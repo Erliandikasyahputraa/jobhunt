@@ -5,8 +5,18 @@ import { Plus, Rocket, Lightbulb } from 'lucide-react'
 import { NavBar } from '@/components/layout/NavBar'
 import { AnimatedBackground } from '@/components/layout/AnimatedBackground'
 import { DashboardStats } from '@/components/dashboard/DashboardStats'
-import { ActivityCalendar } from '@/components/dashboard/ActivityCalendar'
-import { StatusDistributionChart } from '@/components/dashboard/StatusDistributionChart'
+import dynamic from 'next/dynamic'
+
+const ActivityCalendar = dynamic(
+  () => import('@/components/dashboard/ActivityCalendar').then(m => m.ActivityCalendar),
+  { ssr: false }
+)
+
+const StatusDistributionChart = dynamic(
+  () =>
+    import('@/components/dashboard/StatusDistributionChart').then(m => m.StatusDistributionChart),
+  { ssr: false }
+)
 import { RecentActivity } from '@/components/dashboard/RecentActivity'
 import {
   getDashboardStats,
@@ -131,7 +141,8 @@ export default function DashboardPage() {
                     Start Your Job Hunt Journey
                   </h2>
                   <p className="text-label-secondary text-lg">
-                    Your analytics dashboard is ready. Head over to your applications pipeline to begin tracking.
+                    Your analytics dashboard is ready. Head over to your applications pipeline to
+                    begin tracking.
                   </p>
                 </div>
 

@@ -97,6 +97,7 @@ export async function createApplicationAction(formData: ApplicationFormData): Pr
   try {
     const newApplication = await createApplication(supabase, applicationData)
     revalidatePath('/dashboard')
+    revalidatePath('/applications')
     return newApplication
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
@@ -141,6 +142,7 @@ export async function updateApplicationAction(
   try {
     const updatedApplication = await updateApplication(supabase, id, updates)
     revalidatePath('/dashboard')
+    revalidatePath('/applications')
     return updatedApplication
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
@@ -167,6 +169,7 @@ export async function deleteApplicationAction(id: string): Promise<void> {
   try {
     await deleteApplication(supabase, id)
     revalidatePath('/dashboard')
+    revalidatePath('/applications')
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Failed to delete application:', error)
@@ -200,6 +203,7 @@ export async function updateApplicationStatusAction(
   try {
     const updatedApplication = await updateApplication(supabase, id, updates)
     revalidatePath('/dashboard')
+    revalidatePath('/applications')
     return updatedApplication
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
@@ -229,6 +233,7 @@ export async function reorderApplicationsAction(
   try {
     await reorderApplicationsInColumn(supabase, updates)
     revalidatePath('/dashboard')
+    revalidatePath('/applications')
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Failed to reorder applications:', error)
@@ -259,6 +264,7 @@ export async function updateApplicationPositionAction(
   try {
     const updatedApplication = await updateApplicationPosition(supabase, id, position, status)
     revalidatePath('/dashboard')
+    revalidatePath('/applications')
     return updatedApplication
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {

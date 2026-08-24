@@ -45,55 +45,59 @@ export function ActivityCalendar({
           </Select>
         </div>
       </CardHeader>
-      <CardContent className="h-[200px]">
+      <CardContent className="h-[200px] overflow-hidden p-0 sm:p-6 pb-2">
         {data.length === 0 ? (
           <div className="flex h-full w-full items-center justify-center">
             <p className="text-sm text-label-secondary">No activity recorded for {year}</p>
           </div>
         ) : (
-          <ResponsiveCalendar
-            data={data}
-            from={`${year}-01-01`}
-            to={`${year}-12-31`}
-            emptyColor={resolvedTheme === 'light' ? '#f1f5f9' : '#1e293b'}
-            colors={['#90e0ef', '#48cae4', '#00b4d8', '#0096c7', '#0077b6']}
-            minValue={1}
-            margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
-            yearSpacing={40}
-            monthBorderColor={borderColor}
-            dayBorderWidth={2}
-            dayBorderColor={borderColor}
-            tooltip={day => {
-              const count = countMap[day.day] ?? 0
-              return (
-                <div className="bg-slate-800 text-white px-3 py-2 rounded-md text-xs shadow-lg">
-                  <div className="font-semibold mb-1">
-                    {format(parseISO(day.day), 'EEE MMM d, yyyy')}
-                  </div>
-                  <div>
-                    {count} application{count === 1 ? '' : 's'} created
-                  </div>
-                </div>
-              )
-            }}
-            theme={{
-              text: {
-                fill: resolvedTheme === 'light' ? '#64748b' : '#94a3b8',
-              },
-            }}
-            legends={[
-              {
-                anchor: 'bottom-right',
-                direction: 'row',
-                translateY: 36,
-                itemCount: 4,
-                itemWidth: 42,
-                itemHeight: 36,
-                itemsSpacing: 14,
-                itemDirection: 'right-to-left',
-              },
-            ]}
-          />
+          <div className="h-full w-full overflow-x-auto scrollbar-hide px-4 sm:px-0">
+            <div className="h-full min-w-[700px] pb-4">
+              <ResponsiveCalendar
+                data={data}
+                from={`${year}-01-01`}
+                to={`${year}-12-31`}
+                emptyColor={resolvedTheme === 'light' ? '#f1f5f9' : '#1e293b'}
+                colors={['#90e0ef', '#48cae4', '#00b4d8', '#0096c7', '#0077b6']}
+                minValue={1}
+                margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                yearSpacing={40}
+                monthBorderColor={borderColor}
+                dayBorderWidth={2}
+                dayBorderColor={borderColor}
+                tooltip={day => {
+                  const count = countMap[day.day] ?? 0
+                  return (
+                    <div className="bg-slate-800 text-white px-3 py-2 rounded-md text-xs shadow-lg">
+                      <div className="font-semibold mb-1">
+                        {format(parseISO(day.day), 'EEE MMM d, yyyy')}
+                      </div>
+                      <div>
+                        {count} application{count === 1 ? '' : 's'} created
+                      </div>
+                    </div>
+                  )
+                }}
+                theme={{
+                  text: {
+                    fill: resolvedTheme === 'light' ? '#64748b' : '#94a3b8',
+                  },
+                }}
+                legends={[
+                  {
+                    anchor: 'bottom-right',
+                    direction: 'row',
+                    translateY: 36,
+                    itemCount: 4,
+                    itemWidth: 42,
+                    itemHeight: 36,
+                    itemsSpacing: 14,
+                    itemDirection: 'right-to-left',
+                  },
+                ]}
+              />
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>

@@ -99,25 +99,120 @@ Security:
 [ PENDING MANUAL QA ]
 
 ## Visual Recommendations
-*(Awaiting manual feedback on P2/P3 UI polish or improvements)*
+
+_(Awaiting manual feedback on P2/P3 UI polish or improvements)_
 
 ## Phase 2.2 — Dashboard / Applications Separation
+
 **Objective:** Decouple Analytics from Pipeline management and implement mobile UI polish.
 
 - **New Routes:** Created `/applications` to host the `KanbanBoardV3`, serving as the primary workspace for application management.
 - **Moved Components:** `ApplicationForm` and `ApplicationDetail` are now exclusively managed within `/applications`.
 - **Navigation Changes:** Updated `NavBar` authenticated variant to include links to **Dashboard** and **Applications** with active route highlighting using `usePathname`.
 - **Preserved Functionality:** All Kanban operations (drag/drop, creation, deletion, status edits) were preserved safely in the migration.
-- **Mobile UX Improvements:** 
+- **Mobile UX Improvements:**
   - Overhauled `KanbanBoardV3` with `snap-x snap-mandatory` CSS scroll snapping and dynamic `min-w-[85vw]` columns. Users can now horizontally swipe between stages comfortably without the UI becoming compressed.
   - Kanban header (Search & Actions) uses a responsive `flex-col sm:flex-row` layout so it doesn't break boundaries on 375px screens.
   - Made the `ApplicationCard` drag indicator persistently visible on touch devices instead of relying on `hover` which is inaccessible on mobile.
-- **Desktop UX Improvements:** 
+- **Desktop UX Improvements:**
   - Restored vast horizontal space to the Pipeline Kanban by freeing it from the Dashboard layout constraints.
 - **Validation Results:** `next build` passes, ensuring the newly created `/applications` route is fully statically/dynamically viable without hydration or React errors.
 
 ## Known Limitations
+
 - The existing JobHunt test suite contains ~360 pre-existing Windows environment failures unrelated to the dashboard implementation.
 - No `application_history` table exists, so recent activity strictly relies on standard `updated_at` timestamps (no fabricated historical status change events).
 
 The dashboard feature has been successfully frozen into the `feat/analytics-dashboard` branch and committed locally. No upstream PRs or deployments were triggered as per the instructions.
+
+## Phase 2.3 — Responsive UX & Loading
+
+**Objective:** Implement dedicated responsive states and loading skeletons for a native-feeling experience across all breakpoints.
+
+### Mobile Kanban
+
+**Before:** Horizontal scrolling (`overflow-x-auto` with `snap-x`).
+**After:** Vertical stacked columns layout (`flex-col` with native page scroll). Drag and drop support is preserved.
+
+### Desktop Kanban
+
+Horizontal columns are strictly preserved for tablets and up (`md:flex-row`). Scroll snapping and horizontal overflow remains active on desktop viewports.
+
+### Activity Calendar
+
+**Mobile readability improvements:** Wrapped the `ResponsiveCalendar` in a constrained `overflow-x-auto` container with `min-w-[700px]`, allowing mobile users to scroll through the heat map while maintaining readability, avoiding the shrinking/squishing bug.
+
+### Loading
+
+- Dashboard loading skeleton: **YES** (`src/app/dashboard/loading.tsx`)
+- Applications loading skeleton: **YES** (`src/app/applications/loading.tsx`)
+  (Both implemented using Tailwind pulse animations integrated into the existing glass UI aesthetic).
+
+### Horizontal Overflow
+
+- Mobile page-level horizontal overflow: **NONE** (`overflow-x-hidden` on main wrappers).
+
+### Validation
+
+- **TypeScript:** PASS
+- **Lint:** PASS
+- **Tests:** PARTIAL (Existing Windows/Environment JSDOM test failures remain as expected)
+- **Build:** PASS
+
+Browser / DOM QA: NOT PERFORMED BY AGENT
+Manual visual QA: PERFORMED BY DEVELOPER
+
+## Phase 2.3.1 — Applications Runtime Repair
+
+### Runtime Error
+
+`/applications` 500:
+YES
+
+### .next Corruption
+
+Confirmed:
+YES
+
+### routes-manifest.json
+
+Regenerated:
+YES
+
+### Webpack chunk error
+
+Resolved:
+YES
+
+### Duplicate React key
+
+Resolved:
+YES (Removed duplicate `📌` icon in `src/lib/utils/column-icons.ts`)
+
+### TypeScript
+
+PASS
+
+### Lint
+
+PASS
+
+### Tests
+
+PARTIAL (Existing Windows/Environment JSDOM test failures remain as expected)
+
+### Production Build
+
+PASS
+
+### Browser QA
+
+NOT PERFORMED BY AGENT
+
+### DOM Inspection
+
+NOT PERFORMED
+
+### Development Server
+
+NOT STARTED BY AGENT

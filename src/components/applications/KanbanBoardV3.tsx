@@ -204,8 +204,8 @@ function DroppableKanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex w-[85vw] sm:w-auto min-w-[280px] sm:min-w-[240px] flex-1 flex-col rounded-glass p-3 shadow-glass-soft backdrop-blur-sm transition-all duration-200 snap-center',
-        'h-full min-h-[200px]',
+        'flex w-full md:w-auto min-w-0 md:min-w-[280px] lg:min-w-[320px] flex-1 flex-col rounded-glass p-3 shadow-glass-soft backdrop-blur-sm transition-all duration-200 md:snap-center',
+        'md:h-full min-h-[150px] md:min-h-[200px]',
         'glass-light',
         isOver && 'ring-2 ring-blue-400 ring-opacity-50 shadow-glass-dramatic scale-[1.02]'
       )}
@@ -401,8 +401,8 @@ export function KanbanBoardV3({
       const targetApplication = optimisticApplications.find(app => app.id === dropTargetId)
       if (targetApplication) {
         // Find the column that contains this application's status
-        targetColumn = columns.find(col =>
-          col.statuses && col.statuses.includes(targetApplication.status)
+        targetColumn = columns.find(
+          col => col.statuses && col.statuses.includes(targetApplication.status)
         )
       }
     }
@@ -546,8 +546,8 @@ export function KanbanBoardV3({
     <div
       role="region"
       aria-label="Job applications kanban board"
-      className="flex h-full w-full flex-col"
-      style={{ height: 'calc(100vh - 144px)' }}
+      className="flex h-full w-full flex-col md:overflow-hidden"
+      style={{ minHeight: 'calc(100vh - 144px)' }}
     >
       {/* Screen reader announcements */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
@@ -589,7 +589,11 @@ export function KanbanBoardV3({
             Manage Columns
           </Button>
           {onNewApplication && (
-            <Button onClick={onNewApplication} size="sm" className="btn-glass font-semibold flex-1 sm:flex-none">
+            <Button
+              onClick={onNewApplication}
+              size="sm"
+              className="btn-glass font-semibold flex-1 sm:flex-none"
+            >
               <Plus className="mr-2 h-4 w-4" />
               New Application
             </Button>
@@ -606,10 +610,10 @@ export function KanbanBoardV3({
         <div
           ref={kanbanScroll.ref}
           data-testid="kanban-dnd-context"
-          className="flex-1 w-full overflow-x-auto kanban-scrollbar snap-x snap-mandatory"
+          className="flex-1 w-full md:overflow-x-auto kanban-scrollbar md:snap-x md:snap-mandatory overflow-y-visible md:overflow-y-hidden"
         >
           <div
-            className="flex gap-4 p-3 pb-6 min-w-max h-full"
+            className="flex flex-col md:flex-row gap-6 md:gap-4 p-0 sm:p-3 pb-24 md:pb-6 md:min-w-max md:h-full"
             style={{ minHeight: 'calc(100vh - 250px)' }}
           >
             {orderedColumns.map(column => (
