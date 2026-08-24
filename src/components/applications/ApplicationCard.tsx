@@ -13,9 +13,6 @@ interface ApplicationCardProps {
   onClick?: () => void
   isDragging?: boolean
   dragHandleProps?: Record<string, unknown>
-  attributes?: Record<string, unknown>
-  listeners?: Record<string, unknown>
-  setNodeRef?: (element: HTMLElement | null) => void
 }
 
 const formatDate = (dateString: string): string => {
@@ -31,9 +28,6 @@ export function ApplicationCard({
   onClick,
   isDragging = false,
   dragHandleProps,
-  attributes,
-  listeners,
-  setNodeRef,
 }: ApplicationCardProps) {
   const handleCardClick = () => {
     onClick?.()
@@ -41,7 +35,6 @@ export function ApplicationCard({
 
   return (
     <Card
-      ref={setNodeRef}
       role="article"
       aria-label={`${application.job_title} at ${application.company_name}`}
       data-testid="application-card"
@@ -52,8 +45,6 @@ export function ApplicationCard({
           'cursor-pointer transition-all duration-300 ease-in-out hover:!border-[hsl(var(--copper-light))] hover:shadow-[0_0_0_1px_hsl(var(--copper-light))]',
         isDragging && 'opacity-50 rotate-2 shadow-xl'
       )}
-      {...attributes}
-      {...listeners}
     >
       <CardHeader className="pb-3 p-4">
         <div className="flex items-center gap-3">

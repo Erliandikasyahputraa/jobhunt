@@ -6,7 +6,9 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
+  KeyboardSensor,
   useSensor,
   useSensors,
   closestCorners,
@@ -17,6 +19,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
   arrayMove,
+  sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { ChevronDown, ChevronRight, Settings, Plus, Search } from 'lucide-react'
@@ -125,14 +128,12 @@ function SortableApplication({
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-manipulation">
       <ApplicationCard
         application={application}
         isDragging={isDragging}
         onClick={() => onApplicationClick?.(application)}
-        attributes={attributes as unknown as Record<string, unknown>}
-        listeners={listeners as unknown as Record<string, unknown>}
-        setNodeRef={setNodeRef}
+        dragHandleProps={listeners as unknown as Record<string, unknown>}
       />
     </div>
   )
@@ -356,10 +357,19 @@ export function KanbanBoardV3({
   }, [optimisticApplications, columns])
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
         distance: 8,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   )
 
