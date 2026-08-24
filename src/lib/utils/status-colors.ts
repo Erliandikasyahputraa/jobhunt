@@ -1,4 +1,4 @@
-import { ApplicationStatus } from '@/lib/types/database.types'
+
 
 export type StatusCategory =
   | 'Wishlist'
