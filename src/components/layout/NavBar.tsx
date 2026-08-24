@@ -118,12 +118,12 @@ export function NavBar({
   if (variant === 'authenticated') {
     return (
       <header className={cn('border-b glass-light', className)} style={unifiedStyles}>
-        <div className="mx-auto w-[98%] px-6 py-3">
+        <div className="mx-auto w-full px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link
               href={logoHref}
-              className="flex items-center gap-2 text-xl font-semibold text-label-primary transition-opacity hover:opacity-80"
+              className="flex items-center gap-2 text-xl font-semibold text-label-primary transition-opacity hover:opacity-80 shrink-0"
             >
               <Image
                 src="/logo.png"
@@ -132,10 +132,10 @@ export function NavBar({
                 height={24}
                 className="h-6 w-6"
               />
-              <span className="gradient-brand-text">JobHunt</span>
+              <span className="gradient-brand-text hidden sm:inline-block">JobHunt</span>
             </Link>
 
-            {/* Navigation Links (Authenticated) */}
+            {/* Desktop Navigation Links */}
             <div className="hidden sm:flex items-center gap-6 ml-6 flex-1">
               <Link
                 href="/dashboard"
@@ -158,7 +158,7 @@ export function NavBar({
             </div>
 
             {/* User Info & Actions */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               {user && (
                 <ProfileDropdown
                   user={user}
@@ -175,6 +175,28 @@ export function NavBar({
 
               {showThemeToggle && <ThemeToggle />}
             </div>
+          </div>
+          
+          {/* Mobile Navigation Links */}
+          <div className="flex sm:hidden mt-3 p-1 bg-label-quaternary/10 rounded-glass-sm gap-1 w-full">
+            <Link
+              href="/dashboard"
+              className={cn(
+                'flex-1 text-center py-2 text-sm font-medium rounded-md transition-all',
+                pathname === '/dashboard' ? 'bg-background shadow-glass-subtle text-label-primary font-semibold' : 'text-label-secondary hover:text-label-primary'
+              )}
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/applications"
+              className={cn(
+                'flex-1 text-center py-2 text-sm font-medium rounded-md transition-all',
+                pathname === '/applications' ? 'bg-background shadow-glass-subtle text-label-primary font-semibold' : 'text-label-secondary hover:text-label-primary'
+              )}
+            >
+              Applications
+            </Link>
           </div>
         </div>
       </header>

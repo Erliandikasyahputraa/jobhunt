@@ -216,3 +216,70 @@ NOT PERFORMED
 ### Development Server
 
 NOT STARTED BY AGENT
+
+## Phase 2.3.2 — Mobile Navigation & Loading UX
+
+### Mobile Navigation
+Status:
+PASS
+
+Dashboard route:
+PASS
+
+Applications route:
+PASS
+
+Active route indicator:
+PASS (Implemented compact segmented mobile navigation in `NavBar` using `usePathname()`)
+
+### Loading
+Dashboard loading.tsx:
+PASS (Properly structured and visually approximates the layout without blocking spinners)
+
+Applications loading.tsx:
+PASS (Properly structured)
+
+Layout stability:
+PASS
+
+### Mobile Kanban
+Vertical stacking:
+PASS
+
+Native page scrolling:
+PASS (Removed `overflow-y-auto` from Kanban columns on mobile to prevent nested scroll trapping, restoring natural page scroll)
+
+Horizontal page overflow:
+PASS
+
+### Hydration
+Application-generated mismatch:
+NO
+
+External attribute mismatch:
+YES (Documented: `__processed_...`, `bis_status`, `bis_frame_id` are injected by external browser extensions)
+
+RootLayout modified:
+NO (Existing `suppressHydrationWarning` on HTML tag is correct. Did not artificially paper over external extension mismatch)
+
+### Validation
+TypeScript:
+PASS
+
+Lint:
+PASS
+
+Tests:
+PARTIAL (Expected Windows/JSDOM issues only)
+
+Build:
+PASS
+
+Browser QA:
+NOT PERFORMED BY AGENT
+
+DOM inspection:
+NOT PERFORMED
+
+Development server:
+NOT STARTED BY AGENT

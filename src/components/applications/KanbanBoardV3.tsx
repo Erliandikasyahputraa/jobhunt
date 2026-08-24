@@ -262,7 +262,7 @@ function DroppableKanbanColumn({
       >
         <div
           className={cn(
-            'flex flex-1 flex-col gap-3 transition-all duration-200 overflow-y-auto',
+            'flex flex-1 flex-col gap-3 transition-all duration-200 overflow-y-visible md:overflow-y-auto',
             'h-full min-h-[100px] column-content'
           )}
         >
