@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { ResponsiveCalendar } from '@nivo/calendar'
 import { format, parseISO } from 'date-fns'
-import { useTheme } from '@/components/providers/ThemeProvider'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Select,
@@ -20,9 +19,7 @@ export function ActivityCalendar({
   years: string[]
   dataByYear: Record<string, any[]>
 }) {
-  const { resolvedTheme } = useTheme()
   const [year, setYear] = useState(years.at(-1))
-  const borderColor = resolvedTheme === 'light' ? '#ffffff' : '#0e1117'
   const data = dataByYear[year ?? ''] ?? []
   const countMap = Object.fromEntries(data.map(d => [d.day, d.value ?? 0]))
 
@@ -57,14 +54,20 @@ export function ActivityCalendar({
                 data={data}
                 from={`${year}-01-01`}
                 to={`${year}-12-31`}
-                emptyColor={resolvedTheme === 'light' ? '#f1f5f9' : '#1e293b'}
-                colors={['#90e0ef', '#48cae4', '#00b4d8', '#0096c7', '#0077b6']}
+                emptyColor="var(--heatmap-empty)"
+                colors={[
+                  'var(--heatmap-1)',
+                  'var(--heatmap-2)',
+                  'var(--heatmap-3)',
+                  'var(--heatmap-4)',
+                  'var(--heatmap-5)',
+                ]}
                 minValue={1}
                 margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                 yearSpacing={40}
-                monthBorderColor={borderColor}
+                monthBorderColor="var(--heatmap-border)"
                 dayBorderWidth={2}
-                dayBorderColor={borderColor}
+                dayBorderColor="var(--heatmap-border)"
                 tooltip={day => {
                   const count = countMap[day.day] ?? 0
                   return (
@@ -80,7 +83,7 @@ export function ActivityCalendar({
                 }}
                 theme={{
                   text: {
-                    fill: resolvedTheme === 'light' ? '#64748b' : '#94a3b8',
+                    fill: 'var(--heatmap-text)',
                   },
                 }}
                 legends={[
