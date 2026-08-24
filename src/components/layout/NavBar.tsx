@@ -7,7 +7,7 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { ProfileDropdown } from '@/components/auth/ProfileDropdown'
 import { cn } from '@/lib/utils'
 import type { User } from '@supabase/supabase-js'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useLogout } from '@/hooks/useLogout'
 
 interface NavBarProps {
@@ -24,6 +24,7 @@ export function NavBar({
   className,
 }: NavBarProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const { logout } = useLogout()
 
   // Unified styling for all variants
@@ -133,6 +134,28 @@ export function NavBar({
               />
               <span className="gradient-brand-text">JobHunt</span>
             </Link>
+
+            {/* Navigation Links (Authenticated) */}
+            <div className="hidden sm:flex items-center gap-6 ml-6 flex-1">
+              <Link
+                href="/dashboard"
+                className={cn(
+                  'text-sm font-medium transition-colors hover:text-label-primary',
+                  pathname === '/dashboard' ? 'text-label-primary font-semibold' : 'text-label-secondary'
+                )}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/applications"
+                className={cn(
+                  'text-sm font-medium transition-colors hover:text-label-primary',
+                  pathname === '/applications' ? 'text-label-primary font-semibold' : 'text-label-secondary'
+                )}
+              >
+                Applications
+              </Link>
+            </div>
 
             {/* User Info & Actions */}
             <div className="flex items-center gap-4">

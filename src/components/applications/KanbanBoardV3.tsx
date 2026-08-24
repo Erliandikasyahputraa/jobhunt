@@ -204,7 +204,7 @@ function DroppableKanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex min-w-[200px] flex-1 flex-col rounded-glass p-3 md:min-w-[240px] shadow-glass-soft backdrop-blur-sm transition-all duration-200',
+        'flex w-[85vw] sm:w-auto min-w-[280px] sm:min-w-[240px] flex-1 flex-col rounded-glass p-3 shadow-glass-soft backdrop-blur-sm transition-all duration-200 snap-center',
         'h-full min-h-[200px]',
         'glass-light',
         isOver && 'ring-2 ring-blue-400 ring-opacity-50 shadow-glass-dramatic scale-[1.02]'
@@ -554,13 +554,13 @@ export function KanbanBoardV3({
         {announcement}
       </div>
 
-      {/* Unified Header - Single Row */}
-      <div className="flex items-center justify-between gap-4 p-4 pb-0">
-        <h2 className="text-lg font-semibold text-label-primary">Application Pipeline</h2>
+      {/* Unified Header - Responsive Row/Column */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 pb-0">
+        <h2 className="text-lg font-semibold text-label-primary shrink-0">Application Pipeline</h2>
 
-        {/* Search Bar - Positioned between Title and Buttons */}
+        {/* Search Bar */}
         {onSearchChange && (
-          <div className="flex-1 mx-4">
+          <div className="flex-1 w-full sm:mx-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-label-tertiary" />
               <Input
@@ -579,17 +579,17 @@ export function KanbanBoardV3({
         )}
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
           <Button
             onClick={() => setIsManageModalOpen(true)}
             size="sm"
-            className="btn-glass font-semibold"
+            className="btn-glass font-semibold flex-1 sm:flex-none"
           >
             <Settings className="h-4 w-4 mr-2" />
             Manage Columns
           </Button>
           {onNewApplication && (
-            <Button onClick={onNewApplication} size="sm" className="btn-glass font-semibold">
+            <Button onClick={onNewApplication} size="sm" className="btn-glass font-semibold flex-1 sm:flex-none">
               <Plus className="mr-2 h-4 w-4" />
               New Application
             </Button>
@@ -606,10 +606,10 @@ export function KanbanBoardV3({
         <div
           ref={kanbanScroll.ref}
           data-testid="kanban-dnd-context"
-          className="flex-1 w-full overflow-x-auto kanban-scrollbar"
+          className="flex-1 w-full overflow-x-auto kanban-scrollbar snap-x snap-mandatory"
         >
           <div
-            className="flex gap-3 p-3 pb-6 min-w-max h-full"
+            className="flex gap-4 p-3 pb-6 min-w-max h-full"
             style={{ minHeight: 'calc(100vh - 250px)' }}
           >
             {orderedColumns.map(column => (

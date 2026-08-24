@@ -73,10 +73,10 @@ export function ApplicationCard({
           {/* Drag Indicator */}
           <div
             data-testid="drag-indicator"
-            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 glass-ultra rounded-full p-1"
+            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 glass-ultra rounded-full p-1 cursor-grab active:cursor-grabbing"
             {...dragHandleProps}
           >
-            <GripVertical className="h-3 w-3 text-label-tertiary" />
+            <GripVertical className="h-4 w-4 sm:h-3 sm:w-3 text-label-tertiary" />
           </div>
         </div>
       </CardHeader>

@@ -4,9 +4,6 @@ import * as React from 'react'
 import { Plus, Rocket, Lightbulb } from 'lucide-react'
 import { NavBar } from '@/components/layout/NavBar'
 import { AnimatedBackground } from '@/components/layout/AnimatedBackground'
-import { KanbanBoardV3 } from '@/components/applications/KanbanBoardV3'
-import ApplicationForm from '@/components/applications/ApplicationForm'
-import { ApplicationDetail } from '@/components/applications/ApplicationDetail'
 import { DashboardStats } from '@/components/dashboard/DashboardStats'
 import { ActivityCalendar } from '@/components/dashboard/ActivityCalendar'
 import { StatusDistributionChart } from '@/components/dashboard/StatusDistributionChart'
@@ -18,39 +15,17 @@ import {
   getRecentActivity,
 } from '@/lib/utils/dashboard'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import type { Application } from '@/lib/types/database.types'
-import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
-import {
-  createApplicationAction,
-  updateApplicationAction,
-  deleteApplicationAction,
-  updateApplicationStatusAction,
-  getApplicationsAction,
-} from './actions'
+import { getApplicationsAction } from './actions'
+import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [applications, setApplications] = React.useState<Application[]>([])
-  const [filteredApplications, setFilteredApplications] = React.useState<Application[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = React.useState('')
-
-  // Modal states
-  const [isNewApplicationModalOpen, setIsNewApplicationModalOpen] = React.useState(false)
-  const [selectedApplication, setSelectedApplication] = React.useState<Application | null>(null)
-
-  // Operation loading states
-  const [isCreating, setIsCreating] = React.useState(false)
-  const [createError, setCreateError] = React.useState<string | null>(null)
 
   // User state for NavBar
   const [user, setUser] = React.useState<User | null>(null)
@@ -87,7 +62,6 @@ export default function DashboardPage() {
         // Load applications
         const apps = await getApplicationsAction()
         setApplications(apps)
-        setFilteredApplications(apps)
       } catch (err) {
         console.error('Failed to load data:', err)
         setError('Failed to load applications. Please try again.')
@@ -99,96 +73,6 @@ export default function DashboardPage() {
     loadData()
   }, [])
 
-  // Filter applications when search query changes
-  React.useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredApplications(applications)
-      return
-    }
-
-    const query = searchQuery.toLowerCase().trim()
-    const filtered = applications.filter(
-      app =>
-        app.company_name.toLowerCase().includes(query) ||
-        app.job_title.toLowerCase().includes(query)
-    )
-    setFilteredApplications(filtered)
-  }, [searchQuery, applications])
-
-  // Handle create application
-  const handleCreateApplication = async (formData: ApplicationFormData) => {
-    setIsCreating(true)
-    setCreateError(null)
-
-    try {
-      const newApplication = await createApplicationAction(formData)
-      setApplications(prev => [newApplication, ...prev])
-      setIsNewApplicationModalOpen(false)
-    } catch (err) {
-      console.error('Failed to create application:', err)
-      setCreateError('Failed to create application. Please try again.')
-    } finally {
-      setIsCreating(false)
-    }
-  }
-
-  // Handle update application
-  const handleUpdateApplication = async (id: string, formData: ApplicationFormData) => {
-    try {
-      const updatedApplication = await updateApplicationAction(id, formData)
-      setApplications(prev => prev.map(app => (app.id === id ? updatedApplication : app)))
-      setSelectedApplication(null)
-    } catch (err) {
-      console.error('Failed to update application:', err)
-      throw err // Re-throw to let ApplicationDetail handle the error
-    }
-  }
-
-  // Handle delete application
-  const handleDeleteApplication = async (id: string) => {
-    try {
-      await deleteApplicationAction(id)
-      setApplications(prev => prev.filter(app => app.id !== id))
-      setSelectedApplication(null)
-    } catch (err) {
-      console.error('Failed to delete application:', err)
-      throw err // Re-throw to let ApplicationDetail handle the error
-    }
-  }
-
-  // Handle update application status (drag-and-drop)
-  const handleUpdateStatus = async (id: string, newStatus: Application['status']) => {
-    try {
-      const updatedApplication = await updateApplicationStatusAction(id, newStatus)
-      setApplications(prev => prev.map(app => (app.id === id ? updatedApplication : app)))
-    } catch (err) {
-      console.error('Failed to update status:', err)
-      throw err // Re-throw to let KanbanBoard handle the error
-    }
-  }
-
-  // Handle application card click
-  const handleApplicationClick = (application: Application) => {
-    setSelectedApplication(application)
-  }
-
-  // Handle close detail modal
-  const handleCloseDetail = () => {
-    setSelectedApplication(null)
-  }
-
-  // Handle open new application modal
-  const handleOpenNewModal = () => {
-    setCreateError(null)
-    setIsNewApplicationModalOpen(true)
-  }
-
-  // Handle close new application modal
-  const handleCloseNewModal = () => {
-    setIsNewApplicationModalOpen(false)
-    setCreateError(null)
-  }
-
   if (isLoading) {
     return (
       <AnimatedBackground variant="minimal">
@@ -196,7 +80,7 @@ export default function DashboardPage() {
           <NavBar variant="authenticated" user={user} />
           <main className="mx-auto w-full px-4 py-4">
             <div className="flex items-center justify-center p-8 glass-ultra rounded-glass shadow-glass-subtle">
-              <p className="text-label-secondary">Loading applications...</p>
+              <p className="text-label-secondary">Loading dashboard...</p>
             </div>
           </main>
         </div>
@@ -235,7 +119,7 @@ export default function DashboardPage() {
         <NavBar variant="authenticated" user={user} />
 
         <main className="mx-auto w-full px-4 py-4">
-          {applications.length === 0 && !isNewApplicationModalOpen ? (
+          {applications.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
               <div className="max-w-md text-center space-y-6 glass-ultra rounded-glass-lg p-8 shadow-glass-soft">
                 <div className="flex justify-center">
@@ -247,17 +131,17 @@ export default function DashboardPage() {
                     Start Your Job Hunt Journey
                   </h2>
                   <p className="text-label-secondary text-lg">
-                    Track applications, ace interviews, land your dream job
+                    Your analytics dashboard is ready. Head over to your applications pipeline to begin tracking.
                   </p>
                 </div>
 
                 <Button
-                  onClick={handleOpenNewModal}
+                  onClick={() => router.push('/applications')}
                   size="lg"
                   className="w-full sm:w-auto btn-glass font-semibold"
                 >
                   <Plus className="mr-2 h-5 w-5" />
-                  Add Your First Application
+                  Go to Applications
                 </Button>
 
                 <div
@@ -273,7 +157,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
-          ) : applications.length > 0 ? (
+          ) : (
             <>
               {/* Overview Section */}
               <div className="mb-8 space-y-4">
@@ -293,55 +177,9 @@ export default function DashboardPage() {
                   <RecentActivity applications={recentActivityData} />
                 </div>
               </div>
-
-              {/* Kanban Board (Detailed View) */}
-              <KanbanBoardV3
-                applications={filteredApplications}
-                onUpdateStatus={handleUpdateStatus}
-                onApplicationClick={handleApplicationClick}
-                isLoading={false}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                onNewApplication={handleOpenNewModal}
-              />
             </>
-          ) : null}
+          )}
         </main>
-
-        {/* New Application Modal */}
-        <Dialog open={isNewApplicationModalOpen} onOpenChange={handleCloseNewModal}>
-          <DialogContent variant="glass" className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Add New Application</DialogTitle>
-              <DialogDescription>
-                Fill in the details of your job application below.
-              </DialogDescription>
-            </DialogHeader>
-
-            {createError && (
-              <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 text-sm text-red-800 dark:text-red-200">
-                {createError}
-              </div>
-            )}
-
-            <ApplicationForm
-              onSubmit={handleCreateApplication}
-              onCancel={handleCloseNewModal}
-              isLoading={isCreating}
-            />
-          </DialogContent>
-        </Dialog>
-
-        {/* Application Detail Sheet */}
-        {selectedApplication && (
-          <ApplicationDetail
-            application={selectedApplication}
-            onUpdate={handleUpdateApplication}
-            onDelete={handleDeleteApplication}
-            onClose={handleCloseDetail}
-            isOpen={true}
-          />
-        )}
       </div>
     </AnimatedBackground>
   )
