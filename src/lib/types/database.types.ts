@@ -24,6 +24,7 @@ export interface Application {
   company_logo_url?: string | null
   source?: string | null
   status: ApplicationStatus
+  custom_column_id: string | null
   date_applied: string
   notes: string | null
   position: number
@@ -33,3 +34,22 @@ export interface Application {
 
 export type ApplicationInsert = Omit<Application, 'id' | 'created_at' | 'updated_at' | 'user_id'>
 export type ApplicationUpdate = Partial<Omit<Application, 'id' | 'user_id'>>
+
+export interface CustomColumnDB {
+  id: string
+  user_id: string
+  name: string
+  description: string | null
+  icon: string | null
+  order: number
+  created_at: string
+  updated_at: string
+}
+
+export type CustomColumnInsert = Omit<
+  CustomColumnDB,
+  'id' | 'created_at' | 'updated_at' | 'user_id'
+>
+export type CustomColumnUpdate = Partial<
+  Omit<CustomColumnDB, 'id' | 'created_at' | 'updated_at' | 'user_id'>
+>

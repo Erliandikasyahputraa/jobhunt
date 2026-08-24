@@ -16,6 +16,7 @@ function renderWithTheme(ui: React.ReactElement) {
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
   useSearchParams: vi.fn(),
+  usePathname: vi.fn(() => '/login'),
 }))
 
 // Mock Supabase client

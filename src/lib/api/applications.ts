@@ -216,12 +216,13 @@ export async function reorderApplicationsInColumn(
     const userId = await verifyAuthenticationContext(supabase)
 
     // Execute all updates in parallel
-    const updatePromises = updates.map(({ id, position }) =>
-      supabase
-        .from('applications')
-        .update({ position, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .eq('user_id', userId) // Ensure user can only update their own applications
+    const updatePromises = updates.map(
+      ({ id, position }) =>
+        supabase
+          .from('applications')
+          .update({ position, updated_at: new Date().toISOString() })
+          .eq('id', id)
+          .eq('user_id', userId) // Ensure user can only update their own applications
     )
 
     const results = await Promise.all(updatePromises)
@@ -250,7 +251,8 @@ export async function updateApplicationPosition(
   supabase: SupabaseClient,
   id: string,
   position: number,
-  status?: Application['status']
+  status?: Application['status'],
+  customColumnId?: string | null
 ): Promise<Application> {
   try {
     const userId = await verifyAuthenticationContext(supabase)
@@ -262,6 +264,10 @@ export async function updateApplicationPosition(
 
     if (status) {
       updates.status = status
+    }
+
+    if (customColumnId !== undefined) {
+      updates.custom_column_id = customColumnId
     }
 
     const { data, error } = await supabase

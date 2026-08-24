@@ -163,7 +163,7 @@ describe('ApplicationForm', () => {
       const companyInput = screen.getByLabelText(/company name/i)
       const longName = 'A'.repeat(256)
 
-      await user.type(companyInput, longName)
+      fireEvent.change(companyInput, { target: { value: longName } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)

@@ -29,14 +29,22 @@ import type {
   UpdateColumnData,
   ColumnType,
 } from '@/lib/types/column.types'
-import { columnStorage } from '@/lib/storage/column-storage'
+import type { CustomColumnDB } from '@/lib/types/database.types'
+import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { DEFAULT_COLUMN_ICONS } from '@/lib/utils/column-icons'
 import { DraggableColumnList } from './DraggableColumnList'
+import {
+  createCustomColumnAction,
+  updateCustomColumnAction,
+  deleteCustomColumnAction,
+  reorderCustomColumnsAction,
+} from '@/app/dashboard/actions'
 
 interface ColumnManageModalProps {
   isOpen: boolean
   onClose: () => void
-  onColumnsChange: (columns: ColumnConfig[]) => void
+  customColumns: CustomColumnDB[]
+  onCustomColumnsChange: (columns: CustomColumnDB[]) => void
 }
 
 function ColumnItem({
@@ -167,8 +175,12 @@ function ColumnItem({
   )
 }
 
-export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnManageModalProps) {
-  const [columns, setColumns] = useState<ColumnConfig[]>([])
+export function ColumnManageModal({
+  isOpen,
+  onClose,
+  customColumns,
+  onCustomColumnsChange,
+}: ColumnManageModalProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deletingColumn, setDeletingColumn] = useState<ColumnConfig | null>(null)
@@ -178,36 +190,82 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
     description: '',
     icon: '',
   })
+  const [isProcessing, setIsProcessing] = useState(false)
 
-  React.useEffect(() => {
-    if (isOpen) {
-      setColumns(columnStorage.getColumns())
+  // Map CustomColumnDB to ColumnConfig for the UI
+  const mappedCustomColumns: ColumnConfig[] = customColumns
+    .map(cc => ({
+      id: cc.id as any,
+      name: cc.name,
+      description: cc.description || undefined,
+      icon: cc.icon || undefined,
+      isCustom: true,
+      order: cc.order,
+    }))
+    .sort((a, b) => a.order - b.order)
+
+  const handleCustomColumnReorder = async (newOrder: ColumnType[]) => {
+    try {
+      const updates = newOrder.map((id, index) => ({ id, order: index }))
+
+      // Optimistic update
+      const newCustomColumns = [...customColumns]
+      newCustomColumns.forEach(c => {
+        const match = updates.find(u => u.id === c.id)
+        if (match) c.order = match.order
+      })
+      onCustomColumnsChange(newCustomColumns)
+
+      await reorderCustomColumnsAction(updates)
+    } catch (err) {
+      console.error('Failed to reorder', err)
+      // On error, let parent refetch or simply rely on optimistic failing
     }
-  }, [isOpen])
-
-  const refreshColumns = () => {
-    const updatedColumns = columnStorage.getColumns()
-    setColumns(updatedColumns)
-    onColumnsChange(updatedColumns)
   }
 
-  const handleColumnReorder = (newOrder: ColumnType[]) => {
-    columnStorage.reorderColumns(newOrder)
-    refreshColumns()
+  const handleCreateColumn = async () => {
+    if (!newColumn.name.trim() || isProcessing) return
+    setIsProcessing(true)
+
+    try {
+      const added = await createCustomColumnAction({
+        name: newColumn.name,
+        description: newColumn.description || null,
+        icon: newColumn.icon || null,
+        order: customColumns.length,
+      })
+      onCustomColumnsChange([...customColumns, added])
+      setNewColumn({ name: '', description: '', icon: '' })
+      setShowAddForm(false)
+    } catch (err) {
+      console.error('Failed to create column', err)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
-  const handleCreateColumn = () => {
-    if (!newColumn.name.trim()) return
+  const handleUpdateColumn = async (columnId: string, updates: Partial<UpdateColumnData>) => {
+    try {
+      // Optimistic update
+      const optimisticColumns = customColumns.map(c =>
+        c.id === columnId
+          ? {
+              ...c,
+              ...updates,
+              description: updates.description ?? c.description,
+              icon: updates.icon ?? c.icon,
+            }
+          : c
+      )
+      onCustomColumnsChange(optimisticColumns)
 
-    columnStorage.createCustomColumn(newColumn)
-    setNewColumn({ name: '', description: '', icon: '' })
-    setShowAddForm(false)
-    refreshColumns()
-  }
+      const updated = await updateCustomColumnAction(columnId, updates)
 
-  const handleUpdateColumn = (columnId: string, updates: Partial<UpdateColumnData>) => {
-    columnStorage.updateCustomColumn(columnId, updates)
-    refreshColumns()
+      // Actual update
+      onCustomColumnsChange(customColumns.map(c => (c.id === columnId ? updated : c)))
+    } catch (err) {
+      console.error('Failed to update column', err)
+    }
   }
 
   const handleDeleteColumn = (column: ColumnConfig) => {
@@ -215,13 +273,20 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
     setDeleteDialogOpen(true)
   }
 
-  const confirmDeleteColumn = () => {
-    if (deletingColumn && deletingColumn.isCustom) {
-      columnStorage.deleteCustomColumn(deletingColumn.id)
-      refreshColumns()
+  const confirmDeleteColumn = async () => {
+    if (deletingColumn && deletingColumn.isCustom && !isProcessing) {
+      setIsProcessing(true)
+      try {
+        await deleteCustomColumnAction(deletingColumn.id)
+        onCustomColumnsChange(customColumns.filter(c => c.id !== deletingColumn.id))
+      } catch (err) {
+        console.error('Failed to delete', err)
+      } finally {
+        setIsProcessing(false)
+        setDeleteDialogOpen(false)
+        setDeletingColumn(null)
+      }
     }
-    setDeleteDialogOpen(false)
-    setDeletingColumn(null)
   }
 
   const handleColumnEdit = (columnId: string) => {
@@ -248,8 +313,8 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
     handleUpdateColumn(columnId, { description })
   }
 
-  const coreColumns = columns.filter(col => !col.isCustom)
-  const customColumns = columns.filter(col => col.isCustom)
+  // Core columns are static and cannot be modified here
+  const coreColumns = [...DEFAULT_COLUMNS].sort((a, b) => a.order - b.order)
 
   return (
     <>
@@ -261,32 +326,33 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
               Manage Columns
             </DialogTitle>
             <DialogDescription>
-              Customize your kanban board by adding, editing, or removing columns. Core columns
-              cannot be deleted but can be reordered.
+              Customize your kanban board by adding, editing, or removing custom columns. Core
+              columns cannot be modified.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
             {/* Core Columns */}
             <div>
-              <h3 className="text-sm font-semibold text-label-primary mb-3">Core Columns</h3>
-              <DraggableColumnList columns={coreColumns} onReorder={handleColumnReorder}>
-                {(column, _isDragging) => (
+              <h3 className="text-sm font-semibold text-label-primary mb-3">
+                Core Columns (Fixed)
+              </h3>
+              <div className="space-y-2">
+                {coreColumns.map(column => (
                   <ColumnItem
+                    key={column.id}
                     column={column}
-                    isEditing={editingId === column.id}
-                    onEdit={() => handleColumnEdit(column.id)}
-                    onSave={handleColumnSave}
-                    onCancel={handleColumnCancel}
-                    onDelete={() => handleDeleteColumn(column)}
-                    onIconChange={icon => handleIconChange(column.id, icon)}
-                    onNameChange={name => handleNameChange(column.id, name)}
-                    onDescriptionChange={description =>
-                      handleDescriptionChange(column.id, description)
-                    }
+                    isEditing={false}
+                    onEdit={() => {}}
+                    onSave={() => {}}
+                    onCancel={() => {}}
+                    onDelete={() => {}}
+                    onIconChange={() => {}}
+                    onNameChange={() => {}}
+                    onDescriptionChange={() => {}}
                   />
-                )}
-              </DraggableColumnList>
+                ))}
+              </div>
             </div>
 
             {/* Custom Columns */}
@@ -336,7 +402,7 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
                       <Button
                         size="sm"
                         onClick={handleCreateColumn}
-                        disabled={!newColumn.name.trim()}
+                        disabled={!newColumn.name.trim() || isProcessing}
                       >
                         Create Column
                       </Button>
@@ -356,7 +422,7 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
               )}
 
               <div className="space-y-2">
-                {customColumns.length === 0 ? (
+                {mappedCustomColumns.length === 0 ? (
                   <div className="glass-ultra rounded-glass p-8 text-center border-2 border-dashed border-label-quaternary/20">
                     <p className="text-label-tertiary text-sm">No custom columns yet</p>
                     <p className="text-label-quaternary text-xs mt-1">
@@ -364,7 +430,10 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
                     </p>
                   </div>
                 ) : (
-                  <DraggableColumnList columns={customColumns} onReorder={handleColumnReorder}>
+                  <DraggableColumnList
+                    columns={mappedCustomColumns}
+                    onReorder={handleCustomColumnReorder}
+                  >
                     {(column, _isDragging) => (
                       <ColumnItem
                         column={column}
@@ -400,13 +469,15 @@ export function ColumnManageModal({ isOpen, onClose, onColumnsChange }: ColumnMa
             <AlertDialogTitle>Delete Column</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete "{deletingColumn?.name}"? This action cannot be
-              undone. Any applications in this column will need to be moved to other columns.
+              undone. Applications in this column will be reverted back to their standard pipeline
+              status.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDeleteColumn}
+              disabled={isProcessing}
               className="bg-error hover:bg-error/90 text-error-foreground"
             >
               Delete

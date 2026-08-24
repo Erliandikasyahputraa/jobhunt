@@ -10,6 +10,7 @@ vi.mock('next/navigation', () => ({
     push: vi.fn(),
     refresh: vi.fn(),
   }),
+  usePathname: vi.fn(() => '/dashboard'),
 }))
 
 // Mock ThemeToggle
@@ -463,7 +464,7 @@ describe('NavBar Component', () => {
         created_at: '2024-01-01T00:00:00Z',
       }
       const { container } = renderWithTheme(<NavBar variant="authenticated" user={groupUser} />)
-      const actionsGroup = container.querySelector('.flex.items-center.gap-4')
+      const actionsGroup = container.querySelector('.flex.items-center.shrink-0')
       expect(actionsGroup).toBeInTheDocument()
     })
   })

@@ -23,12 +23,17 @@ import {
   createApplicationAction,
   updateApplicationAction,
   deleteApplicationAction,
-  updateApplicationStatusAction,
+  updateApplicationPositionAction,
   getApplicationsAction,
+  getCustomColumnsAction,
+  createCustomColumnAction,
 } from '@/app/dashboard/actions'
+import type { CustomColumnDB } from '@/lib/types/database.types'
+import { columnStorage } from '@/lib/storage/column-storage'
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = React.useState<Application[]>([])
+  const [customColumns, setCustomColumns] = React.useState<CustomColumnDB[]>([])
   const [filteredApplications, setFilteredApplications] = React.useState<Application[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
@@ -65,13 +70,45 @@ export default function ApplicationsPage() {
           return
         }
 
-        // Set user information
         setUser(currentUser)
 
-        // Load applications
-        const apps = await getApplicationsAction()
+        // Load applications and custom columns
+        const [apps, dbColumns] = await Promise.all([
+          getApplicationsAction(),
+          getCustomColumnsAction(),
+        ])
+
+        // Handle LocalStorage Migration
+        let finalColumns = dbColumns
+        if (dbColumns.length === 0) {
+          const localData = columnStorage.getColumns().filter(col => col.isCustom)
+          if (localData.length > 0) {
+            try {
+              // Migrate local custom columns to Supabase
+              const migrationPromises = localData.map(col =>
+                createCustomColumnAction({
+                  name: col.name,
+                  description: col.description || null,
+                  icon: col.icon || null,
+                  order: col.order,
+                })
+              )
+              const migratedCols = await Promise.all(migrationPromises)
+              finalColumns = migratedCols
+              // Clear local storage after successful migration
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('kanban-columns')
+              }
+            } catch (migrationError) {
+              console.error('Failed to migrate local columns:', migrationError)
+              // We just log it and proceed. Users can recreate them.
+            }
+          }
+        }
+
         setApplications(apps)
         setFilteredApplications(apps)
+        setCustomColumns(finalColumns)
       } catch (err) {
         console.error('Failed to load data:', err)
         setError('Failed to load applications. Please try again.')
@@ -141,14 +178,29 @@ export default function ApplicationsPage() {
   }
 
   // Handle update application status (drag-and-drop)
-  const handleUpdateStatus = async (id: string, newStatus: Application['status']) => {
+  const handleUpdateApplicationColumn = async (
+    id: string,
+    position: number,
+    newStatus?: Application['status'],
+    customColumnId?: string | null
+  ) => {
     try {
-      const updatedApplication = await updateApplicationStatusAction(id, newStatus)
+      const updatedApplication = await updateApplicationPositionAction(
+        id,
+        position,
+        newStatus,
+        customColumnId
+      )
       setApplications(prev => prev.map(app => (app.id === id ? updatedApplication : app)))
     } catch (err) {
-      console.error('Failed to update status:', err)
+      console.error('Failed to update application column:', err)
       throw err // Re-throw to let KanbanBoard handle the error
     }
+  }
+
+  // Handle custom column changes
+  const handleCustomColumnsChange = (newColumns: CustomColumnDB[]) => {
+    setCustomColumns(newColumns)
   }
 
   // Handle application card click
@@ -262,7 +314,9 @@ export default function ApplicationsPage() {
               {/* Kanban Board (Detailed View) */}
               <KanbanBoardV3
                 applications={filteredApplications}
-                onUpdateStatus={handleUpdateStatus}
+                customColumns={customColumns}
+                onUpdateApplicationColumn={handleUpdateApplicationColumn}
+                onCustomColumnsChange={handleCustomColumnsChange}
                 onApplicationClick={handleApplicationClick}
                 isLoading={false}
                 searchQuery={searchQuery}

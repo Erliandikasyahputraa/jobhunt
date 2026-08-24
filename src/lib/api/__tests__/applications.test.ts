@@ -7,7 +7,7 @@ import {
   deleteApplication,
   getApplicationsByStatus,
 } from '../applications'
-import type { Application } from '@/lib/types/database.types'
+import type { Application, ApplicationInsert } from '@/lib/types/database.types'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 const mockApplications: Application[] = [
@@ -23,6 +23,7 @@ const mockApplications: Application[] = [
     notes: 'Great company culture',
     date_applied: '2025-10-01',
     position: 1,
+    custom_column_id: null,
     created_at: '2025-10-01T10:00:00Z',
     updated_at: '2025-10-01T10:00:00Z',
   },
@@ -92,19 +93,20 @@ describe('Applications API', () => {
 
   describe('createApplication', () => {
     it('should create a new application', async () => {
-      const newApp = {
-        company_name: 'New Corp',
+      const newApplication: ApplicationInsert = {
+        company_name: 'Test Co',
         job_title: 'Developer',
-        status: 'wishlist' as const,
+        status: 'wishlist',
         job_url: null,
         location: null,
         salary_range: null,
         notes: null,
-        date_applied: '2025-10-02',
+        date_applied: new Date().toISOString().split('T')[0],
         position: 1,
+        custom_column_id: null,
       }
 
-      const result = await createApplication(mockSupabase, newApp)
+      const result = await createApplication(mockSupabase, newApplication)
       expect(result).toBeDefined()
       expect(result.id).toBeDefined()
     })

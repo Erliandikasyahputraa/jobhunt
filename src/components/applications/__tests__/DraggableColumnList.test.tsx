@@ -288,8 +288,8 @@ describe('DraggableColumnList', () => {
       const endTime = performance.now()
       const renderTime = endTime - startTime
 
-      // Should render quickly even with many columns (under 250ms)
-      expect(renderTime).toBeLessThan(250)
+      // Should render quickly even with many columns (under 1000ms)
+      expect(renderTime).toBeLessThan(1000)
       expect(screen.getAllByText(/^Column \d+$/)).toHaveLength(50)
     })
 

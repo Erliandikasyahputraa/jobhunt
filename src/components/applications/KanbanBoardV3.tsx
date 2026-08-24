@@ -29,54 +29,28 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import type { Application, ApplicationStatus } from '@/lib/types/database.types'
+import type { Application, ApplicationStatus, CustomColumnDB } from '@/lib/types/database.types'
 import type { ColumnConfig } from '@/lib/types/column.types'
-import { columnStorage } from '@/lib/storage/column-storage'
+import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { getColumnIcon } from '@/lib/utils/column-icons'
 import { useHorizontalScroll } from '@/hooks/use-horizontal-scroll'
 import { reorderApplicationsAction } from '@/app/dashboard/actions'
 
 interface KanbanBoardV3Props {
   applications: Application[]
-  onUpdateStatus: (_id: string, _newStatus: ApplicationStatus) => Promise<void>
-  onApplicationClick?: (_application: Application) => void
+  customColumns: CustomColumnDB[]
+  onUpdateApplicationColumn: (
+    id: string,
+    position: number,
+    newStatus?: ApplicationStatus,
+    customColumnId?: string | null
+  ) => Promise<void>
+  onCustomColumnsChange: (columns: CustomColumnDB[]) => void
+  onApplicationClick?: (application: Application) => void
   isLoading?: boolean
   searchQuery?: string
-  onSearchChange?: (_query: string) => void
+  onSearchChange?: (query: string) => void
   onNewApplication?: () => void
-}
-
-// Enhanced status mapping that supports custom columns
-function getColumnsStatusMap(columns: ColumnConfig[]): Record<string, ApplicationStatus[]> {
-  const statusMap: Record<string, ApplicationStatus[]> = {}
-
-  columns.forEach(column => {
-    if (column.statuses) {
-      // Use predefined statuses for core columns
-      statusMap[column.id] = column.statuses
-    } else {
-      // For custom columns, we'll handle applications differently
-      statusMap[column.id] = []
-    }
-  })
-
-  return statusMap
-}
-
-// Legacy core status mapping for backwards compatibility
-const CORE_STATUS_LABELS: Record<ApplicationStatus, string> = {
-  wishlist: 'Wishlist',
-  applied: 'Applied',
-  phone_screen: 'Phone Screen',
-  assessment: 'Assessment',
-  take_home: 'Take Home',
-  interviewing: 'Interviewing',
-  final_round: 'Final Round',
-  offered: 'Offered',
-  accepted: 'Accepted',
-  rejected: 'Rejected',
-  withdrawn: 'Withdrawn',
-  ghosted: 'Ghosted',
 }
 
 const CORE_EMPTY_STATE_GUIDANCE: Record<string, { heading: string; text: string; cta?: string }> = {
@@ -106,7 +80,7 @@ const CORE_EMPTY_STATE_GUIDANCE: Record<string, { heading: string; text: string;
 interface SortableApplicationProps {
   application: Application
   isDragging: boolean
-  onApplicationClick?: (_application: Application) => void
+  onApplicationClick?: (application: Application) => void
 }
 
 function SortableApplication({
@@ -119,6 +93,7 @@ function SortableApplication({
     data: {
       applicationId: application.id,
       currentStatus: application.status,
+      customColumnId: application.custom_column_id,
     },
   })
 
@@ -128,7 +103,13 @@ function SortableApplication({
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-manipulation">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="touch-manipulation"
+    >
       <ApplicationCard
         application={application}
         isDragging={isDragging}
@@ -175,7 +156,7 @@ interface KanbanColumnProps {
   column: ColumnConfig
   applications: Application[]
   activeId: string | null
-  onApplicationClick?: (_application: Application) => void
+  onApplicationClick?: (application: Application) => void
   isExpanded: boolean
   onToggleExpand: () => void
 }
@@ -198,7 +179,6 @@ function DroppableKanbanColumn({
   const count = applications.length
   const isExpandable = column.id === 'interview' && !column.isCustom
 
-  // Use icon from column or fallback to default icons
   const icon = column.icon || getColumnIcon(column.id)
 
   return (
@@ -297,7 +277,9 @@ function DroppableKanbanColumn({
 
 export function KanbanBoardV3({
   applications,
-  onUpdateStatus,
+  customColumns,
+  onUpdateApplicationColumn,
+  onCustomColumnsChange,
   onApplicationClick,
   isLoading = false,
   searchQuery = '',
@@ -309,18 +291,24 @@ export function KanbanBoardV3({
     React.useState<Application[]>(applications)
   const [announcement, setAnnouncement] = React.useState<string>('')
   const [expandedColumns, setExpandedColumns] = React.useState<Set<string>>(new Set())
-  const [columns, setColumns] = React.useState<ColumnConfig[]>([])
   const [isManageModalOpen, setIsManageModalOpen] = React.useState(false)
 
-  // Horizontal scroll hook for kanban container - preserves native horizontal scrolling
   const kanbanScroll = useHorizontalScroll<HTMLDivElement>({ behavior: 'auto', throttleMs: 8 })
 
-  // Initialize columns from storage
-  React.useEffect(() => {
-    setColumns(columnStorage.getColumns())
-  }, [])
+  // Combine Default Core Columns with User Custom Columns
+  const columns: ColumnConfig[] = React.useMemo(() => {
+    const customConfig: ColumnConfig[] = customColumns.map(cc => ({
+      id: cc.id as any,
+      name: cc.name,
+      description: cc.description || undefined,
+      icon: cc.icon || undefined,
+      isCustom: true,
+      order: cc.order + 100, // keep them after core columns
+    }))
 
-  // Update optimistic state when applications prop changes
+    return [...DEFAULT_COLUMNS, ...customConfig].sort((a, b) => a.order - b.order)
+  }, [customColumns])
+
   React.useEffect(() => {
     setOptimisticApplications(applications)
   }, [applications])
@@ -328,27 +316,29 @@ export function KanbanBoardV3({
   // Group applications by columns
   const columnApplications = React.useMemo(() => {
     const grouped: Record<string, Application[]> = {}
-    const statusMap = getColumnsStatusMap(columns)
 
-    // Initialize all columns
     columns.forEach(column => {
       grouped[column.id] = []
     })
 
     optimisticApplications.forEach(app => {
-      // For core columns, use existing status mapping logic
-      for (const [columnId, statuses] of Object.entries(statusMap)) {
-        if (statuses.includes(app.status)) {
-          grouped[columnId].push(app)
+      // 1. If it has a valid custom column, put it there
+      if (app.custom_column_id && grouped[app.custom_column_id] !== undefined) {
+        grouped[app.custom_column_id].push(app)
+        return
+      }
+
+      // 2. Otherwise, fall back to core status mapping
+      for (const column of DEFAULT_COLUMNS) {
+        if (column.statuses && column.statuses.includes(app.status)) {
+          if (grouped[column.id]) {
+            grouped[column.id].push(app)
+          }
           return
         }
       }
-
-      // For custom columns, we could add custom logic here
-      // For now, custom columns will be empty unless we add custom status mapping
     })
 
-    // Sort each column's applications by position
     Object.keys(grouped).forEach(columnId => {
       grouped[columnId].sort((a, b) => a.position - b.position)
     })
@@ -382,42 +372,30 @@ export function KanbanBoardV3({
     const { active, over } = event
 
     setActiveId(null)
-
-    if (!over) {
-      return
-    }
+    if (!over) return
 
     const applicationId = active.id as string
-
-    // Determine the drop target - could be a card or a column
-    // When dragging over a card, over.data.current.applicationId exists
-    // When dragging over empty column space, over.id is the column ID
     const overData = over.data?.current as { applicationId?: string } | undefined
     const dropTargetId = overData?.applicationId || (over.id as string)
 
-    // Find the application being dragged
     const application = optimisticApplications.find(app => app.id === applicationId)
+    if (!application) return
 
-    if (!application) {
-      return
-    }
-
-    // Determine the target column
-    // The dropTargetId could be either a column ID or an application ID (when dropping onto another card)
     let targetColumn = columns.find(col => col.id === dropTargetId)
 
     if (!targetColumn) {
-      // If not a column, it might be an application ID - find which column contains that application
       const targetApplication = optimisticApplications.find(app => app.id === dropTargetId)
       if (targetApplication) {
-        // Find the column that contains this application's status
-        targetColumn = columns.find(
-          col => col.statuses && col.statuses.includes(targetApplication.status)
-        )
+        if (targetApplication.custom_column_id) {
+          targetColumn = columns.find(col => col.id === targetApplication.custom_column_id)
+        } else {
+          targetColumn = DEFAULT_COLUMNS.find(col =>
+            col.statuses?.includes(targetApplication.status)
+          )
+        }
       }
     }
 
-    // If we still can't find a target column, use the over.data.column if available
     if (!targetColumn && over.data?.current) {
       const overData = over.data.current as Record<string, unknown>
       if (overData.column) {
@@ -425,68 +403,43 @@ export function KanbanBoardV3({
       }
     }
 
-    // If we still can't determine the target column, abort
-    if (!targetColumn) {
-      return
-    }
+    if (!targetColumn) return
 
-    // Get the target statuses
-    let targetStatuses: ApplicationStatus[] = []
-    if (targetColumn.statuses) {
-      targetStatuses = targetColumn.statuses
-    }
+    const currentColumnId =
+      application.custom_column_id ||
+      DEFAULT_COLUMNS.find(c => c.statuses?.includes(application.status))?.id
 
-    if (targetStatuses.length === 0) {
-      // Cannot move to this column (likely a custom column without status mapping)
-      return
-    }
-
-    // Use the first status in the target column
-    const newStatus = targetStatuses[0]
-
-    // Handle same-column reordering (NEW LOGIC)
-    if (application.status === newStatus) {
-      // Get applications in the current column
+    // Same-column reordering
+    if (currentColumnId === targetColumn.id) {
       const columnApps = columnApplications[targetColumn.id] || []
-
-      // Find old and new indices
       const oldIndex = columnApps.findIndex(app => app.id === applicationId)
       let newIndex = columnApps.findIndex(app => app.id === dropTargetId)
 
-      // If dropping on the column itself (not on a card), move to end
       if (newIndex === -1 && dropTargetId === targetColumn.id) {
         newIndex = columnApps.length - 1
       }
 
-      // If indices are the same or invalid, no reordering needed
       if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
         return
       }
 
-      // Reorder the applications array
       const reorderedApps = arrayMove(columnApps, oldIndex, newIndex)
-
-      // Create position updates
       const positionUpdates = reorderedApps.map((app, index) => ({
         id: app.id,
         position: index + 1,
       }))
 
-      // Optimistically update the UI
       const updatedApplications = optimisticApplications.map(app => {
         const update = positionUpdates.find(u => u.id === app.id)
         return update ? { ...app, position: update.position } : app
       })
-      setOptimisticApplications(updatedApplications)
 
-      // Announce reordering for screen readers
+      setOptimisticApplications(updatedApplications)
       setAnnouncement(`${application.company_name} reordered within ${targetColumn.name}`)
 
       try {
-        // Persist the position changes
         await reorderApplicationsAction(positionUpdates)
       } catch (error) {
-        // Rollback on error
         console.error('Failed to reorder applications:', error)
         setOptimisticApplications(applications)
         setAnnouncement(`Failed to reorder ${application.company_name}. Please try again.`)
@@ -495,26 +448,37 @@ export function KanbanBoardV3({
       return
     }
 
-    // Handle cross-column move (EXISTING LOGIC)
-    const oldStatus = application.status
+    // Cross-column move
+    let newStatus = application.status
+    let newCustomColumnId: string | null = application.custom_column_id
 
-    // Optimistic update: Update UI immediately
+    if (targetColumn.isCustom) {
+      // STANDARD -> CUSTOM or CUSTOM -> CUSTOM
+      newCustomColumnId = targetColumn.id
+      // application.status remains UNCHANGED
+    } else {
+      // CUSTOM -> STANDARD or STANDARD -> STANDARD
+      newCustomColumnId = null
+      newStatus = targetColumn.statuses ? targetColumn.statuses[0] : application.status
+    }
+
     const updatedApplications = optimisticApplications.map(app =>
-      app.id === applicationId ? { ...app, status: newStatus } : app
+      app.id === applicationId
+        ? { ...app, status: newStatus, custom_column_id: newCustomColumnId }
+        : app
     )
     setOptimisticApplications(updatedApplications)
-
-    // Announce status change for screen readers
-    setAnnouncement(
-      `${application.company_name} moved from ${CORE_STATUS_LABELS[oldStatus]} to ${CORE_STATUS_LABELS[newStatus]}`
-    )
+    setAnnouncement(`${application.company_name} moved to ${targetColumn.name}`)
 
     try {
-      // Call the API to persist the change
-      await onUpdateStatus(applicationId, newStatus)
+      // Calculate new position at end of target column
+      const targetApps = columnApplications[targetColumn.id] || []
+      const maxPosition = targetApps.reduce((max, app) => Math.max(max, app.position), 0)
+      const newPosition = maxPosition + 1
+
+      await onUpdateApplicationColumn(applicationId, newPosition, newStatus, newCustomColumnId)
     } catch (error) {
-      // Rollback on error
-      console.error('Failed to update application status:', error)
+      console.error('Failed to update application column:', error)
       setOptimisticApplications(applications)
       setAnnouncement(`Failed to move ${application.company_name}. Please try again.`)
     }
@@ -537,10 +501,6 @@ export function KanbanBoardV3({
     })
   }
 
-  const handleColumnsChange = (newColumns: ColumnConfig[]) => {
-    setColumns(newColumns)
-  }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -549,9 +509,6 @@ export function KanbanBoardV3({
     )
   }
 
-  // Sort columns by order
-  const orderedColumns = [...columns].sort((a, b) => a.order - b.order)
-
   return (
     <div
       role="region"
@@ -559,16 +516,13 @@ export function KanbanBoardV3({
       className="flex h-full w-full flex-col md:overflow-hidden"
       style={{ minHeight: 'calc(100vh - 144px)' }}
     >
-      {/* Screen reader announcements */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </div>
 
-      {/* Unified Header - Responsive Row/Column */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 pb-0">
         <h2 className="text-lg font-semibold text-label-primary shrink-0">Application Pipeline</h2>
 
-        {/* Search Bar */}
         {onSearchChange && (
           <div className="flex-1 w-full sm:mx-4">
             <div className="relative">
@@ -588,7 +542,6 @@ export function KanbanBoardV3({
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
           <Button
             onClick={() => setIsManageModalOpen(true)}
@@ -626,7 +579,7 @@ export function KanbanBoardV3({
             className="flex flex-col md:flex-row gap-6 md:gap-4 p-0 sm:p-3 pb-24 md:pb-6 md:min-w-max md:h-full"
             style={{ minHeight: 'calc(100vh - 250px)' }}
           >
-            {orderedColumns.map(column => (
+            {columns.map(column => (
               <DroppableKanbanColumn
                 key={column.id}
                 column={column}
@@ -649,11 +602,11 @@ export function KanbanBoardV3({
         </DragOverlay>
       </DndContext>
 
-      {/* Column Management Modal */}
       <ColumnManageModal
         isOpen={isManageModalOpen}
         onClose={() => setIsManageModalOpen(false)}
-        onColumnsChange={handleColumnsChange}
+        customColumns={customColumns}
+        onCustomColumnsChange={onCustomColumnsChange}
       />
     </div>
   )

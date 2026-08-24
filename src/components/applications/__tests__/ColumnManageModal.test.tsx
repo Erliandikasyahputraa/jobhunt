@@ -5,19 +5,14 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ColumnManageModal } from '../ColumnManageModal'
-import { columnStorage } from '@/lib/storage/column-storage'
+import { createCustomColumnAction } from '@/app/dashboard/actions'
 
-// Mock the storage
-vi.mock('@/lib/storage/column-storage', () => ({
-  columnStorage: {
-    getColumns: vi.fn(),
-    createCustomColumn: vi.fn(),
-    updateCustomColumn: vi.fn(),
-    deleteCustomColumn: vi.fn(),
-    reorderColumns: vi.fn(),
-  },
+vi.mock('@/app/dashboard/actions', () => ({
+  createCustomColumnAction: vi.fn(),
+  updateCustomColumnAction: vi.fn(),
+  deleteCustomColumnAction: vi.fn(),
+  reorderCustomColumnsAction: vi.fn(),
 }))
-
 // Mock the column icons
 vi.mock('@/lib/utils/column-icons', () => ({
   DEFAULT_COLUMN_ICONS: ['📌', '⭐', '🔥'],
@@ -26,30 +21,10 @@ vi.mock('@/lib/utils/column-icons', () => ({
 
 describe('ColumnManageModal', () => {
   const mockOnClose = vi.fn()
-  const mockOnColumnsChange = vi.fn()
-
-  const mockColumns = [
-    {
-      id: 'saved' as const,
-      name: 'Saved',
-      description: 'Wishlist and saved positions',
-      isCustom: false,
-      order: 0,
-      statuses: ['wishlist' as const],
-    },
-    {
-      id: 'applied' as const,
-      name: 'Applied',
-      description: 'Applications submitted',
-      isCustom: false,
-      order: 1,
-      statuses: ['applied' as const],
-    },
-  ]
+  const mockOnCustomColumnsChange = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(columnStorage.getColumns).mockReturnValue(mockColumns)
   })
 
   it('renders modal when open', () => {
@@ -57,12 +32,13 @@ describe('ColumnManageModal', () => {
       <ColumnManageModal
         isOpen={true}
         onClose={mockOnClose}
-        onColumnsChange={mockOnColumnsChange}
+        customColumns={[]}
+        onCustomColumnsChange={mockOnCustomColumnsChange}
       />
     )
 
     expect(screen.getByText('Manage Columns')).toBeInTheDocument()
-    expect(screen.getByText('Core Columns')).toBeInTheDocument()
+    expect(screen.getByText('Core Columns (Fixed)')).toBeInTheDocument()
     expect(screen.getByText('Custom Columns')).toBeInTheDocument()
   })
 
@@ -71,7 +47,8 @@ describe('ColumnManageModal', () => {
       <ColumnManageModal
         isOpen={false}
         onClose={mockOnClose}
-        onColumnsChange={mockOnColumnsChange}
+        customColumns={[]}
+        onCustomColumnsChange={mockOnCustomColumnsChange}
       />
     )
 
@@ -83,7 +60,8 @@ describe('ColumnManageModal', () => {
       <ColumnManageModal
         isOpen={true}
         onClose={mockOnClose}
-        onColumnsChange={mockOnColumnsChange}
+        customColumns={[]}
+        onCustomColumnsChange={mockOnCustomColumnsChange}
       />
     )
 
@@ -97,7 +75,8 @@ describe('ColumnManageModal', () => {
       <ColumnManageModal
         isOpen={true}
         onClose={mockOnClose}
-        onColumnsChange={mockOnColumnsChange}
+        customColumns={[]}
+        onCustomColumnsChange={mockOnCustomColumnsChange}
       />
     )
 
@@ -120,13 +99,14 @@ describe('ColumnManageModal', () => {
       updated_at: new Date().toISOString(),
     }
 
-    vi.mocked(columnStorage.createCustomColumn).mockReturnValue(mockCustomColumn)
+    vi.mocked(createCustomColumnAction).mockResolvedValue(mockCustomColumn)
 
     render(
       <ColumnManageModal
         isOpen={true}
         onClose={mockOnClose}
-        onColumnsChange={mockOnColumnsChange}
+        customColumns={[]}
+        onCustomColumnsChange={mockOnCustomColumnsChange}
       />
     )
 
@@ -146,14 +126,15 @@ describe('ColumnManageModal', () => {
     fireEvent.click(createButton)
 
     await waitFor(() => {
-      expect(columnStorage.createCustomColumn).toHaveBeenCalledWith({
+      expect(createCustomColumnAction).toHaveBeenCalledWith({
         name: 'Test Column',
         description: 'Test description',
-        icon: '',
+        icon: null,
+        order: 0,
       })
     })
 
-    expect(mockOnColumnsChange).toHaveBeenCalled()
+    expect(mockOnCustomColumnsChange).toHaveBeenCalled()
   })
 
   it('shows empty state when no custom columns exist', () => {
@@ -161,7 +142,8 @@ describe('ColumnManageModal', () => {
       <ColumnManageModal
         isOpen={true}
         onClose={mockOnClose}
-        onColumnsChange={mockOnColumnsChange}
+        customColumns={[]}
+        onCustomColumnsChange={mockOnCustomColumnsChange}
       />
     )
 
@@ -176,7 +158,8 @@ describe('ColumnManageModal', () => {
       <ColumnManageModal
         isOpen={true}
         onClose={mockOnClose}
-        onColumnsChange={mockOnColumnsChange}
+        customColumns={[]}
+        onCustomColumnsChange={mockOnCustomColumnsChange}
       />
     )
 

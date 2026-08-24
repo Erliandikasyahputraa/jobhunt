@@ -13,6 +13,7 @@ vi.mock('next/navigation', () => ({
     push: mockPush,
     refresh: mockRefresh,
   }),
+  usePathname: vi.fn(() => '/dashboard'),
 }))
 
 // Mock Button component to avoid ref issues

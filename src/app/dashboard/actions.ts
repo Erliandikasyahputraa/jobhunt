@@ -92,6 +92,7 @@ export async function createApplicationAction(formData: ApplicationFormData): Pr
     date_applied: validatedData.date_applied,
     notes: validatedData.notes || null,
     position: newPosition,
+    custom_column_id: null,
   }
 
   try {
@@ -249,7 +250,8 @@ export async function reorderApplicationsAction(
 export async function updateApplicationPositionAction(
   id: string,
   position: number,
-  status?: ApplicationStatus
+  status?: ApplicationStatus,
+  customColumnId?: string | null
 ): Promise<Application> {
   const supabase = await createClient()
 
@@ -262,7 +264,13 @@ export async function updateApplicationPositionAction(
   }
 
   try {
-    const updatedApplication = await updateApplicationPosition(supabase, id, position, status)
+    const updatedApplication = await updateApplicationPosition(
+      supabase,
+      id,
+      position,
+      status,
+      customColumnId
+    )
     revalidatePath('/dashboard')
     revalidatePath('/applications')
     return updatedApplication
@@ -271,5 +279,99 @@ export async function updateApplicationPositionAction(
       console.error('Failed to update application position:', error)
     }
     throw new Error('Failed to update application position')
+  }
+}
+
+// ============================================================================
+// CUSTOM COLUMNS API
+// ============================================================================
+
+import {
+  getCustomColumns,
+  createCustomColumn,
+  updateCustomColumn,
+  deleteCustomColumn,
+  reorderCustomColumns,
+} from '@/lib/api/custom-columns'
+import type {
+  CustomColumnDB,
+  CustomColumnInsert,
+  CustomColumnUpdate,
+} from '@/lib/types/database.types'
+
+export async function getCustomColumnsAction(): Promise<CustomColumnDB[]> {
+  try {
+    const supabase = await createClient()
+    return await getCustomColumns(supabase)
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to get custom columns in action:', error)
+    }
+    throw new Error('Failed to fetch custom columns')
+  }
+}
+
+export async function createCustomColumnAction(
+  column: CustomColumnInsert
+): Promise<CustomColumnDB> {
+  try {
+    const supabase = await createClient()
+    const newColumn = await createCustomColumn(supabase, column)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+    return newColumn
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to create custom column in action:', error)
+    }
+    throw new Error('Failed to create custom column')
+  }
+}
+
+export async function updateCustomColumnAction(
+  id: string,
+  updates: CustomColumnUpdate
+): Promise<CustomColumnDB> {
+  try {
+    const supabase = await createClient()
+    const updatedColumn = await updateCustomColumn(supabase, id, updates)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+    return updatedColumn
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to update custom column in action:', error)
+    }
+    throw new Error('Failed to update custom column')
+  }
+}
+
+export async function deleteCustomColumnAction(id: string): Promise<void> {
+  try {
+    const supabase = await createClient()
+    await deleteCustomColumn(supabase, id)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to delete custom column in action:', error)
+    }
+    throw new Error('Failed to delete custom column')
+  }
+}
+
+export async function reorderCustomColumnsAction(
+  updates: Array<{ id: string; order: number }>
+): Promise<void> {
+  try {
+    const supabase = await createClient()
+    await reorderCustomColumns(supabase, updates)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to reorder custom columns in action:', error)
+    }
+    throw new Error('Failed to reorder custom columns')
   }
 }

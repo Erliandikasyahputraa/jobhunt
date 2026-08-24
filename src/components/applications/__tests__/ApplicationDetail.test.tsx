@@ -21,6 +21,7 @@ const createMockApplication = (overrides?: Partial<Application>): Application =>
   source: 'external',
   company_logo_url: null,
   position: 1,
+  custom_column_id: null,
   created_at: '2025-10-01T10:00:00Z',
   updated_at: '2025-10-01T10:00:00Z',
   ...overrides,
@@ -337,13 +338,13 @@ describe('ApplicationDetail', () => {
       const user = userEvent.setup()
       const application = createMockApplication()
 
-      // Make onUpdate take some time
-      mockOnUpdate.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)))
+      const neverResolvePromise = new Promise<void>(() => {})
+      const delayedMock = vi.fn().mockReturnValue(neverResolvePromise)
 
       render(
         <ApplicationDetail
           application={application}
-          onUpdate={mockOnUpdate}
+          onUpdate={delayedMock}
           onDelete={mockOnDelete}
           onClose={mockOnClose}
           isOpen={true}
@@ -354,12 +355,13 @@ describe('ApplicationDetail', () => {
       const editButtons = screen.getAllByRole('button', { name: /edit/i })
       await user.click(editButtons[0])
 
-      // Submit form - in edit mode, button should say "Save Changes"
+      // Submit form
       const submitButton = screen.getByRole('button', { name: /save changes/i })
       await user.click(submitButton)
 
-      // Should show loading state - in edit mode should show "Saving..."
-      expect(screen.getByText(/saving/i)).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByText(/saving/i)).toBeInTheDocument()
+      })
     })
 
     it('returns to view mode after successful submission', async () => {
