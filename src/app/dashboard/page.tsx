@@ -7,6 +7,16 @@ import { AnimatedBackground } from '@/components/layout/AnimatedBackground'
 import { KanbanBoardV3 } from '@/components/applications/KanbanBoardV3'
 import ApplicationForm from '@/components/applications/ApplicationForm'
 import { ApplicationDetail } from '@/components/applications/ApplicationDetail'
+import { DashboardStats } from '@/components/dashboard/DashboardStats'
+import { ActivityCalendar } from '@/components/dashboard/ActivityCalendar'
+import { StatusDistributionChart } from '@/components/dashboard/StatusDistributionChart'
+import { RecentActivity } from '@/components/dashboard/RecentActivity'
+import {
+  getDashboardStats,
+  getActivityCalendarData,
+  getStatusDistribution,
+  getRecentActivity,
+} from '@/lib/utils/dashboard'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -44,6 +54,12 @@ export default function DashboardPage() {
 
   // User state for NavBar
   const [user, setUser] = React.useState<User | null>(null)
+
+  // Derived dashboard metrics
+  const stats = React.useMemo(() => getDashboardStats(applications), [applications])
+  const calendarData = React.useMemo(() => getActivityCalendarData(applications), [applications])
+  const distributionData = React.useMemo(() => getStatusDistribution(applications), [applications])
+  const recentActivityData = React.useMemo(() => getRecentActivity(applications), [applications])
 
   // Load user session and applications on mount
   React.useEffect(() => {
@@ -259,6 +275,25 @@ export default function DashboardPage() {
             </div>
           ) : applications.length > 0 ? (
             <>
+              {/* Overview Section */}
+              <div className="mb-8 space-y-4">
+                <DashboardStats stats={stats} />
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                  <div className="lg:col-span-2">
+                    <ActivityCalendar
+                      years={calendarData.years}
+                      dataByYear={calendarData.dataByYear}
+                    />
+                  </div>
+                  <div>
+                    <StatusDistributionChart data={distributionData} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4">
+                  <RecentActivity applications={recentActivityData} />
+                </div>
+              </div>
+
               {/* Kanban Board (Detailed View) */}
               <KanbanBoardV3
                 applications={filteredApplications}

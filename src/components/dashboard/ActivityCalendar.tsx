@@ -1,0 +1,101 @@
+'use client'
+
+import { useState } from 'react'
+import { ResponsiveCalendar } from '@nivo/calendar'
+import { format, parseISO } from 'date-fns'
+import { useTheme } from '@/components/providers/ThemeProvider'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
+export function ActivityCalendar({
+  years,
+  dataByYear,
+}: {
+  years: string[]
+  dataByYear: Record<string, any[]>
+}) {
+  const { resolvedTheme } = useTheme()
+  const [year, setYear] = useState(years.at(-1))
+  const borderColor = resolvedTheme === 'light' ? '#ffffff' : '#0e1117'
+  const data = dataByYear[year ?? ''] ?? []
+  const countMap = Object.fromEntries(data.map(d => [d.day, d.value ?? 0]))
+
+  return (
+    <Card className="w-full glass-ultra border-glass-medium shadow-glass-subtle">
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg text-label-primary">Application Activity</CardTitle>
+          <Select value={year} onValueChange={setYear}>
+            <SelectTrigger className="w-[100px] glass-ultra" aria-label="Select year">
+              <SelectValue placeholder="Select year" />
+            </SelectTrigger>
+            <SelectContent className="glass-ultra">
+              {years.map(y => (
+                <SelectItem key={y} value={y}>
+                  {y}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </CardHeader>
+      <CardContent className="h-[200px]">
+        {data.length === 0 ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <p className="text-sm text-label-secondary">No activity recorded for {year}</p>
+          </div>
+        ) : (
+          <ResponsiveCalendar
+            data={data}
+            from={`${year}-01-01`}
+            to={`${year}-12-31`}
+            emptyColor={resolvedTheme === 'light' ? '#f1f5f9' : '#1e293b'}
+            colors={['#90e0ef', '#48cae4', '#00b4d8', '#0096c7', '#0077b6']}
+            minValue={1}
+            margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
+            yearSpacing={40}
+            monthBorderColor={borderColor}
+            dayBorderWidth={2}
+            dayBorderColor={borderColor}
+            tooltip={day => {
+              const count = countMap[day.day] ?? 0
+              return (
+                <div className="bg-slate-800 text-white px-3 py-2 rounded-md text-xs shadow-lg">
+                  <div className="font-semibold mb-1">
+                    {format(parseISO(day.day), 'EEE MMM d, yyyy')}
+                  </div>
+                  <div>
+                    {count} application{count === 1 ? '' : 's'} created
+                  </div>
+                </div>
+              )
+            }}
+            theme={{
+              text: {
+                fill: resolvedTheme === 'light' ? '#64748b' : '#94a3b8',
+              },
+            }}
+            legends={[
+              {
+                anchor: 'bottom-right',
+                direction: 'row',
+                translateY: 36,
+                itemCount: 4,
+                itemWidth: 42,
+                itemHeight: 36,
+                itemsSpacing: 14,
+                itemDirection: 'right-to-left',
+              },
+            ]}
+          />
+        )}
+      </CardContent>
+    </Card>
+  )
+}
