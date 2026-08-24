@@ -1,5 +1,6 @@
 import { Application } from '@/lib/types/database.types'
 import { format, parseISO } from 'date-fns'
+import { getStatusCategory, STATUS_STYLES, type StatusCategory } from './status-colors'
 
 export interface DashboardStats {
   total: number
@@ -89,48 +90,9 @@ export function getStatusDistribution(applications: Application[]) {
   const statusCounts: Record<string, number> = {}
 
   applications.forEach(app => {
-    let category = 'Applied'
-    switch (app.status) {
-      case 'wishlist':
-        category = 'Wishlist'
-        break
-      case 'applied':
-        category = 'Applied'
-        break
-      case 'phone_screen':
-      case 'assessment':
-      case 'take_home':
-      case 'interviewing':
-      case 'final_round':
-        category = 'Interviewing'
-        break
-      case 'offered':
-      case 'accepted':
-        category = 'Offer'
-        break
-      case 'rejected':
-        category = 'Rejected'
-        break
-      case 'withdrawn':
-      case 'ghosted':
-        category = 'Closed'
-        break
-      default:
-        category = 'Other'
-    }
-
+    const category = getStatusCategory(app.status)
     statusCounts[category] = (statusCounts[category] || 0) + 1
   })
-
-  const colors: Record<string, string> = {
-    Wishlist: '#94a3b8',
-    Applied: '#38bdf8',
-    Interviewing: '#818cf8',
-    Offer: '#34d399',
-    Rejected: '#f87171',
-    Closed: '#64748b',
-    Other: '#cbd5e1',
-  }
 
   return Object.entries(statusCounts)
     .filter(([_, value]) => value > 0)
@@ -138,7 +100,7 @@ export function getStatusDistribution(applications: Application[]) {
       id: label,
       label,
       value,
-      color: colors[label] || colors['Other'],
+      color: STATUS_STYLES[label as StatusCategory]?.chart || STATUS_STYLES.Other.chart,
     }))
     .sort((a, b) => b.value - a.value)
 }

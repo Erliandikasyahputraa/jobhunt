@@ -3,6 +3,7 @@
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Application } from '@/lib/types/database.types'
+import { getStatusStyles } from '@/lib/utils/status-colors'
 
 export function RecentActivity({ applications }: { applications: Application[] }) {
   return (
@@ -27,8 +28,8 @@ export function RecentActivity({ applications }: { applications: Application[] }
                     <h4 className="text-sm font-semibold text-label-primary">{app.job_title}</h4>
                     <p className="text-xs text-label-secondary">{app.company_name}</p>
                   </div>
-                  <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                    {app.status.replace('_', ' ')}
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${getStatusStyles(app.status).badge}`}>
+                    {app.status.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
                 <p className="text-[10px] text-label-secondary">
