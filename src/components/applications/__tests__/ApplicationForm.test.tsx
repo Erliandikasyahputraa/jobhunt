@@ -80,7 +80,7 @@ describe('ApplicationForm', () => {
       renderWithTheme(<ApplicationForm onSubmit={mockOnSubmit} />)
 
       const companyInput = screen.getByLabelText(/company name/i)
-      await user.type(companyInput, 'Test Company')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -102,9 +102,9 @@ describe('ApplicationForm', () => {
       const jobTitleInput = screen.getByLabelText(/job title/i)
       const jobUrlInput = screen.getByLabelText(/job url/i)
 
-      await user.type(companyInput, 'Test Company')
-      await user.type(jobTitleInput, 'Software Engineer')
-      await user.type(jobUrlInput, 'not-a-valid-url')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } })
+      fireEvent.change(jobUrlInput, { target: { value: 'not-a-valid-url' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -124,9 +124,9 @@ describe('ApplicationForm', () => {
       const jobTitleInput = screen.getByLabelText(/job title/i)
       const jobUrlInput = screen.getByLabelText(/job url/i)
 
-      await user.type(companyInput, 'Test Company')
-      await user.type(jobTitleInput, 'Software Engineer')
-      await user.type(jobUrlInput, 'https://example.com/job/123')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } })
+      fireEvent.change(jobUrlInput, { target: { value: 'https://example.com/job/123' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -143,8 +143,8 @@ describe('ApplicationForm', () => {
       const companyInput = screen.getByLabelText(/company name/i)
       const jobTitleInput = screen.getByLabelText(/job title/i)
 
-      await user.type(companyInput, 'Test Company')
-      await user.type(jobTitleInput, 'Software Engineer')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -185,8 +185,8 @@ describe('ApplicationForm', () => {
       const jobTitleInput = screen.getByLabelText(/job title/i)
       const notesInput = screen.getByLabelText(/notes/i)
 
-      await user.type(companyInput, 'Test Company')
-      await user.type(jobTitleInput, 'Software Engineer')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } })
 
       const longNotes = 'A'.repeat(5001)
       fireEvent.change(notesInput, { target: { value: longNotes } })
@@ -210,8 +210,8 @@ describe('ApplicationForm', () => {
       const companyInput = screen.getByLabelText(/company name/i)
       const jobTitleInput = screen.getByLabelText(/job title/i)
 
-      await user.type(companyInput, 'Test Company')
-      await user.type(jobTitleInput, 'Software Engineer')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -238,13 +238,13 @@ describe('ApplicationForm', () => {
       const dateInput = screen.getByLabelText(/date applied/i)
       const notesInput = screen.getByLabelText(/notes/i)
 
-      await user.type(companyInput, 'Test Company')
-      await user.type(jobTitleInput, 'Software Engineer')
-      await user.type(jobUrlInput, 'https://example.com/job')
-      await user.type(locationInput, 'Remote')
-      await user.type(salaryInput, '$100k-$150k')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } })
+      fireEvent.change(jobUrlInput, { target: { value: 'https://example.com/job' } })
+      fireEvent.change(locationInput, { target: { value: 'Remote' } })
+      fireEvent.change(salaryInput, { target: { value: '$100k-$150k' } })
       fireEvent.change(dateInput, { target: { value: '2025-10-03' } })
-      await user.type(notesInput, 'This is a test note')
+      fireEvent.change(notesInput, { target: { value: 'This is a test note' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -315,7 +315,7 @@ describe('ApplicationForm', () => {
 
       const companyInput = screen.getByLabelText(/company name/i)
       await user.clear(companyInput)
-      await user.type(companyInput, 'New Company')
+      fireEvent.change(companyInput, { target: { value: 'New Company' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -335,7 +335,7 @@ describe('ApplicationForm', () => {
     it('should disable submit button when loading', () => {
       renderWithTheme(<ApplicationForm onSubmit={mockOnSubmit} isLoading={true} />)
 
-      const submitButton = screen.getByRole('button', { name: /submitting/i })
+      const submitButton = screen.getByRole('button', { name: /creating/i })
       expect(submitButton).toBeDisabled()
     })
 
@@ -349,7 +349,7 @@ describe('ApplicationForm', () => {
     it('should show loading text during submission', () => {
       renderWithTheme(<ApplicationForm onSubmit={mockOnSubmit} isLoading={true} />)
 
-      expect(screen.getByText(/submitting/i)).toBeInTheDocument()
+      expect(screen.getByText(/creating/i)).toBeInTheDocument()
     })
   })
 
@@ -473,7 +473,7 @@ describe('ApplicationForm', () => {
     it('should show default loading text when submitButtonText is not provided', () => {
       renderWithTheme(<ApplicationForm onSubmit={mockOnSubmit} isLoading={true} />)
 
-      expect(screen.getByRole('button', { name: /submitting/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /creating/i })).toBeInTheDocument()
     })
   })
 
@@ -485,8 +485,8 @@ describe('ApplicationForm', () => {
       const companyInput = screen.getByLabelText(/company name/i)
       const jobTitleInput = screen.getByLabelText(/job title/i)
 
-      await user.type(companyInput, 'Test Company')
-      await user.type(jobTitleInput, 'Software Engineer')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Software Engineer' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -513,9 +513,9 @@ describe('ApplicationForm', () => {
       const jobTitleInput = screen.getByLabelText(/job title/i)
       const notesInput = screen.getByLabelText(/notes/i)
 
-      await user.type(companyInput, 'Test & Company <Inc.>')
-      await user.type(jobTitleInput, 'Senior C++ Developer')
-      await user.type(notesInput, 'Special chars: @#$%^&*()')
+      fireEvent.change(companyInput, { target: { value: 'Test & Company <Inc.>' } })
+      fireEvent.change(jobTitleInput, { target: { value: 'Senior C++ Developer' } })
+      fireEvent.change(notesInput, { target: { value: 'Special chars: @#$%^&*()' } })
 
       const submitButton = screen.getByRole('button', { name: /submit/i })
       await user.click(submitButton)
@@ -543,7 +543,7 @@ describe('ApplicationForm', () => {
       })
 
       const companyInput = screen.getByLabelText(/company name/i)
-      await user.type(companyInput, 'Test Company')
+      fireEvent.change(companyInput, { target: { value: 'Test Company' } })
 
       await waitFor(() => {
         expect(screen.queryByText(/company name is required/i)).not.toBeInTheDocument()

@@ -4,6 +4,7 @@ import * as React from 'react'
 import type { Application } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { ApplicationDetailState, TabType } from '../types'
+import { toast } from 'sonner'
 
 interface UseApplicationDetailProps {
   application: Application
@@ -64,8 +65,10 @@ export function useApplicationDetail({
       try {
         await onUpdate(application.id, data)
         setEditMode(false)
+        toast.success('Application updated')
       } catch (err) {
-        setError('Failed to update application. Please try again.')
+        setError("Couldn't save changes. Please try again.")
+        toast.error("Couldn't save changes. Please try again.")
         console.error('Update error:', err)
       } finally {
         setState(prev => ({ ...prev, isSubmitting: false }))
@@ -85,8 +88,10 @@ export function useApplicationDetail({
       await onDelete(application.id)
       setDeleteDialogOpen(false)
       onClose()
+      toast.success('Application deleted')
     } catch (err) {
-      setError('Failed to delete application. Please try again.')
+      setError("Couldn't delete application. Please try again.")
+      toast.error("Couldn't delete application. Please try again.")
       setDeleteDialogOpen(false)
       console.error('Delete error:', err)
     } finally {

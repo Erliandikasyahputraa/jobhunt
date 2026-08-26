@@ -39,6 +39,7 @@ import {
   deleteCustomColumnAction,
   reorderCustomColumnsAction,
 } from '@/app/dashboard/actions'
+import { toast } from 'sonner'
 
 interface ColumnManageModalProps {
   isOpen: boolean
@@ -237,8 +238,10 @@ export function ColumnManageModal({
       onCustomColumnsChange([...customColumns, added])
       setNewColumn({ name: '', description: '', icon: '' })
       setShowAddForm(false)
+      toast.success('Column created')
     } catch (err) {
       console.error('Failed to create column', err)
+      toast.error("Couldn't create column. Please try again.")
     } finally {
       setIsProcessing(false)
     }
@@ -263,8 +266,10 @@ export function ColumnManageModal({
 
       // Actual update
       onCustomColumnsChange(customColumns.map(c => (c.id === columnId ? updated : c)))
+      toast.success('Column updated')
     } catch (err) {
       console.error('Failed to update column', err)
+      toast.error("Couldn't update column. Please try again.")
     }
   }
 
@@ -279,8 +284,10 @@ export function ColumnManageModal({
       try {
         await deleteCustomColumnAction(deletingColumn.id)
         onCustomColumnsChange(customColumns.filter(c => c.id !== deletingColumn.id))
+        toast.success('Column deleted')
       } catch (err) {
         console.error('Failed to delete', err)
+        toast.error("Couldn't delete column. Please try again.")
       } finally {
         setIsProcessing(false)
         setDeleteDialogOpen(false)
@@ -403,8 +410,9 @@ export function ColumnManageModal({
                         size="sm"
                         onClick={handleCreateColumn}
                         disabled={!newColumn.name.trim() || isProcessing}
+                        className="min-w-[120px]"
                       >
-                        Create Column
+                        {isProcessing ? 'Creating...' : 'Create Column'}
                       </Button>
                       <Button
                         size="sm"
@@ -478,9 +486,9 @@ export function ColumnManageModal({
             <AlertDialogAction
               onClick={confirmDeleteColumn}
               disabled={isProcessing}
-              className="bg-error hover:bg-error/90 text-error-foreground"
+              className="bg-error hover:bg-error/90 text-error-foreground min-w-[100px]"
             >
-              Delete
+              {isProcessing ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

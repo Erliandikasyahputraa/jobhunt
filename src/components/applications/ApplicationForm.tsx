@@ -302,15 +302,21 @@ export default function ApplicationForm({
 
         <div className="flex justify-end gap-3 pt-4 border-t border-label-quaternary">
           {onCancel && (
-            <Button type="button" variant="glass" onClick={onCancel} disabled={isLoading}>
+            <Button
+              type="button"
+              variant="glass"
+              onClick={onCancel}
+              disabled={isLoading}
+              className="min-w-[100px]"
+            >
               Cancel
             </Button>
           )}
-          <Button type="submit" variant="glass" disabled={isLoading}>
+          <Button type="submit" variant="glass" disabled={isLoading} className="min-w-[160px]">
             {isLoading
               ? submitButtonText === 'Save Changes'
                 ? 'Saving...'
-                : 'Submitting...'
+                : 'Creating...'
               : submitButtonText}
           </Button>
         </div>

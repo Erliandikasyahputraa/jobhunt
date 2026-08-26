@@ -419,7 +419,7 @@ describe('ApplicationDetail', () => {
 
       // Should show error message
       await waitFor(() => {
-        expect(screen.getByText(/failed to update/i)).toBeInTheDocument()
+        expect(screen.getByText(/couldn't save changes/i)).toBeInTheDocument()
       })
 
       // Should remain in edit mode
@@ -562,7 +562,7 @@ describe('ApplicationDetail', () => {
 
       // Should show error message
       await waitFor(() => {
-        expect(screen.getByText(/failed to delete/i)).toBeInTheDocument()
+        expect(screen.getByText(/couldn't delete application/i)).toBeInTheDocument()
       })
     })
   })
