@@ -125,6 +125,18 @@ export async function updateApplicationAction(
     throw new Error('Unauthorized')
   }
 
+  // Fetch existing application to check for status change
+  const { data: existingApp, error: fetchError } = await supabase
+    .from('applications')
+    .select('status')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single()
+
+  if (fetchError || !existingApp) {
+    throw new Error('Failed to fetch existing application')
+  }
+
   // Validate form data
   const validatedData = applicationFormSchema.parse(formData)
 
@@ -138,6 +150,11 @@ export async function updateApplicationAction(
     date_applied: validatedData.date_applied,
     notes: validatedData.notes || null,
     updated_at: new Date().toISOString(),
+  }
+
+  // Phase 3.1: If core status is manually changed via form, clear custom_column_id
+  if (existingApp.status !== validatedData.status) {
+    updates.custom_column_id = null
   }
 
   try {

@@ -95,6 +95,7 @@ describe('ColumnManageModal', () => {
       icon: '📌',
       isCustom: true,
       order: 2,
+      user_id: 'user-1',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }
