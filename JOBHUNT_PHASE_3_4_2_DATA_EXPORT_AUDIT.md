@@ -336,3 +336,25 @@ Based on a strict source-code audit following the remediation of the runtime cac
 - Proceed to commit Phase 3.4.2 Step 1.
 
 **PHASE 3.4.2 STEP 1: READY FOR COMMIT**
+
+## 38. Step 1 Commit Record
+
+- **Commit Hash:** `d6dbe01`
+- **Commit Message:** `feat(applications): add csv export`
+- **Exact Files Committed:**
+  - `src/lib/utils/export-utils.ts`
+  - `src/lib/utils/__tests__/export-utils.test.ts`
+  - `src/components/applications/ApplicationsToolbar.tsx`
+  - `src/components/applications/__tests__/ApplicationsToolbar.export.test.tsx`
+  - `src/app/applications/page.tsx`
+  - `src/app/applications/__tests__/page.export.test.tsx`
+  - `JOBHUNT_PHASE_3_4_2_DATA_EXPORT_AUDIT.md`
+- **Validation Results:**
+  - `bun run typecheck`: PASS
+  - `bun run lint`: PASS
+  - `bun run test`: PASS (474 tests)
+  - `bunx next build`: PASS
+- **Screenshot/UI Artifact Investigation Result:** The missing styling in the UI screenshot was confirmed to be a GENERATED ARTIFACT ISSUE, caused by a desynchronized `.next` webpack cache failing to load CSS chunks. `src/app/layout.tsx` and the `globals.css` import were verified as structurally intact. Removing the `.next` directory completely resolved the transient environment issue without any source code modification.
+- **Unrelated Files Confirmation:** Confirmed via `git diff --cached --name-only`. No unrelated changes (e.g., Phase 3.1/3.2 lingering files, Documents, or Company Info) were included in this commit.
+- **Push Result:** Successfully pushed to `origin feat/analytics-dashboard`.
+- **Final Git Status:** Branch `feat/analytics-dashboard` is up to date with `origin/feat/analytics-dashboard`. Working tree is clean of any tracked modified files (only untracked audit/temp files remain).
