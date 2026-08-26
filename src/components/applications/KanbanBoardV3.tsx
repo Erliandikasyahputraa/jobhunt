@@ -215,10 +215,10 @@ function DroppableKanbanColumn({
       className={cn(
         'flex w-full md:w-auto min-w-0 md:min-w-[280px] lg:min-w-[320px] flex-1 flex-col rounded-glass p-3 shadow-glass-soft backdrop-blur-sm transition-all duration-200 md:snap-center',
         'md:h-full min-h-[150px] md:min-h-[200px]',
-        'glass-light',
+        'glass-light border border-border/50',
         isOver &&
           !isDragDisabled &&
-          'ring-2 ring-blue-400 ring-opacity-50 shadow-glass-dramatic scale-[1.02]'
+          'ring-2 ring-copper/60 ring-opacity-50 shadow-glass-medium scale-[1.01]'
       )}
       data-testid={`column-${column.id}`}
     >

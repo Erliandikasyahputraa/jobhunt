@@ -91,11 +91,11 @@ export function ApplicationsToolbar({
             {CORE_STATUSES.map(status => (
               <label
                 key={status}
-                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer"
+                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer transition-colors"
               >
                 <input
                   type="checkbox"
-                  className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  className="rounded border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
                   checked={filters.statusFilters.includes(status)}
                   onChange={() => onStatusFilterChange(status)}
                 />
@@ -110,10 +110,10 @@ export function ApplicationsToolbar({
         <div>
           <h4 className="mb-2 text-sm font-medium text-label-primary">Custom Column</h4>
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer transition-colors">
               <input
                 type="checkbox"
-                className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                className="rounded border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
                 checked={filters.customColumnFilters.includes('none')}
                 onChange={() => onCustomColumnFilterChange('none')}
               />
@@ -122,11 +122,11 @@ export function ApplicationsToolbar({
             {customColumns.map(col => (
               <label
                 key={col.id}
-                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer"
+                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer transition-colors"
               >
                 <input
                   type="checkbox"
-                  className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  className="rounded border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
                   checked={filters.customColumnFilters.includes(col.id)}
                   onChange={() => onCustomColumnFilterChange(col.id)}
                 />
@@ -150,12 +150,12 @@ export function ApplicationsToolbar({
             ].map(opt => (
               <label
                 key={opt.value}
-                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer"
+                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer transition-colors"
               >
                 <input
                   type="radio"
                   name="mobile-date-range"
-                  className="border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  className="border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
                   checked={filters.dateRange === opt.value}
                   onChange={() => onDateRangeChange(opt.value as DateFilterOption)}
                 />
@@ -180,12 +180,12 @@ export function ApplicationsToolbar({
             ].map(opt => (
               <label
                 key={opt.value}
-                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer"
+                className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer transition-colors"
               >
                 <input
                   type="radio"
                   name="mobile-sort-option"
-                  className="border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  className="border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
                   checked={filters.sortOption === opt.value}
                   onChange={() => onSortChange(opt.value as SortOption)}
                 />
@@ -358,7 +358,7 @@ export function ApplicationsToolbar({
                 Clear All
               </Button>
               <Button
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                className="flex-1 bg-copper hover:bg-copper-dark text-white"
                 onClick={() => setIsMobileFilterOpen(false)}
               >
                 Apply

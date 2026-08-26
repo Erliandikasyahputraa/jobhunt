@@ -136,12 +136,14 @@ export function NavBar({
             </Link>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden sm:flex items-center gap-6 ml-6 flex-1">
+            <div className="hidden sm:flex items-center gap-2 ml-6 flex-1">
               <Link
                 href="/dashboard"
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-label-primary',
-                  pathname === '/dashboard' ? 'text-label-primary font-semibold' : 'text-label-secondary'
+                  'text-sm font-medium transition-all px-3 py-1.5 rounded-md',
+                  pathname === '/dashboard'
+                    ? 'bg-accent/80 text-label-primary font-semibold shadow-xs'
+                    : 'text-label-secondary hover:text-label-primary hover:bg-accent/40'
                 )}
               >
                 Dashboard
@@ -149,8 +151,10 @@ export function NavBar({
               <Link
                 href="/applications"
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-label-primary',
-                  pathname === '/applications' ? 'text-label-primary font-semibold' : 'text-label-secondary'
+                  'text-sm font-medium transition-all px-3 py-1.5 rounded-md',
+                  pathname === '/applications'
+                    ? 'bg-accent/80 text-label-primary font-semibold shadow-xs'
+                    : 'text-label-secondary hover:text-label-primary hover:bg-accent/40'
                 )}
               >
                 Applications
@@ -176,14 +180,16 @@ export function NavBar({
               {showThemeToggle && <ThemeToggle />}
             </div>
           </div>
-          
+
           {/* Mobile Navigation Links */}
           <div className="flex sm:hidden mt-3 p-1 bg-label-quaternary/10 rounded-glass-sm gap-1 w-full">
             <Link
               href="/dashboard"
               className={cn(
                 'flex-1 text-center py-2 text-sm font-medium rounded-md transition-all',
-                pathname === '/dashboard' ? 'bg-background shadow-glass-subtle text-label-primary font-semibold' : 'text-label-secondary hover:text-label-primary'
+                pathname === '/dashboard'
+                  ? 'bg-background shadow-glass-subtle text-label-primary font-semibold'
+                  : 'text-label-secondary hover:text-label-primary'
               )}
             >
               Dashboard
@@ -192,7 +198,9 @@ export function NavBar({
               href="/applications"
               className={cn(
                 'flex-1 text-center py-2 text-sm font-medium rounded-md transition-all',
-                pathname === '/applications' ? 'bg-background shadow-glass-subtle text-label-primary font-semibold' : 'text-label-secondary hover:text-label-primary'
+                pathname === '/applications'
+                  ? 'bg-background shadow-glass-subtle text-label-primary font-semibold'
+                  : 'text-label-secondary hover:text-label-primary'
               )}
             >
               Applications

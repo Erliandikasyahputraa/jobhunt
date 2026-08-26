@@ -183,10 +183,10 @@ export function Documents({ _application, className }: DocumentsProps) {
           {documents.map(doc => (
             <div
               key={doc.id}
-              className="glass-ultra rounded-glass-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+              className="glass-ultra rounded-glass-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-border/60 shadow-glass-subtle hover:border-copper/40 transition-all duration-200"
             >
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="p-2 bg-copper/10 rounded-md shrink-0">
+                <div className="p-2 bg-copper/10 rounded-md shrink-0 border border-copper/20">
                   <File className="w-5 h-5 text-copper" />
                 </div>
                 <div className="min-w-0">
@@ -194,7 +194,9 @@ export function Documents({ _application, className }: DocumentsProps) {
                     {doc.name}
                   </h4>
                   <div className="flex items-center gap-2 text-xs text-label-secondary mt-1">
-                    <span className="capitalize">{doc.document_type.replace('_', ' ')}</span>
+                    <span className="capitalize font-medium">
+                      {doc.document_type.replace('_', ' ')}
+                    </span>
                     <span>•</span>
                     <span>{formatBytes(doc.size_bytes)}</span>
                     <span>•</span>
@@ -209,7 +211,7 @@ export function Documents({ _application, className }: DocumentsProps) {
                   aria-label="View document"
                   onClick={() => handleDownload(doc)}
                   disabled={isDownloadingId === doc.id}
-                  className="h-8 text-copper hover:text-copper/80 hover:bg-copper/10"
+                  className="h-8 text-copper hover:text-copper-dark hover:bg-copper/10 font-medium transition-colors"
                 >
                   {isDownloadingId === doc.id ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -223,7 +225,7 @@ export function Documents({ _application, className }: DocumentsProps) {
                   size="sm"
                   aria-label="Delete document"
                   onClick={() => setDocumentToDelete(doc)}
-                  className="h-8 text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                  className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -235,7 +237,7 @@ export function Documents({ _application, className }: DocumentsProps) {
 
       {/* Upload Dialog */}
       <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-        <DialogContent className="glass-panel border-copper/20 max-w-md">
+        <DialogContent variant="glass" className="border-border/60 max-w-md">
           <DialogHeader>
             <DialogTitle className="text-label-primary">Upload Document</DialogTitle>
             <DialogDescription className="text-label-secondary">
@@ -247,7 +249,7 @@ export function Documents({ _application, className }: DocumentsProps) {
             <div className="space-y-2">
               <label className="text-sm font-medium text-label-secondary">Document Type</label>
               <Select value={uploadType} onValueChange={val => setUploadType(val as DocumentType)}>
-                <SelectTrigger className="glass-ultra border-glass-border">
+                <SelectTrigger className="glass-ultra border-border">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -272,7 +274,7 @@ export function Documents({ _application, className }: DocumentsProps) {
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
-                  className="glass-ultra border-glass-border shrink-0"
+                  className="glass-ultra border-border shrink-0"
                 >
                   Choose File
                 </Button>
@@ -292,9 +294,10 @@ export function Documents({ _application, className }: DocumentsProps) {
               Cancel
             </Button>
             <Button
+              variant="brand"
               onClick={handleUploadSubmit}
               disabled={!selectedFile || isUploading}
-              className="bg-copper hover:bg-copper/90 text-white min-w-[100px]"
+              className="min-w-[100px]"
             >
               {isUploading ? (
                 <>
@@ -311,7 +314,7 @@ export function Documents({ _application, className }: DocumentsProps) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!documentToDelete} onOpenChange={open => !open && setDocumentToDelete(null)}>
-        <DialogContent className="glass-panel border-copper/20 max-w-sm">
+        <DialogContent variant="glass" className="border-border/60 max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-label-primary">Delete Document</DialogTitle>
             <DialogDescription className="text-label-secondary">

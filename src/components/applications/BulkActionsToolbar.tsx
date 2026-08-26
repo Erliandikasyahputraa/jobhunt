@@ -78,7 +78,7 @@ export function BulkActionsToolbar({
     <>
       <div
         data-testid="bulk-actions-toolbar"
-        className="flex flex-wrap items-center justify-between gap-3 p-3 px-4 rounded-glass-sm glass-heavy border border-blue-500/30 shadow-glass-soft animate-in fade-in slide-in-from-top-2 duration-200"
+        className="flex flex-wrap items-center justify-between gap-3 p-2.5 sm:p-3 px-4 rounded-glass glass-heavy border border-border/80 shadow-glass-soft animate-in fade-in slide-in-from-top-2 duration-200"
       >
         {/* Left Side: Select All & Count */}
         <div className="flex items-center gap-3">
@@ -96,7 +96,7 @@ export function BulkActionsToolbar({
             data-testid="bulk-select-all-btn"
           >
             {isAllSelected ? (
-              <CheckSquare className="h-4 w-4 text-blue-400" />
+              <CheckSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             ) : (
               <Square className="h-4 w-4 text-label-secondary" />
             )}

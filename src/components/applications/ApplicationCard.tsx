@@ -53,10 +53,11 @@ export function ApplicationCard({
       data-testid="application-card"
       onClick={handleCardClick}
       className={cn(
-        'glass-light rounded-glass shadow-glass-soft transition-all duration-300 ease-in-out group',
+        'glass-light rounded-glass shadow-glass-soft border border-border/70 transition-all duration-300 ease-in-out group',
         onClick &&
           'cursor-pointer transition-all duration-300 ease-in-out hover:!border-[hsl(var(--copper-light))] hover:shadow-[0_0_0_1px_hsl(var(--copper-light))]',
-        isSelected && 'ring-2 ring-blue-500 border-blue-500/50 bg-blue-500/5',
+        isSelected &&
+          'ring-2 ring-blue-500/80 border-blue-500/60 bg-blue-500/5 shadow-glass-medium',
         isDragging && 'opacity-50 rotate-2 shadow-xl'
       )}
     >

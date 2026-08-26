@@ -24,7 +24,7 @@ export function ActivityCalendar({
   const countMap = Object.fromEntries(data.map(d => [d.day, d.value ?? 0]))
 
   return (
-    <Card className="w-full glass-ultra border-glass-medium shadow-glass-subtle">
+    <Card className="w-full glass-ultra border-border/80 shadow-glass-subtle">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg text-label-primary">Application Activity</CardTitle>

@@ -16,7 +16,7 @@ export function StatusDistributionChart({ data }: { data: DistributionData[] }) 
   const total = data.reduce((sum, item) => sum + item.value, 0)
 
   return (
-    <Card className="w-full glass-ultra border-glass-medium shadow-glass-subtle @lg:col-span-2">
+    <Card className="w-full glass-ultra border-border/80 shadow-glass-subtle @lg:col-span-2">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-lg text-label-primary min-w-0 truncate">

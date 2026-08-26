@@ -43,7 +43,10 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       {statCards.map(card => (
-        <Card key={card.title} className="glass-ultra border-glass-medium shadow-glass-subtle">
+        <Card
+          key={card.title}
+          className="glass-ultra border-border/80 shadow-glass-subtle hover:shadow-glass-soft hover:border-border transition-all duration-200"
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-label-secondary">{card.title}</CardTitle>
             <div className={`p-2 rounded-full ${card.bgColor}`}>

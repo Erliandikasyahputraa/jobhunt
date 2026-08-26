@@ -9,14 +9,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90 rounded-md',
+        default:
+          'bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.99] rounded-md shadow-sm',
         destructive:
-          'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 rounded-md',
+          'bg-destructive text-white hover:bg-destructive/90 active:scale-[0.99] focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 rounded-md shadow-sm',
         outline:
-          'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 rounded-md',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md',
-        ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-md',
+          'border border-border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground active:scale-[0.99] dark:bg-input/30 dark:border-input dark:hover:bg-input/50 rounded-md',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-[0.99] rounded-md shadow-xs',
+        ghost:
+          'hover:bg-accent hover:text-accent-foreground active:scale-[0.99] dark:hover:bg-accent/50 rounded-md',
         link: 'text-primary underline-offset-4 hover:underline rounded-md',
+        brand:
+          'bg-copper text-white hover:bg-copper-dark active:scale-[0.98] focus-visible:ring-copper/40 rounded-md shadow-sm transition-all duration-200',
         glass:
           'rounded-glass-lg shadow-glass-soft hover:shadow-glass-medium active:shadow-glass-subtle backdrop-blur-[30px] [-webkit-backdrop-filter:blur(30px)] saturate-[180%] transition-all duration-300 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-px active:scale-[0.98] text-[var(--macos-label-primary)] bg-[var(--glass-medium)] border border-[var(--glass-border-strong)]',
       },
