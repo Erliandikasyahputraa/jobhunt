@@ -13,8 +13,9 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
-export interface DialogOverlayProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> {
+export interface DialogOverlayProps extends React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Overlay
+> {
   variant?: 'default' | 'glass'
 }
 
@@ -36,8 +37,9 @@ const DialogOverlay = React.forwardRef<
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-export interface DialogContentProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
+export interface DialogContentProps extends React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Content
+> {
   variant?: 'default' | 'glass'
 }
 
@@ -50,10 +52,10 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border p-6 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
         variant === 'default' && 'bg-background sm:rounded-lg',
         variant === 'glass' &&
-          'rounded-glass-lg bg-[var(--glass-medium)] backdrop-blur-[30px] [-webkit-backdrop-filter:blur(30px)] saturate-[200%] border-[var(--glass-border-strong)] data-[state=open]:animate-spring-bounce-in',
+          'rounded-glass-lg bg-background border-border shadow-2xl data-[state=open]:animate-spring-bounce-in',
         className
       )}
       {...props}

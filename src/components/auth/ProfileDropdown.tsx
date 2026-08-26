@@ -128,16 +128,11 @@ export function ProfileDropdown({
 
       <DropdownMenuContent
         className={cn(
-          'w-56 glass-heavy border border-[var(--glass-border-strong)]',
-          'backdrop-blur-[30px] saturate-[180%]',
-          'shadow-glass-medium',
+          'w-56 border border-border bg-popover text-popover-foreground',
+          'shadow-lg',
           'animate-in fade-in-0 zoom-in-95',
           'duration-200'
         )}
-        style={{
-          backgroundColor: 'var(--glass-heavy)',
-          borderColor: 'var(--glass-border-strong)',
-        }}
         align="end"
         sideOffset={8}
         role="menu"

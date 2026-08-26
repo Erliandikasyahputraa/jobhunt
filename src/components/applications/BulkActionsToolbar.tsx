@@ -190,7 +190,7 @@ export function BulkActionsToolbar({
             size="sm"
             disabled={isMutating}
             onClick={() => setIsDeleteDialogOpen(true)}
-            className="font-medium flex items-center gap-1.5 bg-red-600/80 hover:bg-red-600 text-white"
+            className="font-medium flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white shadow-xs border border-red-700/20 disabled:opacity-50 disabled:pointer-events-none transition-all"
             data-testid="bulk-delete-trigger"
           >
             {isMutating ? (

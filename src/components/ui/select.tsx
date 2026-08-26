@@ -11,8 +11,9 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 
-export interface SelectTriggerProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
+export interface SelectTriggerProps extends React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Trigger
+> {
   variant?: 'default' | 'glass'
 }
 
@@ -68,8 +69,9 @@ const SelectScrollDownButton = React.forwardRef<
 ))
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName
 
-export interface SelectContentProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {
+export interface SelectContentProps extends React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Content
+> {
   variant?: 'default' | 'glass'
 }
 
@@ -81,10 +83,11 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-[9999] max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin]',
-        variant === 'default' && 'rounded-md border bg-popover text-popover-foreground',
+        'relative z-[9999] max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin]',
+        variant === 'default' &&
+          'rounded-md border border-border bg-popover text-popover-foreground',
         variant === 'glass' &&
-          'rounded-glass bg-[var(--glass-medium)] backdrop-blur-[30px] [-webkit-backdrop-filter:blur(30px)] saturate-[200%] border border-[var(--glass-border-strong)] text-[var(--macos-label-primary)]',
+          'rounded-glass bg-popover border border-border text-popover-foreground shadow-lg',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         className
@@ -120,8 +123,9 @@ const SelectLabel = React.forwardRef<
 ))
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
-export interface SelectItemProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {
+export interface SelectItemProps extends React.ComponentPropsWithoutRef<
+  typeof SelectPrimitive.Item
+> {
   variant?: 'default' | 'glass'
 }
 

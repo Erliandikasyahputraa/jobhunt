@@ -20,10 +20,10 @@ export function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} theme`}
-      className="relative overflow-hidden transition-all hover:scale-105"
+      className="relative overflow-hidden border border-border bg-background text-label-primary shadow-xs hover:bg-accent hover:text-label-primary focus-visible:ring-ring transition-all hover:scale-105"
       title={`Current theme: ${resolvedTheme}. Click to switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode.`}
     >
-      <CurrentIcon className="h-5 w-5 transition-transform duration-300" />
+      <CurrentIcon className="h-5 w-5 text-label-primary transition-transform duration-300" />
       <span className="sr-only">
         Toggle theme (currently {resolvedTheme}, click to switch to{' '}
         {resolvedTheme === 'dark' ? 'light' : 'dark'})
