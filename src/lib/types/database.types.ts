@@ -71,3 +71,27 @@ export type CustomColumnInsert = Omit<
 export type CustomColumnUpdate = Partial<
   Omit<CustomColumnDB, 'id' | 'created_at' | 'updated_at' | 'user_id'>
 >
+
+export type DocumentType = 'resume' | 'cover_letter' | 'attachment'
+
+export interface ApplicationDocumentDB {
+  id: string
+  user_id: string
+  application_id: string
+  name: string
+  document_type: DocumentType
+  storage_path: string
+  mime_type: string
+  size_bytes: number
+  created_at: string
+  updated_at: string
+}
+
+export type ApplicationDocumentInsert = Omit<
+  ApplicationDocumentDB,
+  'id' | 'created_at' | 'updated_at' | 'user_id'
+>
+
+export type ApplicationDocumentUpdate = Partial<
+  Omit<ApplicationDocumentDB, 'id' | 'created_at' | 'updated_at' | 'user_id' | 'application_id'>
+>
