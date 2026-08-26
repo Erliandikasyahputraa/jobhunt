@@ -4,12 +4,16 @@
 -- ============================================================================
 
 -- Create document_type enum
-CREATE TYPE document_type_enum AS ENUM ('resume', 'cover_letter', 'attachment');
+DO $$ BEGIN
+  CREATE TYPE document_type_enum AS ENUM ('resume', 'cover_letter', 'attachment');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- Create the application_documents table
-CREATE TABLE application_documents (
+CREATE TABLE IF NOT EXISTS application_documents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
   application_id UUID NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   document_type document_type_enum NOT NULL,
@@ -65,7 +69,8 @@ VALUES (
   false,
   5242880, -- 5MB in bytes
   ARRAY['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']::text[]
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Note: In older or restricted Supabase instances, file_size_limit and allowed_mime_types 
 -- might not be supported directly via SQL if the extensions/versions differ. 

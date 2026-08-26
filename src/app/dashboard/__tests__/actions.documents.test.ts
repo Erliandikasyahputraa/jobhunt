@@ -164,7 +164,8 @@ describe('Documents Server Actions', () => {
           application_id: mockApplicationId,
           document_type: 'resume',
           storage_path: mockStoragePath,
-        })
+        }),
+        mockUserId
       )
     })
 

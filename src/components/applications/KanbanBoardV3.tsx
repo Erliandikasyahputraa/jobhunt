@@ -33,7 +33,11 @@ import type { ColumnConfig } from '@/lib/types/column.types'
 import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { getColumnIcon } from '@/lib/utils/column-icons'
 import { useHorizontalScroll } from '@/hooks/use-horizontal-scroll'
-import { reorderApplicationsAction } from '@/app/dashboard/actions'
+import {
+  reorderApplicationsAction,
+  bulkUpdateApplicationStatusAction,
+  bulkUpdateApplicationColumnAction,
+} from '@/app/dashboard/actions'
 import { toast } from 'sonner'
 import type { SortOption } from '@/lib/utils/filter-utils'
 import { sortApplications } from '@/lib/utils/filter-utils'
@@ -47,9 +51,13 @@ interface KanbanBoardV3Props {
     newStatus?: ApplicationStatus,
     customColumnId?: string | null
   ) => Promise<void>
+  onBulkMoveApplications?: (ids: string[], targetColumn: ColumnConfig) => Promise<void>
   onApplicationClick?: (application: Application) => void
   isLoading?: boolean
   sortOption?: SortOption
+  selectedIds?: Set<string>
+  onToggleSelect?: (id: string) => void
+  isMutating?: boolean
 }
 
 const CORE_EMPTY_STATE_GUIDANCE: Record<string, { heading: string; text: string; cta?: string }> = {
@@ -80,6 +88,8 @@ interface SortableApplicationProps {
   application: Application
   isDragging: boolean
   isDragDisabled: boolean
+  isSelected?: boolean
+  onToggleSelect?: (id: string) => void
   onApplicationClick?: (application: Application) => void
 }
 
@@ -87,6 +97,8 @@ function SortableApplication({
   application,
   isDragging,
   isDragDisabled,
+  isSelected,
+  onToggleSelect,
   onApplicationClick,
 }: SortableApplicationProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -115,6 +127,8 @@ function SortableApplication({
       <ApplicationCard
         application={application}
         isDragging={isDragging}
+        isSelected={isSelected}
+        onToggleSelect={onToggleSelect}
         onClick={() => onApplicationClick?.(application)}
         dragHandleProps={
           isDragDisabled ? undefined : (listeners as unknown as Record<string, unknown>)
@@ -164,6 +178,9 @@ interface KanbanColumnProps {
   onApplicationClick?: (application: Application) => void
   isExpanded: boolean
   onToggleExpand: () => void
+  selectedIds?: Set<string>
+  onToggleSelect?: (id: string) => void
+  isMutating?: boolean
 }
 
 function DroppableKanbanColumn({
@@ -174,8 +191,11 @@ function DroppableKanbanColumn({
   onApplicationClick,
   isExpanded,
   onToggleExpand,
+  selectedIds,
+  onToggleSelect,
+  isMutating = false,
 }: KanbanColumnProps) {
-  const isDragDisabled = sortOption !== 'manual'
+  const isDragDisabled = sortOption !== 'manual' || Boolean(isMutating)
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
     disabled: isDragDisabled,
@@ -271,6 +291,8 @@ function DroppableKanbanColumn({
                 application={application}
                 isDragging={application.id === activeId}
                 isDragDisabled={isDragDisabled}
+                isSelected={selectedIds?.has(application.id)}
+                onToggleSelect={onToggleSelect}
                 onApplicationClick={onApplicationClick}
               />
             ))
@@ -290,9 +312,13 @@ export function KanbanBoardV3({
   applications,
   customColumns,
   onUpdateApplicationColumn,
+  onBulkMoveApplications,
   onApplicationClick,
   isLoading = false,
   sortOption = 'manual',
+  selectedIds,
+  onToggleSelect,
+  isMutating = false,
 }: KanbanBoardV3Props) {
   const [activeId, setActiveId] = React.useState<string | null>(null)
   const [optimisticApplications, setOptimisticApplications] =
@@ -418,6 +444,61 @@ export function KanbanBoardV3({
     }
 
     if (!targetColumn) return
+
+    const isSelectedDrag = Boolean(
+      selectedIds && selectedIds.has(applicationId) && selectedIds.size > 1
+    )
+
+    // Handle Multi-Select Bulk Drag
+    if (isSelectedDrag && selectedIds) {
+      const movingIds = Array.from(selectedIds)
+      const movingIdsSet = new Set(movingIds)
+
+      let newStatus: ApplicationStatus | undefined
+
+      if (!targetColumn.isCustom) {
+        newStatus = targetColumn.statuses ? targetColumn.statuses[0] : undefined
+      }
+
+      const updatedApplications = optimisticApplications.map(app => {
+        if (!movingIdsSet.has(app.id)) return app
+        if (targetColumn.isCustom) {
+          return {
+            ...app,
+            custom_column_id: targetColumn.id,
+            updated_at: new Date().toISOString(),
+          }
+        } else {
+          return {
+            ...app,
+            status: newStatus || app.status,
+            custom_column_id: null,
+            updated_at: new Date().toISOString(),
+          }
+        }
+      })
+
+      setOptimisticApplications(updatedApplications)
+      setAnnouncement(`${movingIds.length} applications moved to ${targetColumn.name}`)
+
+      try {
+        if (onBulkMoveApplications) {
+          await onBulkMoveApplications(movingIds, targetColumn)
+        } else if (targetColumn.isCustom) {
+          await bulkUpdateApplicationColumnAction(movingIds, targetColumn.id)
+        } else if (newStatus) {
+          await bulkUpdateApplicationStatusAction(movingIds, newStatus)
+        }
+        toast.success(`${movingIds.length} applications moved`)
+      } catch (error) {
+        console.error('Failed to bulk move applications:', error)
+        setOptimisticApplications(applications)
+        setAnnouncement(`Failed to move applications. Please try again.`)
+        toast.error("Couldn't move applications. Please try again.")
+      }
+
+      return
+    }
 
     const currentColumnId =
       application.custom_column_id ||
@@ -563,6 +644,9 @@ export function KanbanBoardV3({
                 onApplicationClick={onApplicationClick}
                 isExpanded={expandedColumns.has(column.id)}
                 onToggleExpand={() => toggleColumnExpansion(column.id)}
+                selectedIds={selectedIds}
+                onToggleSelect={onToggleSelect}
+                isMutating={isMutating}
               />
             ))}
           </div>

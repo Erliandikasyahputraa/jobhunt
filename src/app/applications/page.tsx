@@ -8,6 +8,7 @@ import { KanbanBoardV3 } from '@/components/applications/KanbanBoardV3'
 import ApplicationForm from '@/components/applications/ApplicationForm'
 import { ApplicationDetail } from '@/components/applications/ApplicationDetail'
 import { ApplicationsToolbar } from '@/components/applications/ApplicationsToolbar'
+import { BulkActionsToolbar } from '@/components/applications/BulkActionsToolbar'
 import { FilterChips } from '@/components/applications/FilterChips'
 import { ColumnManageModal } from '@/components/applications/ColumnManageModal'
 import { Button } from '@/components/ui/button'
@@ -31,6 +32,9 @@ import {
   getApplicationsAction,
   getCustomColumnsAction,
   createCustomColumnAction,
+  bulkDeleteApplicationsAction,
+  bulkUpdateApplicationStatusAction,
+  bulkUpdateApplicationColumnAction,
 } from '@/app/dashboard/actions'
 import type { CustomColumnDB } from '@/lib/types/database.types'
 import { columnStorage } from '@/lib/storage/column-storage'
@@ -183,6 +187,15 @@ function ApplicationsPageContent() {
   const [isNewApplicationModalOpen, setIsNewApplicationModalOpen] = React.useState(false)
   const [isManageColumnsModalOpen, setIsManageColumnsModalOpen] = React.useState(false)
   const [selectedApplication, setSelectedApplication] = React.useState<Application | null>(null)
+
+  // Selection & Bulk mutation state
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())
+  const [isBulkMutating, setIsBulkMutating] = React.useState(false)
+
+  // Clear selection when filters change
+  React.useEffect(() => {
+    setSelectedIds(new Set())
+  }, [filters])
 
   // Operation loading states
   const [isCreating, setIsCreating] = React.useState(false)
@@ -410,6 +423,144 @@ function ApplicationsPageContent() {
     setCreateError(null)
   }
 
+  // Selection Handlers
+  const handleToggleSelect = React.useCallback((id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }, [])
+
+  const handleToggleSelectAll = React.useCallback(() => {
+    if (processedApplications.length === 0) return
+    const allVisibleIds = processedApplications.map(a => a.id)
+    const isAllSelected = allVisibleIds.length > 0 && allVisibleIds.every(id => selectedIds.has(id))
+
+    if (isAllSelected) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(allVisibleIds))
+    }
+  }, [processedApplications, selectedIds])
+
+  const handleClearSelection = React.useCallback(() => {
+    setSelectedIds(new Set())
+  }, [])
+
+  // Bulk Action Handlers
+  const handleBulkUpdateStatus = async (status: ApplicationStatus) => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+    setIsBulkMutating(true)
+    try {
+      await bulkUpdateApplicationStatusAction(ids, status)
+      const idsSet = new Set(ids)
+      setApplications(prev =>
+        prev.map(app =>
+          idsSet.has(app.id)
+            ? { ...app, status, custom_column_id: null, updated_at: new Date().toISOString() }
+            : app
+        )
+      )
+      setSelectedIds(new Set())
+      toast.success(`${ids.length} application${ids.length === 1 ? '' : 's'} updated`)
+    } catch (err) {
+      console.error('Failed to bulk update status:', err)
+      toast.error('Failed to update applications. Please try again.')
+    } finally {
+      setIsBulkMutating(false)
+    }
+  }
+
+  const handleBulkUpdateCustomColumn = async (customColumnId: string | null) => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+    setIsBulkMutating(true)
+    try {
+      await bulkUpdateApplicationColumnAction(ids, customColumnId)
+      const idsSet = new Set(ids)
+      setApplications(prev =>
+        prev.map(app =>
+          idsSet.has(app.id)
+            ? { ...app, custom_column_id: customColumnId, updated_at: new Date().toISOString() }
+            : app
+        )
+      )
+      setSelectedIds(new Set())
+      toast.success(`${ids.length} application${ids.length === 1 ? '' : 's'} moved`)
+    } catch (err) {
+      console.error('Failed to bulk update custom column:', err)
+      toast.error('Failed to move applications. Please try again.')
+    } finally {
+      setIsBulkMutating(false)
+    }
+  }
+
+  const handleBulkMoveApplications = async (
+    ids: string[],
+    targetColumn: { id: string; name: string; isCustom?: boolean; statuses?: ApplicationStatus[] }
+  ) => {
+    setIsBulkMutating(true)
+    try {
+      if (targetColumn.isCustom) {
+        await bulkUpdateApplicationColumnAction(ids, targetColumn.id)
+        const idsSet = new Set(ids)
+        setApplications(prev =>
+          prev.map(app =>
+            idsSet.has(app.id)
+              ? { ...app, custom_column_id: targetColumn.id, updated_at: new Date().toISOString() }
+              : app
+          )
+        )
+      } else {
+        const newStatus = targetColumn.statuses ? targetColumn.statuses[0] : 'applied'
+        await bulkUpdateApplicationStatusAction(ids, newStatus)
+        const idsSet = new Set(ids)
+        setApplications(prev =>
+          prev.map(app =>
+            idsSet.has(app.id)
+              ? {
+                  ...app,
+                  status: newStatus,
+                  custom_column_id: null,
+                  updated_at: new Date().toISOString(),
+                }
+              : app
+          )
+        )
+      }
+    } catch (err) {
+      console.error('Failed to bulk move applications:', err)
+      throw err
+    } finally {
+      setIsBulkMutating(false)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+    setIsBulkMutating(true)
+    try {
+      await bulkDeleteApplicationsAction(ids)
+      const deletedSet = new Set(ids)
+      setApplications(prev => prev.filter(app => !deletedSet.has(app.id)))
+      setSelectedIds(new Set())
+      toast.success(`${ids.length} application${ids.length === 1 ? '' : 's'} deleted`)
+    } catch (err) {
+      console.error('Failed to bulk delete applications:', err)
+      toast.error('Failed to delete applications. Please try again.')
+      throw err
+    } finally {
+      setIsBulkMutating(false)
+    }
+  }
+
   // Handle export
   const handleExport = () => {
     if (processedApplications.length === 0) {
@@ -520,20 +671,36 @@ function ApplicationsPageContent() {
             </div>
           ) : (
             <div className="flex-1 flex flex-col h-full">
-              <ApplicationsToolbar
-                filters={displayFilters}
-                onSearchChange={handleSearchChange}
-                onStatusFilterChange={handleStatusFilterChange}
-                onCustomColumnFilterChange={handleCustomColumnFilterChange}
-                onDateRangeChange={handleDateRangeChange}
-                onSortChange={handleSortChange}
-                onClearFilters={handleClearFilters}
-                customColumns={customColumns}
-                onManageColumns={() => setIsManageColumnsModalOpen(true)}
-                onNewApplication={handleOpenNewModal}
-                onExport={handleExport}
-                isExporting={isExporting}
-              />
+              {selectedIds.size > 0 ? (
+                <div className="p-4 pb-0">
+                  <BulkActionsToolbar
+                    selectedCount={selectedIds.size}
+                    totalVisibleCount={processedApplications.length}
+                    customColumns={customColumns}
+                    isMutating={isBulkMutating}
+                    onToggleSelectAll={handleToggleSelectAll}
+                    onUpdateStatus={handleBulkUpdateStatus}
+                    onUpdateCustomColumn={handleBulkUpdateCustomColumn}
+                    onDelete={handleBulkDelete}
+                    onClearSelection={handleClearSelection}
+                  />
+                </div>
+              ) : (
+                <ApplicationsToolbar
+                  filters={displayFilters}
+                  onSearchChange={handleSearchChange}
+                  onStatusFilterChange={handleStatusFilterChange}
+                  onCustomColumnFilterChange={handleCustomColumnFilterChange}
+                  onDateRangeChange={handleDateRangeChange}
+                  onSortChange={handleSortChange}
+                  onClearFilters={handleClearFilters}
+                  customColumns={customColumns}
+                  onManageColumns={() => setIsManageColumnsModalOpen(true)}
+                  onNewApplication={handleOpenNewModal}
+                  onExport={handleExport}
+                  isExporting={isExporting}
+                />
+              )}
 
               <FilterChips
                 filters={displayFilters}
@@ -563,9 +730,13 @@ function ApplicationsPageContent() {
                   applications={processedApplications}
                   customColumns={customColumns}
                   onUpdateApplicationColumn={handleUpdateApplicationColumn}
+                  onBulkMoveApplications={handleBulkMoveApplications}
                   onApplicationClick={handleApplicationClick}
                   isLoading={false}
                   sortOption={filters.sortOption}
+                  selectedIds={selectedIds}
+                  onToggleSelect={handleToggleSelect}
+                  isMutating={isBulkMutating}
                 />
               )}
             </div>

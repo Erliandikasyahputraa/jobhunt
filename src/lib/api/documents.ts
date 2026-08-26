@@ -57,11 +57,14 @@ export async function uploadDocumentToStorage(
  */
 export async function createDocumentRecord(
   supabase: SupabaseClient,
-  documentData: ApplicationDocumentInsert
+  documentData: ApplicationDocumentInsert,
+  userId?: string
 ): Promise<ApplicationDocumentDB> {
+  const insertPayload = userId ? { ...documentData, user_id: userId } : documentData
+
   const { data, error } = await supabase
     .from('application_documents')
-    .insert(documentData)
+    .insert(insertPayload)
     .select()
     .single()
 

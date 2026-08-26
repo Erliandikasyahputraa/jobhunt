@@ -105,7 +105,7 @@ export async function uploadApplicationDocumentAction(formData: FormData) {
     // Validate insert payload
     documentInsertSchema.parse(documentData)
 
-    await createDocumentRecord(supabase, documentData)
+    await createDocumentRecord(supabase, documentData, user.id)
   } catch (error) {
     // Rollback uploaded storage object if metadata row creation fails
     console.error('Database insert error, rolling back storage:', error)

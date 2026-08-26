@@ -1,5 +1,15 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Application, ApplicationInsert, ApplicationUpdate } from '@/lib/types/database.types'
+import type {
+  Application,
+  ApplicationInsert,
+  ApplicationUpdate,
+  ApplicationStatus,
+} from '@/lib/types/database.types'
+import {
+  bulkApplicationIdsSchema,
+  bulkStatusUpdateSchema,
+  bulkCustomColumnUpdateSchema,
+} from '@/lib/schemas/bulk.schema'
 
 async function verifyAuthenticationContext(supabase: SupabaseClient): Promise<string> {
   const {
@@ -289,6 +299,166 @@ export async function updateApplicationPosition(
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('updateApplicationPosition error:', error)
+    }
+    throw error
+  }
+}
+
+/**
+ * Bulk delete applications
+ * 1. Validates inputs & user authentication
+ * 2. Fetches associated storage paths from application_documents for this user
+ * 3. Removes files from private jobhunt_documents bucket
+ * 4. Deletes application rows from PostgreSQL (application_documents metadata cascades)
+ */
+export async function bulkDeleteApplications(
+  supabase: SupabaseClient,
+  applicationIds: string[]
+): Promise<void> {
+  try {
+    const userId = await verifyAuthenticationContext(supabase)
+    const validatedIds = bulkApplicationIdsSchema.parse(applicationIds)
+    const uniqueIds = Array.from(new Set(validatedIds))
+
+    // 1. Query storage paths belonging to selected applications AND authenticated user
+    const { data: docs, error: docError } = await supabase
+      .from('application_documents')
+      .select('storage_path')
+      .in('application_id', uniqueIds)
+      .eq('user_id', userId)
+
+    if (docError) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to query documents for bulk delete:', docError)
+      }
+      throw new Error(`Failed to check application documents: ${docError.message}`)
+    }
+
+    // 2. Remove storage objects from jobhunt_documents bucket
+    if (docs && docs.length > 0) {
+      const storagePaths = docs.map(d => d.storage_path).filter(Boolean)
+      if (storagePaths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from('jobhunt_documents')
+          .remove(storagePaths)
+
+        if (storageError) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Storage deletion error during bulk delete:', storageError)
+          }
+          throw new Error(`Failed to delete document files: ${storageError.message}`)
+        }
+      }
+    }
+
+    // 3. Delete application records (PostgreSQL cascades application_documents rows)
+    const { error: deleteError } = await supabase
+      .from('applications')
+      .delete()
+      .in('id', uniqueIds)
+      .eq('user_id', userId)
+
+    if (deleteError) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to delete applications in bulk:', deleteError)
+      }
+      throw new Error(`Failed to delete applications: ${deleteError.message}`)
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('bulkDeleteApplications error:', error)
+    }
+    throw error
+  }
+}
+
+/**
+ * Bulk update application core status
+ * Preserves Phase 3.1 invariant: moving to core status resets custom_column_id to null
+ */
+export async function bulkUpdateApplicationStatus(
+  supabase: SupabaseClient,
+  applicationIds: string[],
+  status: ApplicationStatus
+): Promise<void> {
+  try {
+    const userId = await verifyAuthenticationContext(supabase)
+    const validated = bulkStatusUpdateSchema.parse({ ids: applicationIds, status })
+    const uniqueIds = Array.from(new Set(validated.ids))
+
+    const { error: updateError } = await supabase
+      .from('applications')
+      .update({
+        status: validated.status,
+        custom_column_id: null,
+        updated_at: new Date().toISOString(),
+      })
+      .in('id', uniqueIds)
+      .eq('user_id', userId)
+
+    if (updateError) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to bulk update application status:', updateError)
+      }
+      throw new Error(`Failed to update application status: ${updateError.message}`)
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('bulkUpdateApplicationStatus error:', error)
+    }
+    throw error
+  }
+}
+
+/**
+ * Bulk update application custom column
+ * Validates ownership of destination custom column if non-null
+ */
+export async function bulkUpdateApplicationCustomColumn(
+  supabase: SupabaseClient,
+  applicationIds: string[],
+  customColumnId: string | null
+): Promise<void> {
+  try {
+    const userId = await verifyAuthenticationContext(supabase)
+    const validated = bulkCustomColumnUpdateSchema.parse({
+      ids: applicationIds,
+      customColumnId,
+    })
+    const uniqueIds = Array.from(new Set(validated.ids))
+
+    // If a custom column UUID is provided, verify it belongs to the authenticated user
+    if (validated.customColumnId !== null) {
+      const { data: column, error: colError } = await supabase
+        .from('custom_columns')
+        .select('id')
+        .eq('id', validated.customColumnId)
+        .eq('user_id', userId)
+        .single()
+
+      if (colError || !column) {
+        throw new Error('Unauthorized or custom column not found')
+      }
+    }
+
+    const { error: updateError } = await supabase
+      .from('applications')
+      .update({
+        custom_column_id: validated.customColumnId,
+        updated_at: new Date().toISOString(),
+      })
+      .in('id', uniqueIds)
+      .eq('user_id', userId)
+
+    if (updateError) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to bulk update application custom column:', updateError)
+      }
+      throw new Error(`Failed to update application custom column: ${updateError.message}`)
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('bulkUpdateApplicationCustomColumn error:', error)
     }
     throw error
   }

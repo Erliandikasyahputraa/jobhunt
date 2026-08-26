@@ -12,6 +12,9 @@ import {
   getApplications,
   reorderApplicationsInColumn,
   updateApplicationPosition,
+  bulkDeleteApplications,
+  bulkUpdateApplicationStatus,
+  bulkUpdateApplicationCustomColumn,
 } from '@/lib/api/applications'
 
 /**
@@ -297,6 +300,99 @@ export async function updateApplicationPositionAction(
       console.error('Failed to update application position:', error)
     }
     throw new Error('Failed to update application position')
+  }
+}
+
+/**
+ * Bulk delete applications
+ */
+export async function bulkDeleteApplicationsAction(ids: string[]): Promise<void> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  try {
+    await bulkDeleteApplications(supabase, ids)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to bulk delete applications:', error)
+    }
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Failed to delete applications')
+  }
+}
+
+/**
+ * Bulk update application core status
+ */
+export async function bulkUpdateApplicationStatusAction(
+  ids: string[],
+  status: ApplicationStatus
+): Promise<void> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  try {
+    await bulkUpdateApplicationStatus(supabase, ids, status)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to bulk update application status:', error)
+    }
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Failed to update application status')
+  }
+}
+
+/**
+ * Bulk update application custom column
+ */
+export async function bulkUpdateApplicationColumnAction(
+  ids: string[],
+  customColumnId: string | null
+): Promise<void> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  try {
+    await bulkUpdateApplicationCustomColumn(supabase, ids, customColumnId)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to bulk update application custom column:', error)
+    }
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Failed to update application column')
   }
 }
 
