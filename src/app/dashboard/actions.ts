@@ -84,6 +84,7 @@ export async function createApplicationAction(formData: ApplicationFormData): Pr
 
   const applicationData: ApplicationInsert = {
     company_name: validatedData.company_name,
+    company_id: null,
     job_title: validatedData.job_title,
     job_url: validatedData.job_url || null,
     location: validatedData.location || null,

@@ -18,6 +18,7 @@ describe('Filter Utils', () => {
     {
       id: '1',
       company_name: 'Apple',
+      company_id: null,
       job_title: 'Frontend Developer',
       status: 'applied',
       custom_column_id: null,
@@ -34,6 +35,7 @@ describe('Filter Utils', () => {
     {
       id: '2',
       company_name: 'Google',
+      company_id: null,
       job_title: 'Backend Engineer',
       status: 'interviewing',
       custom_column_id: 'col_urgent',
@@ -50,6 +52,7 @@ describe('Filter Utils', () => {
     {
       id: '3',
       company_name: 'Stripe',
+      company_id: null,
       job_title: 'Fullstack Engineer',
       status: 'offered',
       custom_column_id: 'col_done',

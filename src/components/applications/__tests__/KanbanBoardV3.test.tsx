@@ -53,6 +53,7 @@ const createMockApplication = (overrides?: Partial<Application>): Application =>
   id: '123e4567-e89b-12d3-a456-426614174000',
   user_id: 'user-123',
   company_name: 'TechCorp Inc',
+  company_id: null,
   job_title: 'Senior Software Engineer',
   job_url: 'https://example.com/job',
   location: 'San Francisco, CA',
@@ -115,11 +116,36 @@ describe('KanbanBoardV3', () => {
   describe('Application Grouping and Display', () => {
     it('groups applications correctly into columns', async () => {
       const applications = [
-        createMockApplication({ id: '1', company_name: 'WishlistCo', status: 'wishlist' }),
-        createMockApplication({ id: '2', company_name: 'AppliedCo', status: 'applied' }),
-        createMockApplication({ id: '3', company_name: 'InterviewCo', status: 'interviewing' }),
-        createMockApplication({ id: '4', company_name: 'OfferedCo', status: 'offered' }),
-        createMockApplication({ id: '5', company_name: 'RejectedCo', status: 'rejected' }),
+        createMockApplication({
+          id: '1',
+          company_name: 'WishlistCo',
+          company_id: null,
+          status: 'wishlist',
+        }),
+        createMockApplication({
+          id: '2',
+          company_name: 'AppliedCo',
+          company_id: null,
+          status: 'applied',
+        }),
+        createMockApplication({
+          id: '3',
+          company_name: 'InterviewCo',
+          company_id: null,
+          status: 'interviewing',
+        }),
+        createMockApplication({
+          id: '4',
+          company_name: 'OfferedCo',
+          company_id: null,
+          status: 'offered',
+        }),
+        createMockApplication({
+          id: '5',
+          company_name: 'RejectedCo',
+          company_id: null,
+          status: 'rejected',
+        }),
       ]
 
       render(

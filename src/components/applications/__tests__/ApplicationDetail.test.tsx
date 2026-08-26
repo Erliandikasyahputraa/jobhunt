@@ -9,6 +9,7 @@ const createMockApplication = (overrides?: Partial<Application>): Application =>
   id: '123e4567-e89b-12d3-a456-426614174000',
   user_id: 'user-123',
   company_name: 'TechCorp Inc',
+  company_id: null,
   job_title: 'Senior Software Engineer',
   job_url: 'https://example.com/job',
   location: 'San Francisco, CA',
@@ -328,6 +329,7 @@ describe('ApplicationDetail', () => {
           application.id,
           expect.objectContaining({
             company_name: 'Updated Corp',
+
             job_title: 'Senior Software Engineer',
           })
         )

@@ -15,6 +15,7 @@ const mockApplications: Application[] = [
     id: '1',
     user_id: 'user-1',
     company_name: 'Tech Corp',
+    company_id: null,
     job_title: 'Software Engineer',
     status: 'applied',
     job_url: 'https://techcorp.com/jobs/123',
@@ -95,6 +96,7 @@ describe('Applications API', () => {
     it('should create a new application', async () => {
       const newApplication: ApplicationInsert = {
         company_name: 'Test Co',
+        company_id: null,
         job_title: 'Developer',
         status: 'wishlist',
         job_url: null,
