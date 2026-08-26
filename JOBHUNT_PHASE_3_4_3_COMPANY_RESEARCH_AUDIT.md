@@ -148,4 +148,18 @@ We will utilize existing Radix Tabs, Dialogs, Inputs, and Textareas, along with 
 - **UI Implemented**: `src/components/applications/ApplicationDetail/components/MainPanel/CompanyInfo.tsx` was rewritten to handle the full company lifecycle (Empty State, Create Form, Link Existing, Edit Profile, Unlink).
 - **Dependencies**: Utilized existing primitives (`Input`, `Select`, `Button`, `Textarea`) and `sonner` for toast notifications.
 - **Testing**: Added `CompanyInfo.test.tsx` which tests all states and ensures isolated functionality.
-- **Verification**: Typecheck, lint, and test suite (479 tests) passed successfully. The UI properly falls back and preserves `company_name` while utilizing `company_id` for rich data linking.
+- **Verification**: Typecheck, lint, and test suite (487 tests) passed successfully. The UI properly falls back and preserves `company_name` while utilizing `company_id` for rich data linking.
+
+## Step 2 Commit Verification
+
+- **Commit hash**: `a9452a7`
+- **Commit message**: `feat: add company research application ui`
+- **Exact committed files**:
+  - `JOBHUNT_PHASE_3_4_3_COMPANY_RESEARCH_AUDIT.md`
+  - `src/app/dashboard/actions.ts`
+  - `src/components/applications/ApplicationDetail/__tests__/CompanyInfo.test.tsx`
+  - `src/components/applications/ApplicationDetail/components/MainPanel/CompanyInfo.tsx`
+- **Push result**: Successfully pushed to `origin/feat/analytics-dashboard`
+- **HEAD/remote equality**: Local `HEAD` (`a9452a752f8cfbc4c64635ab3e9f54ef60e8f10e`) exactly matches `origin/feat/analytics-dashboard`.
+- **Final working tree state**: Clean (only known, untracked local reports remain).
+- **Confirmation**: No Phase 3.4.4 Document Management, Phase 3.4.5 Bulk Actions, or Virtualization work was included. The code is strictly limited to Phase 3.4.3 Step 2 Company Research UI.
