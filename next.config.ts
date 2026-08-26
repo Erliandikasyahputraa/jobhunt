@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
   // Enable standalone output for Docker
   output: 'standalone',
 
+  experimental: {
+    // Allow larger uploads for resumes and cover letters
+    serverActions: {
+      bodySizeLimit: '5mb',
+    },
+  },
+
   // Allow external images for company logos
   images: {
     remotePatterns: [

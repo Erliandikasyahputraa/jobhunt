@@ -124,8 +124,9 @@ describe('ApplicationsPage URL Sync', () => {
     expect(replaceCall).not.toContain('custom=fake-id')
 
     // Assert state was cleaned
-    const toolbar = await screen.findByTestId('toolbar-custom')
-    expect(toolbar.textContent).toBe('')
+    await waitFor(() => {
+      expect(screen.getByTestId('toolbar-custom').textContent).toBe('')
+    })
   })
 
   it('3. mixed valid + invalid IDs are cleaned up', async () => {
@@ -142,8 +143,9 @@ describe('ApplicationsPage URL Sync', () => {
     expect(replaceCall).toContain('custom=valid-id-2')
     expect(replaceCall).not.toContain('fake-id')
 
-    const toolbar = await screen.findByTestId('toolbar-custom')
-    expect(toolbar.textContent).toBe('valid-id-2')
+    await waitFor(() => {
+      expect(screen.getByTestId('toolbar-custom').textContent).toBe('valid-id-2')
+    })
   })
 
   it('4. all invalid IDs result in empty state', async () => {
@@ -157,8 +159,10 @@ describe('ApplicationsPage URL Sync', () => {
 
     const replaceCall = mockReplace.mock.calls[0][0]
     expect(replaceCall).not.toContain('custom=')
-    const toolbar = await screen.findByTestId('toolbar-custom')
-    expect(toolbar.textContent).toBe('')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('toolbar-custom').textContent).toBe('')
+    })
   })
 
   it('5. URL cleanup works properly', async () => {

@@ -283,6 +283,94 @@ Native browser `FormData` and `File` APIs, along with the existing `@supabase/su
 - **Migration status**: Migration `005_add_application_documents.sql` successfully establishes the necessary `application_documents` table and `jobhunt_documents` storage bucket.
 - **Storage status**: `jobhunt_documents` is configured as private with proper RLS policies for `SELECT`, `INSERT`, `UPDATE`, and `DELETE`.
 - **Known orphan limitation**: Application deletion cascades to `application_documents`, but leaves orphaned files in the `jobhunt_documents` bucket. This limitation is known and intentionally deferred.
-- **Exact commit hash after commit**: Will be documented after commit.
-- **Push result**: Will be documented after push.
-- **HEAD/remote equality**: Will be documented after push.
+- **Exact commit hash after commit**: `6d0109e` (`6d0109e0653566143b1e032891efdccaafd5f6b1`)
+- **Push result**: Successfully pushed to `origin/feat/analytics-dashboard` (`63023a1..6d0109e`).
+- **HEAD/remote equality**: Verified (`6d0109e0653566143b1e032891efdccaafd5f6b1` matches `origin/feat/analytics-dashboard`).
+
+## Implementation Step 2 — API & UI
+
+1. **API architecture**: Implemented modular functions in `src/lib/api/documents.ts`:
+   - `getDocumentsByApplication(supabase, applicationId)`: Fetches user-owned documents for an application, ordered `created_at DESC`.
+   - `uploadDocumentToStorage(supabase, userId, applicationId, file, documentUuid, filename)`: Strips path separators (`split(/[/\\]/).pop()`) and sanitizes filename before storing at `{user_id}/{application_id}/{document_uuid}/{filename}`.
+   - `createDocumentRecord(supabase, documentData)`: Inserts document metadata row into `application_documents`.
+   - `getSignedUrl(supabase, storagePath)`: Generates short-lived (60 seconds) signed download URL.
+   - `deleteDocument(supabase, documentId, storagePath)`: Removes object from Storage first, then removes row from database metadata table.
+
+2. **Server Actions**: Implemented in `src/app/dashboard/actions/documents.ts`:
+   - `uploadApplicationDocumentAction(formData)`: Validates authentication, application ownership, file size, MIME type, file extension, and document type. Uploads to Storage, validates metadata payload via Zod, inserts metadata into DB, and cleans up Storage if metadata insert fails.
+   - `deleteApplicationDocumentAction(documentId, storagePath)`: Validates authentication, document ownership, and application ownership before removing Storage object and DB record.
+   - `getDocumentUrlAction(documentId)`: Validates authentication, document ownership, and application ownership before generating a 60-second signed URL.
+   - `getDocumentsByApplicationAction(applicationId)`: Validates authentication and application ownership before fetching documents.
+
+3. **Authentication**: Every Server Action verifies `supabase.auth.getUser()`. Unauthenticated requests throw `'Unauthorized'` immediately without touching any database or storage resources.
+
+4. **Application ownership checks**: `verifyApplicationOwnership` runs for every upload, list, URL generation, and delete operation to guarantee users can only access applications they own.
+
+5. **Document ownership checks**: `deleteApplicationDocumentAction` and `getDocumentUrlAction` explicitly verify `doc.user_id === user.id` as well as application ownership.
+
+6. **File validation**: Server-side enforces:
+   - Size limit: 5 MB (`5 * 1024 * 1024` bytes)
+   - MIME types: `application/pdf`, `application/msword`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`
+   - File extensions: `.pdf`, `.doc`, `.docx`
+   - Document types: `resume`, `cover_letter`, `attachment` (via `documentTypeSchema.parse`)
+
+7. **5MB limit**: Validated on both client (instant feedback) and server (hard security gate).
+
+8. **MIME validation**: Validated on both client and server; rejects disallowed types with informative error messages.
+
+9. **Storage path security**: Path structure is strictly server-controlled: `{user_id}/{application_id}/{document_uuid}/{safe_filename}`. Path traversal sequences (`../`, `..\\`) are stripped via regex and path basename resolution.
+
+10. **Upload transaction/cleanup behavior**: If database metadata insertion fails after storage upload, the Server Action immediately executes `supabase.storage.from('jobhunt_documents').remove([storagePath])` to ensure zero orphaned storage objects.
+
+11. **Signed URL behavior**: Uses `supabase.storage.createSignedUrl(storagePath, 60)` with a strict 60-second TTL. No permanent public URLs are ever generated.
+
+12. **Delete behavior**: Deletes the storage object first; if storage deletion succeeds, deletes the database metadata row.
+
+13. **UI implementation**: Built `src/components/applications/ApplicationDetail/components/MainPanel/Documents.tsx`:
+    - Clean empty state with icon and direct "Upload Document" CTA.
+    - Document card list showing document name, formatted type, human-readable file size (`formatBytes`), relative creation time, View button (signed URL), and Delete button with trash icon.
+    - Upload dialog with document type selector (`Resume`, `Cover Letter`, `Attachment`), hidden file input with "Choose File" button, and disabled upload CTA until a valid file is selected.
+    - Delete confirmation dialog showing document name and warning that action is irreversible.
+
+14. **Mobile behavior**: Full responsive support using existing modal primitives and flex layout with truncation to prevent horizontal overflow on small screens. No new Sheet or layout dependencies introduced.
+
+15. **Sonner feedback**:
+    - Upload success: `"Document uploaded"`
+    - Upload error: `"Failed to upload document. Please try again."`
+    - Delete success: `"Document deleted"`
+    - Delete error: `"Failed to delete document. Please try again."`
+    - Size error: `"File must be 5 MB or smaller."`
+
+16. **next.config decision**: Maintained `experimental: { serverActions: { bodySizeLimit: '5mb' } }` in `next.config.ts`. Next.js Server Actions default to a 1MB request body limit. Because documents up to 5MB are uploaded directly via Server Actions, configuring `bodySizeLimit: '5mb'` is strictly necessary to prevent HTTP 413 Payload Too Large errors.
+
+17. **Tests**:
+    - `src/components/applications/ApplicationDetail/__tests__/Documents.test.tsx`: 17 comprehensive UI tests covering loading, empty state, document list, upload modal, view/download action, delete confirmation flow, delete cancel, delete confirm, error handling, and duplicate upload prevention.
+    - `src/lib/api/__tests__/documents.test.ts`: 11 tests covering query ordering, storage upload path sanitization, path traversal mitigation, metadata insertion, signed URL generation (60s TTL), and storage-first deletion.
+    - `src/app/dashboard/__tests__/actions.documents.test.ts`: 16 tests covering authentication gate, missing fields, invalid document types, 5MB limit, MIME validation, extension validation, application ownership verification, rollback on DB error, delete authorization, and signed URL authorization.
+
+18. **Validation results**:
+    - Typecheck (`tsc --noEmit`): Pass
+    - Lint (`eslint .`): Pass
+    - Vitest (`vitest run`): 34 test files, 523 tests passed
+    - Build (`next build`): Pass
+
+19. **Known limitations**: Cascading application delete drops `application_documents` metadata rows but leaves orphaned storage objects (deferred to future storage cleanup worker). Browser preview for `.docx` downloads the file rather than rendering inline.
+
+20. **Exact files changed**:
+    - `next.config.ts` (Modified: `bodySizeLimit: '5mb'`)
+    - `src/lib/api/documents.ts` (New API layer)
+    - `src/app/dashboard/actions/documents.ts` (New Server Actions)
+    - `src/components/applications/ApplicationDetail/components/MainPanel/Documents.tsx` (Modified: functional UI)
+    - `src/components/applications/ApplicationDetail/__tests__/Documents.test.tsx` (New: UI tests)
+    - `src/lib/api/__tests__/documents.test.ts` (New: API tests)
+    - `src/app/dashboard/__tests__/actions.documents.test.ts` (New: Server Action tests)
+
+## Step 2 Final Audit
+
+- **Security result**: PASSED. All document operations enforce strict user authentication and ownership across applications and documents. Storage paths are server-controlled and sanitized against directory traversal. Signed URLs expire after 60 seconds. Storage rollback handles failed metadata inserts.
+- **Data integrity result**: PASSED. Database constraints (FKs, UUIDs, enum types) and server-side Zod validation ensure only valid metadata is inserted. Storage objects are removed before database row deletion.
+- **UI result**: PASSED. Replaces placeholder with responsive Document list, upload dialog, delete confirmation dialog, accessible buttons, and Sonner notifications.
+- **Regression result**: PASSED. Zero regressions across Kanban, DnD, custom columns, filtering, sorting, CSV export, and Company Research.
+- **Test result**: PASSED. 523 total unit and integration tests passing across 34 test files.
+- **Build result**: PASSED. Production build (`bunx next build`) compiles all static and dynamic routes cleanly.
+- **Remaining findings**: None. Ready for commit and push.
