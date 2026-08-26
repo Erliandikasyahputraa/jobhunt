@@ -140,5 +140,12 @@ We will utilize existing Radix Tabs, Dialogs, Inputs, and Textareas, along with 
 - LinkedIn/Web scraping.
 - Employee/Recruiter CRM.
 - Shared/Public company database.
-- Real-time external data synchronization.
 - Complex nested company hierarchies (e.g., Google vs Alphabet).
+
+## 22. Step 2 UI Implementation Audit
+
+- **Actions Added**: `getCompaniesAction`, `getCompanyByIdAction`, `createCompanyAction`, `updateCompanyAction`, `linkCompanyAction`, `unlinkCompanyAction` added to `src/app/dashboard/actions.ts`.
+- **UI Implemented**: `src/components/applications/ApplicationDetail/components/MainPanel/CompanyInfo.tsx` was rewritten to handle the full company lifecycle (Empty State, Create Form, Link Existing, Edit Profile, Unlink).
+- **Dependencies**: Utilized existing primitives (`Input`, `Select`, `Button`, `Textarea`) and `sonner` for toast notifications.
+- **Testing**: Added `CompanyInfo.test.tsx` which tests all states and ensures isolated functionality.
+- **Verification**: Typecheck, lint, and test suite (479 tests) passed successfully. The UI properly falls back and preserves `company_name` while utilizing `company_id` for rich data linking.

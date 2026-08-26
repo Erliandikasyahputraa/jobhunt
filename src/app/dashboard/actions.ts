@@ -393,3 +393,131 @@ export async function reorderCustomColumnsAction(
     throw new Error('Failed to reorder custom columns')
   }
 }
+
+// ============================================================================
+// COMPANY ACTIONS
+// ============================================================================
+
+import { getCompanies, getCompanyById, createCompany, updateCompany } from '@/lib/api/companies'
+import { createCompanySchema, updateCompanySchema } from '@/lib/schemas/company.schema'
+import type { CompanyFormData } from '@/lib/schemas/company.schema'
+import type { CompanyDB } from '@/lib/types/database.types'
+
+export async function getCompaniesAction(): Promise<CompanyDB[]> {
+  try {
+    const supabase = await createClient()
+    return await getCompanies(supabase)
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to get companies in action:', error)
+    }
+    throw new Error('Failed to fetch companies')
+  }
+}
+
+export async function getCompanyByIdAction(id: string): Promise<CompanyDB> {
+  try {
+    const supabase = await createClient()
+    return await getCompanyById(supabase, id)
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to get company by id in action:', error)
+    }
+    throw new Error('Failed to fetch company')
+  }
+}
+
+export async function createCompanyAction(formData: CompanyFormData): Promise<CompanyDB> {
+  try {
+    const supabase = await createClient()
+
+    // Auth check
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error('Unauthorized')
+
+    // Validate
+    const validatedData = createCompanySchema.parse(formData)
+
+    const newCompany = await createCompany(supabase, validatedData as any)
+    return newCompany
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to create company in action:', error)
+    }
+    throw new Error('Failed to create company')
+  }
+}
+
+export async function updateCompanyAction(
+  id: string,
+  formData: Partial<CompanyFormData>
+): Promise<CompanyDB> {
+  try {
+    const supabase = await createClient()
+
+    // Validate
+    const validatedData = updateCompanySchema.parse(formData)
+
+    const updatedCompany = await updateCompany(supabase, id, validatedData as any)
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+    return updatedCompany
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to update company in action:', error)
+    }
+    throw new Error('Failed to update company')
+  }
+}
+
+export async function linkCompanyAction(applicationId: string, companyId: string): Promise<void> {
+  try {
+    const supabase = await createClient()
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error('Unauthorized')
+
+    // Update the application
+    await updateApplication(supabase, applicationId, {
+      company_id: companyId,
+      updated_at: new Date().toISOString(),
+    })
+
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to link company in action:', error)
+    }
+    throw new Error('Failed to link company')
+  }
+}
+
+export async function unlinkCompanyAction(applicationId: string): Promise<void> {
+  try {
+    const supabase = await createClient()
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error('Unauthorized')
+
+    // Update the application to remove company_id
+    await updateApplication(supabase, applicationId, {
+      company_id: null,
+      updated_at: new Date().toISOString(),
+    })
+
+    revalidatePath('/dashboard')
+    revalidatePath('/applications')
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to unlink company in action:', error)
+    }
+    throw new Error('Failed to unlink company')
+  }
+}
