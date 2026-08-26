@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { filterApplications, sortApplications } from '../filter-utils'
+import { filterApplications, sortApplications, validateCustomColumnFilters } from '../filter-utils'
 import type { Application } from '@/lib/types/database.types'
 
 describe('Filter Utils', () => {
@@ -169,6 +169,40 @@ describe('Filter Utils', () => {
     it('should sort by company A-Z', () => {
       const result = sortApplications(mockApps, 'company_az')
       expect(result.map(a => a.company_name)).toEqual(['Apple', 'Google', 'Stripe'])
+    })
+  })
+
+  describe('validateCustomColumnFilters', () => {
+    const mockColumns = [{ id: 'col1' }, { id: 'col2' }]
+
+    it('should keep valid custom ID', () => {
+      const result = validateCustomColumnFilters(['col1'], mockColumns)
+      expect(result.hasInvalid).toBe(false)
+      expect(result.validFilters).toEqual(['col1'])
+    })
+
+    it('should remove invalid custom ID', () => {
+      const result = validateCustomColumnFilters(['invalid-id'], mockColumns)
+      expect(result.hasInvalid).toBe(true)
+      expect(result.validFilters).toEqual([])
+    })
+
+    it('should handle mixed valid and invalid IDs', () => {
+      const result = validateCustomColumnFilters(['col1', 'invalid-id', 'col2'], mockColumns)
+      expect(result.hasInvalid).toBe(true)
+      expect(result.validFilters).toEqual(['col1', 'col2'])
+    })
+
+    it('should treat "none" as a valid ID', () => {
+      const result = validateCustomColumnFilters(['none', 'invalid-id'], mockColumns)
+      expect(result.hasInvalid).toBe(true)
+      expect(result.validFilters).toEqual(['none'])
+    })
+
+    it('should return empty array when all IDs are invalid', () => {
+      const result = validateCustomColumnFilters(['invalid1', 'invalid2'], mockColumns)
+      expect(result.hasInvalid).toBe(true)
+      expect(result.validFilters).toEqual([])
     })
   })
 })

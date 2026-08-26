@@ -39,22 +39,140 @@ import {
   type FilterState,
   type SortOption,
   type DateFilterOption,
+  isValidStatus,
+  isValidSortOption,
+  isValidDateOption,
 } from '@/lib/utils/filter-utils'
+import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 
-export default function ApplicationsPage() {
+function ApplicationsPageContent() {
   const [applications, setApplications] = React.useState<Application[]>([])
   const [customColumns, setCustomColumns] = React.useState<CustomColumnDB[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
 
-  // Filter State
-  const [filters, setFilters] = React.useState<FilterState>({
-    searchQuery: '',
-    statusFilters: [],
-    customColumnFilters: [],
-    dateRange: 'all',
-    sortOption: 'manual',
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  // Filter State initialized from URL
+  const [filters, setFilters] = React.useState<FilterState>(() => {
+    const statusFilters = searchParams.getAll('status').filter(isValidStatus)
+    const customColumnFilters = searchParams.getAll('custom')
+
+    const dateParam = searchParams.get('date')
+    const dateRange = dateParam && isValidDateOption(dateParam) ? dateParam : 'all'
+
+    const sortParam = searchParams.get('sort')
+    const sortOption = sortParam && isValidSortOption(sortParam) ? sortParam : 'manual'
+
+    const searchQuery = searchParams.get('q') || ''
+
+    return {
+      searchQuery,
+      statusFilters,
+      customColumnFilters,
+      dateRange,
+      sortOption,
+    }
   })
+
+  // Separate state for instant typing, debounced into `filters.searchQuery`
+  const [searchInput, setSearchInput] = React.useState(filters.searchQuery)
+
+  // displayFilters merges the debounced state with the instant search input for the UI toolbar
+  const displayFilters = React.useMemo(
+    () => ({ ...filters, searchQuery: searchInput }),
+    [filters, searchInput]
+  )
+
+  const updateUrl = React.useCallback(
+    (newFilters: FilterState) => {
+      const params = new URLSearchParams()
+
+      if (newFilters.searchQuery.trim()) {
+        params.set('q', newFilters.searchQuery.trim())
+      }
+
+      newFilters.statusFilters.forEach(status => params.append('status', status))
+      newFilters.customColumnFilters.forEach(custom => params.append('custom', custom))
+
+      if (newFilters.dateRange !== 'all') {
+        params.set('date', newFilters.dateRange)
+      }
+
+      if (newFilters.sortOption !== 'manual') {
+        params.set('sort', newFilters.sortOption)
+      }
+
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    },
+    [pathname, router]
+  )
+
+  // Sync state to URL if it differs from URL (e.g., Browser Back/Forward)
+  React.useEffect(() => {
+    const urlStatuses = searchParams.getAll('status').filter(isValidStatus)
+    const urlCustoms = searchParams.getAll('custom')
+    const urlDateRaw = searchParams.get('date')
+    const urlDate = urlDateRaw && isValidDateOption(urlDateRaw) ? urlDateRaw : 'all'
+    const urlSortRaw = searchParams.get('sort')
+    const urlSort = urlSortRaw && isValidSortOption(urlSortRaw) ? urlSortRaw : 'manual'
+    const urlQuery = searchParams.get('q') || ''
+
+    const isDifferent =
+      urlQuery !== filters.searchQuery ||
+      urlDate !== filters.dateRange ||
+      urlSort !== filters.sortOption ||
+      urlStatuses.join(',') !== filters.statusFilters.join(',') ||
+      urlCustoms.join(',') !== filters.customColumnFilters.join(',')
+
+    if (isDifferent) {
+      const nextFilters: FilterState = {
+        searchQuery: urlQuery,
+        statusFilters: urlStatuses,
+        customColumnFilters: urlCustoms,
+        dateRange: urlDate,
+        sortOption: urlSort,
+      }
+      setFilters(nextFilters)
+      setSearchInput(urlQuery)
+    }
+  }, [searchParams, filters])
+
+  // Validate custom column filters after initial load
+  const currentCustomFilters = filters.customColumnFilters
+  React.useEffect(() => {
+    // Wait until loading finishes. If there's an error, do not aggressively prune.
+    if (isLoading || error) return
+
+    const validIds = new Set(customColumns.map(c => c.id))
+    validIds.add('none')
+
+    const hasInvalid = currentCustomFilters.some(id => !validIds.has(id))
+
+    if (hasInvalid) {
+      const validFilters = currentCustomFilters.filter(id => validIds.has(id))
+      setFilters(prev => {
+        const nextFilters = { ...prev, customColumnFilters: validFilters }
+        // Update the URL to remove the invalid parameters silently
+        updateUrl(nextFilters)
+        return nextFilters
+      })
+    }
+  }, [isLoading, error, customColumns, currentCustomFilters, updateUrl])
+
+  // Effect for debouncing search query
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (filters.searchQuery !== searchInput) {
+        const nextFilters = { ...filters, searchQuery: searchInput }
+        setFilters(nextFilters)
+        updateUrl(nextFilters)
+      }
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchInput, filters, updateUrl])
 
   // Modal states
   const [isNewApplicationModalOpen, setIsNewApplicationModalOpen] = React.useState(false)
@@ -146,46 +264,53 @@ export default function ApplicationsPage() {
 
   // Handlers for Filters
   const handleSearchChange = (query: string) => {
-    setFilters(prev => ({ ...prev, searchQuery: query }))
+    setSearchInput(query)
   }
 
   const handleStatusFilterChange = (status: ApplicationStatus) => {
-    setFilters(prev => ({
-      ...prev,
-      statusFilters: prev.statusFilters.includes(status)
-        ? prev.statusFilters.filter(s => s !== status)
-        : [...prev.statusFilters, status],
-    }))
+    const newStatusFilters = filters.statusFilters.includes(status)
+      ? filters.statusFilters.filter(s => s !== status)
+      : [...filters.statusFilters, status]
+    const nextFilters = { ...filters, statusFilters: newStatusFilters }
+    setFilters(nextFilters)
+    updateUrl(nextFilters)
   }
 
   const handleCustomColumnFilterChange = (colId: string) => {
-    setFilters(prev => ({
-      ...prev,
-      customColumnFilters: prev.customColumnFilters.includes(colId)
-        ? prev.customColumnFilters.filter(c => c !== colId)
-        : [...prev.customColumnFilters, colId],
-    }))
+    const newCustomFilters = filters.customColumnFilters.includes(colId)
+      ? filters.customColumnFilters.filter(c => c !== colId)
+      : [...filters.customColumnFilters, colId]
+    const nextFilters = { ...filters, customColumnFilters: newCustomFilters }
+    setFilters(nextFilters)
+    updateUrl(nextFilters)
   }
 
   const handleDateRangeChange = (range: DateFilterOption) => {
-    setFilters(prev => ({ ...prev, dateRange: range }))
+    const nextFilters = { ...filters, dateRange: range }
+    setFilters(nextFilters)
+    updateUrl(nextFilters)
   }
 
   const handleSortChange = (sort: SortOption) => {
-    setFilters(prev => ({ ...prev, sortOption: sort }))
+    const nextFilters = { ...filters, sortOption: sort }
+    setFilters(nextFilters)
+    updateUrl(nextFilters)
     if (sort !== 'manual') {
       toast.info('Drag and drop is disabled while custom sorting is active')
     }
   }
 
   const handleClearFilters = () => {
-    setFilters(prev => ({
-      ...prev,
+    const nextFilters: FilterState = {
+      ...filters,
       statusFilters: [],
       customColumnFilters: [],
       dateRange: 'all',
       searchQuery: '',
-    }))
+    }
+    setFilters(nextFilters)
+    setSearchInput('')
+    updateUrl(nextFilters)
   }
 
   // Handle create application
@@ -369,7 +494,7 @@ export default function ApplicationsPage() {
           ) : (
             <div className="flex-1 flex flex-col h-full">
               <ApplicationsToolbar
-                filters={filters}
+                filters={displayFilters}
                 onSearchChange={handleSearchChange}
                 onStatusFilterChange={handleStatusFilterChange}
                 onCustomColumnFilterChange={handleCustomColumnFilterChange}
@@ -382,7 +507,7 @@ export default function ApplicationsPage() {
               />
 
               <FilterChips
-                filters={filters}
+                filters={displayFilters}
                 onRemoveStatus={handleStatusFilterChange}
                 onRemoveCustomColumn={handleCustomColumnFilterChange}
                 onClearDate={() => handleDateRangeChange('all')}
@@ -462,5 +587,25 @@ export default function ApplicationsPage() {
         />
       </div>
     </AnimatedBackground>
+  )
+}
+
+export default function ApplicationsPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <AnimatedBackground variant="minimal">
+          <div className="min-h-screen flex flex-col">
+            <main className="mx-auto w-full flex-1 px-4 py-4 flex flex-col">
+              <div className="flex flex-1 items-center justify-center p-8 glass-ultra rounded-glass shadow-glass-subtle">
+                <p className="text-label-secondary">Loading applications view...</p>
+              </div>
+            </main>
+          </div>
+        </AnimatedBackground>
+      }
+    >
+      <ApplicationsPageContent />
+    </React.Suspense>
   )
 }

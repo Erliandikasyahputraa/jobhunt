@@ -1,6 +1,8 @@
 import type { Application, ApplicationStatus } from '@/lib/types/database.types'
 
 export type DateFilterOption = 'all' | 'today' | '7d' | '30d' | 'this_month'
+export const VALID_DATE_OPTIONS: DateFilterOption[] = ['all', 'today', '7d', '30d', 'this_month']
+
 export type SortOption =
   | 'manual'
   | 'newest_applied'
@@ -8,6 +10,41 @@ export type SortOption =
   | 'newest_updated'
   | 'oldest_updated'
   | 'company_az'
+export const VALID_SORT_OPTIONS: SortOption[] = [
+  'manual',
+  'newest_applied',
+  'oldest_applied',
+  'newest_updated',
+  'oldest_updated',
+  'company_az',
+]
+
+export const VALID_STATUSES: ApplicationStatus[] = [
+  'wishlist',
+  'applied',
+  'phone_screen',
+  'assessment',
+  'take_home',
+  'interviewing',
+  'final_round',
+  'offered',
+  'accepted',
+  'rejected',
+  'withdrawn',
+  'ghosted',
+]
+
+export function isValidDateOption(val: string): val is DateFilterOption {
+  return VALID_DATE_OPTIONS.includes(val as DateFilterOption)
+}
+
+export function isValidSortOption(val: string): val is SortOption {
+  return VALID_SORT_OPTIONS.includes(val as SortOption)
+}
+
+export function isValidStatus(val: string): val is ApplicationStatus {
+  return VALID_STATUSES.includes(val as ApplicationStatus)
+}
 
 export interface FilterState {
   searchQuery: string
@@ -112,4 +149,20 @@ export function sortApplications(
         return 0
     }
   })
+}
+
+export function validateCustomColumnFilters(
+  currentFilters: string[],
+  customColumns: { id: string }[]
+): { hasInvalid: boolean; validFilters: string[] } {
+  const validIds = new Set(customColumns.map(c => c.id))
+  validIds.add('none')
+
+  const hasInvalid = currentFilters.some(id => !validIds.has(id))
+  if (!hasInvalid) {
+    return { hasInvalid: false, validFilters: currentFilters }
+  }
+
+  const validFilters = currentFilters.filter(id => validIds.has(id))
+  return { hasInvalid: true, validFilters }
 }
