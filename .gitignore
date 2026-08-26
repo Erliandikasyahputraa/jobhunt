@@ -106,3 +106,5 @@ docs/screenshots/*
 docs/journals
 logs.txt
 test-ck
+# Supabase local generated state
+supabase/.temp/
