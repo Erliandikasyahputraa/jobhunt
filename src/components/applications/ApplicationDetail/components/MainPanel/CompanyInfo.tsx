@@ -185,7 +185,7 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
       <div className={cn('space-y-6', className)}>
         <div className="glass-ultra rounded-glass-sm p-6">
           <h3 className="text-lg font-semibold text-label-primary mb-4 flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-copper" />
+            <Building2 className="w-5 h-5 text-foreground dark:text-copper" />
             {isEditing ? 'Edit Company Profile' : 'Create Company Profile'}
           </h3>
           <form onSubmit={isEditing ? handleUpdate : handleCreate} className="space-y-4">
@@ -496,8 +496,8 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
   // No company profile linked state
   return (
     <div className={cn('space-y-6', className)}>
-      <div className="glass-light bg-copper/10 border border-copper/30 rounded-glass-sm p-6 text-center">
-        <Building2 className="w-12 h-12 text-copper mx-auto mb-3" />
+      <div className="glass-light bg-muted/40 border border-border rounded-glass-sm p-6 text-center">
+        <Building2 className="w-12 h-12 text-label-secondary mx-auto mb-3" />
         <h3 className="text-lg font-semibold text-label-primary mb-2">No company profile linked</h3>
         <p className="text-label-secondary mb-4">
           This application is for <strong>{application.company_name}</strong> but it is not linked

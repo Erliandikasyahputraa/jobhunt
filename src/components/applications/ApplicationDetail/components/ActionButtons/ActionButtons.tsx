@@ -30,10 +30,10 @@ export function ActionButtons({
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            'inline-flex items-center gap-2 px-3 py-2 rounded-glass-sm text-sm font-medium',
-            'text-copper hover:text-copper/80 hover:bg-copper/10',
+            'inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-border bg-background shadow-xs',
+            'text-label-primary hover:text-foreground hover:bg-accent',
             'transition-all duration-200',
-            'focus:outline-none focus:ring-2 focus:ring-copper/50',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             isDisabled && 'opacity-50 cursor-not-allowed'
           )}
         >
@@ -48,11 +48,7 @@ export function ActionButtons({
         size="sm"
         onClick={onEdit}
         disabled={isDisabled}
-        className={cn(
-          'glass-ultra border-copper/30 text-copper',
-          'hover:bg-copper/10 hover:border-copper/50',
-          'transition-all duration-200'
-        )}
+        className="transition-all duration-200"
       >
         <Edit2 className="w-4 h-4 mr-2" />
         <span className="hidden sm:inline">Edit</span>

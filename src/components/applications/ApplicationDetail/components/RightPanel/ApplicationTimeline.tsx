@@ -77,7 +77,7 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
   const getEventColor = (type: TimelineEvent['type']) => {
     switch (type) {
       case 'status_change':
-        return 'text-copper'
+        return 'text-foreground dark:text-copper'
       case 'note_added':
         return 'text-blue-500'
       case 'interview_scheduled':
@@ -92,7 +92,7 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
   return (
     <div className={cn('p-6', className)}>
       <div className="flex items-center gap-2 mb-6">
-        <Clock className="w-5 h-5 text-copper" />
+        <Clock className="w-5 h-5 text-foreground dark:text-copper" />
         <h3 className="text-lg font-semibold text-label-primary">Timeline</h3>
       </div>
 
@@ -116,7 +116,7 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
               {/* Timeline line - connecting vertical line between dots */}
               {!isLast && (
                 <div
-                  className="absolute left-[7px] top-[16px] h-full border-l-2 border-copper/50"
+                  className="absolute left-[7px] top-[16px] h-full border-l-2 border-border dark:border-copper/50"
                   aria-hidden="true"
                 />
               )}

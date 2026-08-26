@@ -151,7 +151,7 @@ export function Documents({ _application, className }: DocumentsProps) {
         <Button
           onClick={handleUploadClick}
           variant="outline"
-          className="glass-ultra border-copper/30 text-copper hover:bg-copper/10 hover:border-copper/50"
+          className="border-border shadow-xs hover:bg-accent transition-all"
         >
           <Upload className="w-4 h-4 mr-2" />
           Upload Document
@@ -160,20 +160,16 @@ export function Documents({ _application, className }: DocumentsProps) {
 
       {isLoading ? (
         <div className="flex justify-center p-8">
-          <Loader2 className="w-8 h-8 animate-spin text-copper/50" />
+          <Loader2 className="w-8 h-8 animate-spin text-label-secondary" />
         </div>
       ) : documents.length === 0 ? (
-        <div className="glass-light bg-copper/10 border border-copper/30 rounded-glass-sm p-6 text-center">
-          <FileText className="w-12 h-12 text-copper mx-auto mb-3" />
+        <div className="glass-light bg-muted/40 border border-border rounded-glass-sm p-6 text-center">
+          <FileText className="w-12 h-12 text-label-secondary mx-auto mb-3" />
           <h3 className="text-lg font-semibold text-label-primary mb-2">No documents yet</h3>
           <p className="text-label-secondary mb-4">
             Upload resumes, cover letters, or other attachments for this application.
           </p>
-          <Button
-            onClick={handleUploadClick}
-            variant="default"
-            className="bg-copper hover:bg-copper/90 text-white"
-          >
+          <Button onClick={handleUploadClick} variant="default">
             <Plus className="w-4 h-4 mr-2" />
             Upload Document
           </Button>
@@ -183,11 +179,11 @@ export function Documents({ _application, className }: DocumentsProps) {
           {documents.map(doc => (
             <div
               key={doc.id}
-              className="glass-ultra rounded-glass-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-border/60 shadow-glass-subtle hover:border-copper/40 transition-all duration-200"
+              className="glass-ultra rounded-glass-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-border shadow-glass-subtle hover:border-foreground/30 dark:hover:border-copper/40 transition-all duration-200"
             >
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="p-2 bg-copper/10 rounded-md shrink-0 border border-copper/20">
-                  <File className="w-5 h-5 text-copper" />
+                <div className="p-2 bg-muted/60 dark:bg-copper/10 rounded-md shrink-0 border border-border dark:border-copper/20">
+                  <File className="w-5 h-5 text-foreground dark:text-copper" />
                 </div>
                 <div className="min-w-0">
                   <h4 className="text-sm font-medium text-label-primary truncate" title={doc.name}>
@@ -211,7 +207,7 @@ export function Documents({ _application, className }: DocumentsProps) {
                   aria-label="View document"
                   onClick={() => handleDownload(doc)}
                   disabled={isDownloadingId === doc.id}
-                  className="h-8 text-copper hover:text-copper-dark hover:bg-copper/10 font-medium transition-colors"
+                  className="h-8 text-label-primary hover:text-foreground hover:bg-accent font-medium transition-colors"
                 >
                   {isDownloadingId === doc.id ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />

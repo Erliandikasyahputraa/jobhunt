@@ -64,21 +64,26 @@ export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabN
             onClick={() => handleTabClick(tab.id)}
             className={cn(
               'w-full flex items-center gap-3 px-4 py-3 rounded-glass-sm transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-copper/50 focus:ring-offset-2',
+              'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
               isActive
-                ? 'glass-light bg-copper/10 text-copper border-l-4 border-copper shadow-sm'
-                : 'glass-ultra text-label-secondary hover:text-label-primary hover:glass-light',
+                ? 'glass-light bg-accent text-foreground border-l-4 border-foreground dark:border-copper dark:text-copper dark:bg-copper/10 shadow-xs'
+                : 'glass-ultra text-label-secondary hover:text-label-primary hover:bg-accent/50',
               disabled && 'opacity-50 cursor-not-allowed'
             )}
           >
             <Icon
               className={cn(
                 'w-5 h-5 flex-shrink-0',
-                isActive ? 'text-copper' : 'text-label-tertiary'
+                isActive ? 'text-foreground dark:text-copper' : 'text-label-tertiary'
               )}
             />
             <div className="flex-1 text-left">
-              <div className={cn('font-medium', isActive ? 'text-copper' : 'text-label-primary')}>
+              <div
+                className={cn(
+                  'font-medium',
+                  isActive ? 'text-foreground dark:text-copper font-semibold' : 'text-label-primary'
+                )}
+              >
                 {tab.label}
               </div>
               <div className="text-xs text-label-tertiary mt-0.5">{tab.description}</div>

@@ -95,7 +95,7 @@ export function ApplicationsToolbar({
               >
                 <input
                   type="checkbox"
-                  className="rounded border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
+                  className="rounded border-border text-foreground focus:ring-ring/40 shadow-xs transition-colors"
                   checked={filters.statusFilters.includes(status)}
                   onChange={() => onStatusFilterChange(status)}
                 />
@@ -113,7 +113,7 @@ export function ApplicationsToolbar({
             <label className="flex items-center gap-2 text-sm text-label-secondary hover:text-label-primary cursor-pointer transition-colors">
               <input
                 type="checkbox"
-                className="rounded border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
+                className="rounded border-border text-foreground focus:ring-ring/40 shadow-xs transition-colors"
                 checked={filters.customColumnFilters.includes('none')}
                 onChange={() => onCustomColumnFilterChange('none')}
               />
@@ -126,7 +126,7 @@ export function ApplicationsToolbar({
               >
                 <input
                   type="checkbox"
-                  className="rounded border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
+                  className="rounded border-border text-foreground focus:ring-ring/40 shadow-xs transition-colors"
                   checked={filters.customColumnFilters.includes(col.id)}
                   onChange={() => onCustomColumnFilterChange(col.id)}
                 />
@@ -155,7 +155,7 @@ export function ApplicationsToolbar({
                 <input
                   type="radio"
                   name="mobile-date-range"
-                  className="border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
+                  className="border-border text-foreground focus:ring-ring/40 shadow-xs transition-colors"
                   checked={filters.dateRange === opt.value}
                   onChange={() => onDateRangeChange(opt.value as DateFilterOption)}
                 />
@@ -185,7 +185,7 @@ export function ApplicationsToolbar({
                 <input
                   type="radio"
                   name="mobile-sort-option"
-                  className="border-border text-copper focus:ring-copper/40 shadow-xs transition-colors"
+                  className="border-border text-foreground focus:ring-ring/40 shadow-xs transition-colors"
                   checked={filters.sortOption === opt.value}
                   onChange={() => onSortChange(opt.value as SortOption)}
                 />
@@ -358,7 +358,7 @@ export function ApplicationsToolbar({
                 Clear All
               </Button>
               <Button
-                className="flex-1 bg-copper hover:bg-copper-dark text-white"
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                 onClick={() => setIsMobileFilterOpen(false)}
               >
                 Apply
