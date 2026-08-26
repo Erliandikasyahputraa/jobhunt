@@ -7,7 +7,11 @@ import { AnimatedBackground } from '@/components/layout/AnimatedBackground'
 import { KanbanBoardV3 } from '@/components/applications/KanbanBoardV3'
 import ApplicationForm from '@/components/applications/ApplicationForm'
 import { ApplicationDetail } from '@/components/applications/ApplicationDetail'
+import { ApplicationsToolbar } from '@/components/applications/ApplicationsToolbar'
+import { FilterChips } from '@/components/applications/FilterChips'
+import { ColumnManageModal } from '@/components/applications/ColumnManageModal'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import {
   Dialog,
   DialogContent,
@@ -15,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import type { Application } from '@/lib/types/database.types'
+import type { Application, ApplicationStatus } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
@@ -30,17 +34,31 @@ import {
 } from '@/app/dashboard/actions'
 import type { CustomColumnDB } from '@/lib/types/database.types'
 import { columnStorage } from '@/lib/storage/column-storage'
+import {
+  filterApplications,
+  type FilterState,
+  type SortOption,
+  type DateFilterOption,
+} from '@/lib/utils/filter-utils'
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = React.useState<Application[]>([])
   const [customColumns, setCustomColumns] = React.useState<CustomColumnDB[]>([])
-  const [filteredApplications, setFilteredApplications] = React.useState<Application[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = React.useState('')
+
+  // Filter State
+  const [filters, setFilters] = React.useState<FilterState>({
+    searchQuery: '',
+    statusFilters: [],
+    customColumnFilters: [],
+    dateRange: 'all',
+    sortOption: 'manual',
+  })
 
   // Modal states
   const [isNewApplicationModalOpen, setIsNewApplicationModalOpen] = React.useState(false)
+  const [isManageColumnsModalOpen, setIsManageColumnsModalOpen] = React.useState(false)
   const [selectedApplication, setSelectedApplication] = React.useState<Application | null>(null)
 
   // Operation loading states
@@ -107,7 +125,6 @@ export default function ApplicationsPage() {
         }
 
         setApplications(apps)
-        setFilteredApplications(apps)
         setCustomColumns(finalColumns)
       } catch (err) {
         console.error('Failed to load data:', err)
@@ -120,21 +137,56 @@ export default function ApplicationsPage() {
     loadData()
   }, [])
 
-  // Filter applications when search query changes
-  React.useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredApplications(applications)
-      return
-    }
+  const processedApplications = React.useMemo(() => {
+    // 1. Filter
+    const filtered = filterApplications(applications, filters)
+    // 2. Sorting is handled INSIDE KanbanBoardV3 because it needs to sort WITHIN groups.
+    return filtered
+  }, [applications, filters])
 
-    const query = searchQuery.toLowerCase().trim()
-    const filtered = applications.filter(
-      app =>
-        app.company_name.toLowerCase().includes(query) ||
-        app.job_title.toLowerCase().includes(query)
-    )
-    setFilteredApplications(filtered)
-  }, [searchQuery, applications])
+  // Handlers for Filters
+  const handleSearchChange = (query: string) => {
+    setFilters(prev => ({ ...prev, searchQuery: query }))
+  }
+
+  const handleStatusFilterChange = (status: ApplicationStatus) => {
+    setFilters(prev => ({
+      ...prev,
+      statusFilters: prev.statusFilters.includes(status)
+        ? prev.statusFilters.filter(s => s !== status)
+        : [...prev.statusFilters, status],
+    }))
+  }
+
+  const handleCustomColumnFilterChange = (colId: string) => {
+    setFilters(prev => ({
+      ...prev,
+      customColumnFilters: prev.customColumnFilters.includes(colId)
+        ? prev.customColumnFilters.filter(c => c !== colId)
+        : [...prev.customColumnFilters, colId],
+    }))
+  }
+
+  const handleDateRangeChange = (range: DateFilterOption) => {
+    setFilters(prev => ({ ...prev, dateRange: range }))
+  }
+
+  const handleSortChange = (sort: SortOption) => {
+    setFilters(prev => ({ ...prev, sortOption: sort }))
+    if (sort !== 'manual') {
+      toast.info('Drag and drop is disabled while custom sorting is active')
+    }
+  }
+
+  const handleClearFilters = () => {
+    setFilters(prev => ({
+      ...prev,
+      statusFilters: [],
+      customColumnFilters: [],
+      dateRange: 'all',
+      searchQuery: '',
+    }))
+  }
 
   // Handle create application
   const handleCreateApplication = async (formData: ApplicationFormData) => {
@@ -145,9 +197,11 @@ export default function ApplicationsPage() {
       const newApplication = await createApplicationAction(formData)
       setApplications(prev => [newApplication, ...prev])
       setIsNewApplicationModalOpen(false)
+      toast.success('Application added')
     } catch (err) {
       console.error('Failed to create application:', err)
-      setCreateError('Failed to create application. Please try again.')
+      setCreateError("Couldn't save changes. Please try again.")
+      toast.error("Couldn't save changes. Please try again.")
     } finally {
       setIsCreating(false)
     }
@@ -265,13 +319,16 @@ export default function ApplicationsPage() {
     )
   }
 
+  const isDatabaseEmpty = applications.length === 0
+  const isFilterEmpty = !isDatabaseEmpty && processedApplications.length === 0
+
   return (
     <AnimatedBackground variant="minimal">
       <div className="min-h-screen flex flex-col">
         <NavBar variant="authenticated" user={user} />
 
         <main className="mx-auto w-full flex-1 px-4 py-4 flex flex-col">
-          {applications.length === 0 && !isNewApplicationModalOpen ? (
+          {isDatabaseEmpty && !isNewApplicationModalOpen ? (
             <div className="flex flex-1 flex-col items-center justify-center min-h-[60vh] px-4">
               <div className="max-w-md text-center space-y-6 glass-ultra rounded-glass-lg p-8 shadow-glass-soft">
                 <div className="flex justify-center">
@@ -311,18 +368,52 @@ export default function ApplicationsPage() {
             </div>
           ) : (
             <div className="flex-1 flex flex-col h-full">
-              {/* Kanban Board (Detailed View) */}
-              <KanbanBoardV3
-                applications={filteredApplications}
+              <ApplicationsToolbar
+                filters={filters}
+                onSearchChange={handleSearchChange}
+                onStatusFilterChange={handleStatusFilterChange}
+                onCustomColumnFilterChange={handleCustomColumnFilterChange}
+                onDateRangeChange={handleDateRangeChange}
+                onSortChange={handleSortChange}
+                onClearFilters={handleClearFilters}
                 customColumns={customColumns}
-                onUpdateApplicationColumn={handleUpdateApplicationColumn}
-                onCustomColumnsChange={handleCustomColumnsChange}
-                onApplicationClick={handleApplicationClick}
-                isLoading={false}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
+                onManageColumns={() => setIsManageColumnsModalOpen(true)}
                 onNewApplication={handleOpenNewModal}
               />
+
+              <FilterChips
+                filters={filters}
+                onRemoveStatus={handleStatusFilterChange}
+                onRemoveCustomColumn={handleCustomColumnFilterChange}
+                onClearDate={() => handleDateRangeChange('all')}
+                onClearAll={handleClearFilters}
+                customColumns={customColumns}
+              />
+
+              {isFilterEmpty ? (
+                <div className="flex flex-1 items-center justify-center p-8 mt-4">
+                  <div className="text-center space-y-4">
+                    <h3 className="text-xl font-medium text-label-primary">
+                      No applications match your filters
+                    </h3>
+                    <p className="text-label-secondary">
+                      Try adjusting your search or active filters.
+                    </p>
+                    <Button onClick={handleClearFilters} variant="outline" className="glass-light">
+                      Clear all filters
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <KanbanBoardV3
+                  applications={processedApplications}
+                  customColumns={customColumns}
+                  onUpdateApplicationColumn={handleUpdateApplicationColumn}
+                  onApplicationClick={handleApplicationClick}
+                  isLoading={false}
+                  sortOption={filters.sortOption}
+                />
+              )}
             </div>
           )}
         </main>
@@ -361,6 +452,14 @@ export default function ApplicationsPage() {
             isOpen={true}
           />
         )}
+
+        {/* Column Manage Modal */}
+        <ColumnManageModal
+          isOpen={isManageColumnsModalOpen}
+          onClose={() => setIsManageColumnsModalOpen(false)}
+          customColumns={customColumns}
+          onCustomColumnsChange={handleCustomColumnsChange}
+        />
       </div>
     </AnimatedBackground>
   )

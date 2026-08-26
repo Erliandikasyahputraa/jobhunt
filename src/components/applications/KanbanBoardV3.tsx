@@ -22,12 +22,11 @@ import {
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { ChevronDown, ChevronRight, Settings, Plus, Search } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { ApplicationCard } from './ApplicationCard'
-import { ColumnManageModal } from './ColumnManageModal'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+
 import { cn } from '@/lib/utils'
 import type { Application, ApplicationStatus, CustomColumnDB } from '@/lib/types/database.types'
 import type { ColumnConfig } from '@/lib/types/column.types'
@@ -35,6 +34,9 @@ import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { getColumnIcon } from '@/lib/utils/column-icons'
 import { useHorizontalScroll } from '@/hooks/use-horizontal-scroll'
 import { reorderApplicationsAction } from '@/app/dashboard/actions'
+import { toast } from 'sonner'
+import type { SortOption } from '@/lib/utils/filter-utils'
+import { sortApplications } from '@/lib/utils/filter-utils'
 
 interface KanbanBoardV3Props {
   applications: Application[]
@@ -45,12 +47,9 @@ interface KanbanBoardV3Props {
     newStatus?: ApplicationStatus,
     customColumnId?: string | null
   ) => Promise<void>
-  onCustomColumnsChange: (columns: CustomColumnDB[]) => void
   onApplicationClick?: (application: Application) => void
   isLoading?: boolean
-  searchQuery?: string
-  onSearchChange?: (query: string) => void
-  onNewApplication?: () => void
+  sortOption?: SortOption
 }
 
 const CORE_EMPTY_STATE_GUIDANCE: Record<string, { heading: string; text: string; cta?: string }> = {
@@ -80,16 +79,19 @@ const CORE_EMPTY_STATE_GUIDANCE: Record<string, { heading: string; text: string;
 interface SortableApplicationProps {
   application: Application
   isDragging: boolean
+  isDragDisabled: boolean
   onApplicationClick?: (application: Application) => void
 }
 
 function SortableApplication({
   application,
   isDragging,
+  isDragDisabled,
   onApplicationClick,
 }: SortableApplicationProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: application.id,
+    disabled: isDragDisabled,
     data: {
       applicationId: application.id,
       currentStatus: application.status,
@@ -108,13 +110,15 @@ function SortableApplication({
       style={style}
       {...attributes}
       {...listeners}
-      className="touch-manipulation"
+      className={cn('touch-manipulation', isDragDisabled && 'cursor-default')}
     >
       <ApplicationCard
         application={application}
         isDragging={isDragging}
         onClick={() => onApplicationClick?.(application)}
-        dragHandleProps={listeners as unknown as Record<string, unknown>}
+        dragHandleProps={
+          isDragDisabled ? undefined : (listeners as unknown as Record<string, unknown>)
+        }
       />
     </div>
   )
@@ -156,6 +160,7 @@ interface KanbanColumnProps {
   column: ColumnConfig
   applications: Application[]
   activeId: string | null
+  sortOption: SortOption
   onApplicationClick?: (application: Application) => void
   isExpanded: boolean
   onToggleExpand: () => void
@@ -165,12 +170,15 @@ function DroppableKanbanColumn({
   column,
   applications,
   activeId,
+  sortOption,
   onApplicationClick,
   isExpanded,
   onToggleExpand,
 }: KanbanColumnProps) {
+  const isDragDisabled = sortOption !== 'manual'
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
+    disabled: isDragDisabled,
     data: {
       column,
     },
@@ -188,7 +196,9 @@ function DroppableKanbanColumn({
         'flex w-full md:w-auto min-w-0 md:min-w-[280px] lg:min-w-[320px] flex-1 flex-col rounded-glass p-3 shadow-glass-soft backdrop-blur-sm transition-all duration-200 md:snap-center',
         'md:h-full min-h-[150px] md:min-h-[200px]',
         'glass-light',
-        isOver && 'ring-2 ring-blue-400 ring-opacity-50 shadow-glass-dramatic scale-[1.02]'
+        isOver &&
+          !isDragDisabled &&
+          'ring-2 ring-blue-400 ring-opacity-50 shadow-glass-dramatic scale-[1.02]'
       )}
       data-testid={`column-${column.id}`}
     >
@@ -260,11 +270,12 @@ function DroppableKanbanColumn({
                 key={application.id}
                 application={application}
                 isDragging={application.id === activeId}
+                isDragDisabled={isDragDisabled}
                 onApplicationClick={onApplicationClick}
               />
             ))
           )}
-          {isOver && applications.length === 0 && (
+          {isOver && !isDragDisabled && applications.length === 0 && (
             <div className="flex items-center justify-center h-20 border-2 border-dashed border-blue-400 rounded-glass-sm animate-pulse">
               <span className="text-blue-400 text-sm font-medium">Drop to move here</span>
             </div>
@@ -279,19 +290,15 @@ export function KanbanBoardV3({
   applications,
   customColumns,
   onUpdateApplicationColumn,
-  onCustomColumnsChange,
   onApplicationClick,
   isLoading = false,
-  searchQuery = '',
-  onSearchChange,
-  onNewApplication,
+  sortOption = 'manual',
 }: KanbanBoardV3Props) {
   const [activeId, setActiveId] = React.useState<string | null>(null)
   const [optimisticApplications, setOptimisticApplications] =
     React.useState<Application[]>(applications)
   const [announcement, setAnnouncement] = React.useState<string>('')
   const [expandedColumns, setExpandedColumns] = React.useState<Set<string>>(new Set())
-  const [isManageModalOpen, setIsManageModalOpen] = React.useState(false)
 
   const kanbanScroll = useHorizontalScroll<HTMLDivElement>({ behavior: 'auto', throttleMs: 8 })
 
@@ -339,12 +346,17 @@ export function KanbanBoardV3({
       }
     })
 
+    // Sort within columns based on the current sortOption (default: position)
     Object.keys(grouped).forEach(columnId => {
-      grouped[columnId].sort((a, b) => a.position - b.position)
+      if (sortOption === 'manual') {
+        grouped[columnId].sort((a, b) => a.position - b.position)
+      } else {
+        grouped[columnId] = sortApplications(grouped[columnId], sortOption)
+      }
     })
 
     return grouped
-  }, [optimisticApplications, columns])
+  }, [optimisticApplications, columns, sortOption])
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -364,11 +376,13 @@ export function KanbanBoardV3({
   )
 
   const handleDragStart = (event: DragStartEvent) => {
+    if (sortOption !== 'manual') return
     const { active } = event
     setActiveId(active.id as string)
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
+    if (sortOption !== 'manual') return
     const { active, over } = event
 
     setActiveId(null)
@@ -439,10 +453,12 @@ export function KanbanBoardV3({
 
       try {
         await reorderApplicationsAction(positionUpdates)
+        toast.success('Application moved')
       } catch (error) {
         console.error('Failed to reorder applications:', error)
         setOptimisticApplications(applications)
         setAnnouncement(`Failed to reorder ${application.company_name}. Please try again.`)
+        toast.error("Couldn't move application. Please try again.")
       }
 
       return
@@ -477,10 +493,12 @@ export function KanbanBoardV3({
       const newPosition = maxPosition + 1
 
       await onUpdateApplicationColumn(applicationId, newPosition, newStatus, newCustomColumnId)
+      toast.success('Application moved')
     } catch (error) {
       console.error('Failed to update application column:', error)
       setOptimisticApplications(applications)
       setAnnouncement(`Failed to move ${application.company_name}. Please try again.`)
+      toast.error("Couldn't move application. Please try again.")
     }
   }
 
@@ -520,50 +538,6 @@ export function KanbanBoardV3({
         {announcement}
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 pb-0">
-        <h2 className="text-lg font-semibold text-label-primary shrink-0">Application Pipeline</h2>
-
-        {onSearchChange && (
-          <div className="flex-1 w-full sm:mx-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-label-tertiary" />
-              <Input
-                type="text"
-                placeholder="Search by company or job title..."
-                value={searchQuery}
-                onChange={e => onSearchChange(e.target.value)}
-                className="pl-10 glass-light rounded-glass-sm text-label-primary placeholder:text-label-tertiary shadow-glass-subtle w-full"
-                style={{
-                  border: '1px solid var(--glass-border-medium)',
-                  backdropFilter: 'blur(20px) saturate(180%)',
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
-          <Button
-            onClick={() => setIsManageModalOpen(true)}
-            size="sm"
-            className="btn-glass font-semibold flex-1 sm:flex-none"
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Manage Columns
-          </Button>
-          {onNewApplication && (
-            <Button
-              onClick={onNewApplication}
-              size="sm"
-              className="btn-glass font-semibold flex-1 sm:flex-none"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              New Application
-            </Button>
-          )}
-        </div>
-      </div>
-
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -585,6 +559,7 @@ export function KanbanBoardV3({
                 column={column}
                 applications={columnApplications[column.id] || []}
                 activeId={activeId}
+                sortOption={sortOption}
                 onApplicationClick={onApplicationClick}
                 isExpanded={expandedColumns.has(column.id)}
                 onToggleExpand={() => toggleColumnExpansion(column.id)}
@@ -601,13 +576,6 @@ export function KanbanBoardV3({
           ) : null}
         </DragOverlay>
       </DndContext>
-
-      <ColumnManageModal
-        isOpen={isManageModalOpen}
-        onClose={() => setIsManageModalOpen(false)}
-        customColumns={customColumns}
-        onCustomColumnsChange={onCustomColumnsChange}
-      />
     </div>
   )
 }

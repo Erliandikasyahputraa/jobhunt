@@ -79,12 +79,7 @@ describe('KanbanBoardV3', () => {
   describe('Component Rendering', () => {
     it('renders all 5 default columns', async () => {
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       await waitFor(() => {
@@ -103,52 +98,12 @@ describe('KanbanBoardV3', () => {
       expect(screen.getByTestId('column-closed')).toBeInTheDocument()
     })
 
-    it('renders unified header with title and actions', async () => {
-      const onNewApplication = vi.fn()
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-          onNewApplication={onNewApplication}
-        />
-      )
-
-      await waitFor(() => {
-        expect(screen.getByText('Application Pipeline')).toBeInTheDocument()
-        expect(screen.getByText('Manage Columns')).toBeInTheDocument()
-        expect(screen.getByText('New Application')).toBeInTheDocument()
-      })
-    })
-
-    it('renders search functionality when onSearchChange is provided', async () => {
-      const onSearchChange = vi.fn()
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-          onSearchChange={onSearchChange}
-          searchQuery="test query"
-        />
-      )
-
-      await waitFor(() => {
-        const searchInput = screen.getByPlaceholderText('Search by company or job title...')
-        expect(searchInput).toBeInTheDocument()
-        expect(searchInput).toHaveValue('test query')
-      })
-    })
-
     it('shows loading state when isLoading is true', () => {
       render(
         <KanbanBoardV3
           applications={[]}
           customColumns={[]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
           isLoading={true}
         />
       )
@@ -172,7 +127,6 @@ describe('KanbanBoardV3', () => {
           applications={applications}
           customColumns={[]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
         />
       )
 
@@ -207,7 +161,6 @@ describe('KanbanBoardV3', () => {
           applications={applications}
           customColumns={[]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
         />
       )
 
@@ -222,12 +175,7 @@ describe('KanbanBoardV3', () => {
   describe('Empty States', () => {
     it('displays contextual empty state for saved column', async () => {
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       await waitFor(() => {
@@ -240,12 +188,7 @@ describe('KanbanBoardV3', () => {
 
     it('displays contextual empty state for applied column', async () => {
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       await waitFor(() => {
@@ -265,7 +208,6 @@ describe('KanbanBoardV3', () => {
           applications={applications}
           customColumns={[]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
         />
       )
 
@@ -281,47 +223,6 @@ describe('KanbanBoardV3', () => {
   })
 
   describe('Column Management', () => {
-    it('opens column management modal when Manage Columns is clicked', async () => {
-      const user = userEvent.setup()
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
-      )
-
-      await waitFor(() => {
-        expect(screen.getByText('Manage Columns')).toBeInTheDocument()
-      })
-
-      await user.click(screen.getByText('Manage Columns'))
-
-      expect(screen.getByTestId('column-manage-modal')).toBeInTheDocument()
-    })
-
-    it('closes modal when close button is clicked', async () => {
-      const user = userEvent.setup()
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
-      )
-
-      await waitFor(() => {
-        expect(screen.getByText('Manage Columns')).toBeInTheDocument()
-      })
-
-      await user.click(screen.getByText('Manage Columns'))
-      await user.click(screen.getByText('Close'))
-
-      expect(screen.queryByTestId('column-manage-modal')).not.toBeInTheDocument()
-    })
-
     it('shows Custom badge for custom columns', async () => {
       const customColumn: ColumnConfig = {
         id: 'custom_test',
@@ -336,7 +237,6 @@ describe('KanbanBoardV3', () => {
           applications={[]}
           customColumns={[customColumn as any]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
         />
       )
 
@@ -350,12 +250,7 @@ describe('KanbanBoardV3', () => {
   describe('Interview Column Expansion', () => {
     it('shows expand button for interview column', async () => {
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       await waitFor(() => {
@@ -370,12 +265,7 @@ describe('KanbanBoardV3', () => {
     it('toggles expansion when clicked', async () => {
       const user = userEvent.setup()
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       await waitFor(() => {
@@ -395,94 +285,13 @@ describe('KanbanBoardV3', () => {
 
     it('other columns do not have expand buttons', () => {
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       expect(screen.queryByTestId('toggle-expand-saved')).not.toBeInTheDocument()
       expect(screen.queryByTestId('toggle-expand-applied')).not.toBeInTheDocument()
       expect(screen.queryByTestId('toggle-expand-offers')).not.toBeInTheDocument()
       expect(screen.queryByTestId('toggle-expand-closed')).not.toBeInTheDocument()
-    })
-  })
-
-  describe('Search Functionality', () => {
-    it('calls onSearchChange when search input changes', async () => {
-      const user = userEvent.setup()
-      const onSearchChange = vi.fn()
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-          onSearchChange={onSearchChange}
-        />
-      )
-
-      const searchInput = await screen.findByPlaceholderText('Search by company or job title...')
-      expect(searchInput).toBeInTheDocument()
-
-      await user.type(searchInput, 'Google')
-
-      expect(onSearchChange).toHaveBeenCalled()
-      expect(onSearchChange).toHaveBeenCalledWith(expect.any(String))
-    })
-
-    it('does not render search when onSearchChange is not provided', () => {
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
-      )
-
-      expect(
-        screen.queryByPlaceholderText('Search by company or job title...')
-      ).not.toBeInTheDocument()
-    })
-  })
-
-  describe('New Application Button', () => {
-    it('calls onNewApplication when button is clicked', async () => {
-      const user = userEvent.setup()
-      const onNewApplication = vi.fn()
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-          onNewApplication={onNewApplication}
-        />
-      )
-
-      await waitFor(() => {
-        expect(screen.getByText('New Application')).toBeInTheDocument()
-      })
-
-      await user.click(screen.getByText('New Application'))
-
-      expect(onNewApplication).toHaveBeenCalledTimes(1)
-    })
-
-    it('does not render new application button when onNewApplication is not provided', () => {
-      render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
-      )
-
-      expect(screen.queryByText('New Application')).not.toBeInTheDocument()
     })
   })
 
@@ -497,7 +306,6 @@ describe('KanbanBoardV3', () => {
           applications={[application]}
           customColumns={[]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
           onApplicationClick={onApplicationClick}
         />
       )
@@ -515,12 +323,7 @@ describe('KanbanBoardV3', () => {
   describe('Drag and Drop Setup', () => {
     it('renders DnD context with correct test ID', () => {
       const { container } = render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       const dndContext = container.querySelector('[data-testid="kanban-dnd-context"]')
@@ -535,7 +338,6 @@ describe('KanbanBoardV3', () => {
           applications={applications}
           customColumns={[]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
         />
       )
 
@@ -549,12 +351,7 @@ describe('KanbanBoardV3', () => {
   describe('Accessibility', () => {
     it('uses semantic HTML with proper ARIA labels', () => {
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       expect(screen.getByRole('region')).toHaveAttribute(
@@ -565,12 +362,7 @@ describe('KanbanBoardV3', () => {
 
     it('provides screen reader announcements for status changes', () => {
       const { container } = render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       const liveRegion = container.querySelector('[aria-live="polite"][role="status"]')
@@ -579,12 +371,7 @@ describe('KanbanBoardV3', () => {
 
     it('expand buttons have proper ARIA labels', async () => {
       render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       await waitFor(() => {
@@ -597,12 +384,7 @@ describe('KanbanBoardV3', () => {
   describe('Responsive Design', () => {
     it('uses horizontal scroll for mobile overflow', () => {
       const { container } = render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       const dndContext = container.querySelector('[data-testid="kanban-dnd-context"]')
@@ -611,12 +393,7 @@ describe('KanbanBoardV3', () => {
 
     it('columns have responsive sizing', () => {
       const { container } = render(
-        <KanbanBoardV3
-          applications={[]}
-          customColumns={[]}
-          onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
-        />
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
       )
 
       const columns = container.querySelectorAll('[data-testid^="column-"]')
@@ -642,12 +419,10 @@ describe('KanbanBoardV3', () => {
           applications={manyApplications}
           customColumns={[]}
           onUpdateApplicationColumn={vi.fn()}
-          onCustomColumnsChange={vi.fn()}
         />
       )
 
       expect(container).toBeTruthy()
-      expect(screen.getByText('Application Pipeline')).toBeInTheDocument()
     })
   })
 })
