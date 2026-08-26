@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Search, Settings, Plus, Filter, ArrowUpDown } from 'lucide-react'
+import { Search, Settings, Plus, Filter, ArrowUpDown, Download, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -49,6 +49,8 @@ interface ApplicationsToolbarProps {
   customColumns: CustomColumnDB[]
   onManageColumns: () => void
   onNewApplication?: () => void
+  onExport?: () => void
+  isExporting?: boolean
 }
 
 export function ApplicationsToolbar({
@@ -62,6 +64,8 @@ export function ApplicationsToolbar({
   customColumns,
   onManageColumns,
   onNewApplication,
+  onExport,
+  isExporting,
 }: ApplicationsToolbarProps) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false)
 
@@ -304,6 +308,22 @@ export function ApplicationsToolbar({
           <Settings className="h-4 w-4 mr-2" />
           Columns
         </Button>
+        {onExport && (
+          <Button
+            onClick={onExport}
+            size="sm"
+            variant="outline"
+            className="glass-light font-medium"
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            {isExporting ? 'Exporting...' : 'Export CSV'}
+          </Button>
+        )}
         {onNewApplication && (
           <Button onClick={onNewApplication} size="sm" className="btn-glass font-semibold">
             <Plus className="mr-2 h-4 w-4" />
@@ -351,6 +371,22 @@ export function ApplicationsToolbar({
           <Settings className="h-4 w-4" />
           <span className="sr-only">Columns</span>
         </Button>
+        {onExport && (
+          <Button
+            onClick={onExport}
+            size="sm"
+            variant="outline"
+            className="glass-light px-3"
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            <span className="sr-only">Export CSV</span>
+          </Button>
+        )}
         {onNewApplication && (
           <Button onClick={onNewApplication} size="sm" className="btn-glass px-3">
             <Plus className="h-4 w-4" />

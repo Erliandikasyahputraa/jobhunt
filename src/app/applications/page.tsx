@@ -43,6 +43,11 @@ import {
   isValidSortOption,
   isValidDateOption,
 } from '@/lib/utils/filter-utils'
+import {
+  generateApplicationsCSV,
+  generateFilename,
+  triggerDownload,
+} from '@/lib/utils/export-utils'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 
 function ApplicationsPageContent() {
@@ -182,6 +187,7 @@ function ApplicationsPageContent() {
   // Operation loading states
   const [isCreating, setIsCreating] = React.useState(false)
   const [createError, setCreateError] = React.useState<string | null>(null)
+  const [isExporting, setIsExporting] = React.useState(false)
 
   // User state for NavBar
   const [user, setUser] = React.useState<User | null>(null)
@@ -404,6 +410,27 @@ function ApplicationsPageContent() {
     setCreateError(null)
   }
 
+  // Handle export
+  const handleExport = () => {
+    if (processedApplications.length === 0) {
+      toast.error("Couldn't export applications. Please try again.")
+      return
+    }
+
+    setIsExporting(true)
+    try {
+      const csvContent = generateApplicationsCSV(processedApplications, customColumns)
+      const filename = generateFilename()
+      triggerDownload(csvContent, filename)
+      toast.success('Applications exported')
+    } catch (err) {
+      console.error('Failed to export CSV:', err)
+      toast.error("Couldn't export applications. Please try again.")
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <AnimatedBackground variant="minimal">
@@ -504,6 +531,8 @@ function ApplicationsPageContent() {
                 customColumns={customColumns}
                 onManageColumns={() => setIsManageColumnsModalOpen(true)}
                 onNewApplication={handleOpenNewModal}
+                onExport={handleExport}
+                isExporting={isExporting}
               />
 
               <FilterChips
