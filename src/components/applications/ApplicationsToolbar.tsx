@@ -207,17 +207,13 @@ export function ApplicationsToolbar({
       {/* Search Bar */}
       <div className="flex-1 w-full lg:mx-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-label-tertiary" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-900 dark:text-label-tertiary" />
           <Input
             type="text"
             placeholder="Search by company or job title..."
             value={filters.searchQuery}
             onChange={e => onSearchChange(e.target.value)}
-            className="pl-10 glass-light rounded-glass-sm text-label-primary placeholder:text-label-tertiary shadow-glass-subtle w-full"
-            style={{
-              border: '1px solid var(--glass-border-medium)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-            }}
+            className="pl-10 bg-white border-neutral-900/40 focus-visible:border-neutral-900 text-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-light dark:border-border dark:text-foreground dark:placeholder:text-label-tertiary rounded-md w-full transition-all"
           />
         </div>
       </div>
@@ -226,11 +222,15 @@ export function ApplicationsToolbar({
       <div className="hidden sm:flex items-center gap-2 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="glass-light font-medium relative">
-              <Filter className="h-4 w-4 mr-2 text-label-secondary" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium relative hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
+            >
+              <Filter className="h-4 w-4 mr-2 text-neutral-900 dark:text-foreground" />
               Filter
               {activeFilterCount > 0 && (
-                <span className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                <span className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 text-white dark:bg-blue-500 text-[10px] font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -281,8 +281,12 @@ export function ApplicationsToolbar({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="glass-light font-medium">
-              <ArrowUpDown className="h-4 w-4 mr-2 text-label-secondary" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
+            >
+              <ArrowUpDown className="h-4 w-4 mr-2 text-neutral-900 dark:text-foreground" />
               Sort
             </Button>
           </DropdownMenuTrigger>
@@ -304,8 +308,13 @@ export function ApplicationsToolbar({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button onClick={onManageColumns} size="sm" className="btn-glass font-semibold">
-          <Settings className="h-4 w-4 mr-2" />
+        <Button
+          onClick={onManageColumns}
+          variant="outline"
+          size="sm"
+          className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
+        >
+          <Settings className="h-4 w-4 mr-2 text-neutral-900 dark:text-foreground" />
           Columns
         </Button>
         {onExport && (
@@ -313,20 +322,25 @@ export function ApplicationsToolbar({
             onClick={onExport}
             size="sm"
             variant="outline"
-            className="glass-light font-medium"
+            className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
             disabled={isExporting}
           >
             {isExporting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin text-neutral-900 dark:text-foreground" />
             ) : (
-              <Download className="mr-2 h-4 w-4" />
+              <Download className="mr-2 h-4 w-4 text-neutral-900 dark:text-foreground" />
             )}
             {isExporting ? 'Exporting...' : 'Export CSV'}
           </Button>
         )}
         {onNewApplication && (
-          <Button onClick={onNewApplication} size="sm" className="btn-glass font-semibold">
-            <Plus className="mr-2 h-4 w-4" />
+          <Button
+            onClick={onNewApplication}
+            size="sm"
+            variant="outline"
+            className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
+          >
+            <Plus className="mr-2 h-4 w-4 text-neutral-900 dark:text-foreground" />
             New
           </Button>
         )}
@@ -336,11 +350,15 @@ export function ApplicationsToolbar({
       <div className="flex sm:hidden items-center gap-2 w-full">
         <Dialog open={isMobileFilterOpen} onOpenChange={setIsMobileFilterOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="glass-light font-medium flex-1 relative">
-              <Filter className="h-4 w-4 mr-2 text-label-secondary" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium flex-1 relative hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
+            >
+              <Filter className="h-4 w-4 mr-2 text-neutral-900 dark:text-foreground" />
               Filter & Sort
               {activeFilterCount > 0 && (
-                <span className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                <span className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 text-white dark:bg-blue-500 text-[10px] font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -367,8 +385,13 @@ export function ApplicationsToolbar({
           </DialogContent>
         </Dialog>
 
-        <Button onClick={onManageColumns} size="sm" variant="outline" className="glass-light px-3">
-          <Settings className="h-4 w-4" />
+        <Button
+          onClick={onManageColumns}
+          size="sm"
+          variant="outline"
+          className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all px-3 shadow-xs"
+        >
+          <Settings className="h-4 w-4 text-neutral-900 dark:text-foreground" />
           <span className="sr-only">Columns</span>
         </Button>
         {onExport && (
@@ -376,20 +399,25 @@ export function ApplicationsToolbar({
             onClick={onExport}
             size="sm"
             variant="outline"
-            className="glass-light px-3"
+            className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all px-3 shadow-xs"
             disabled={isExporting}
           >
             {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin text-neutral-900 dark:text-foreground" />
             ) : (
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4 text-neutral-900 dark:text-foreground" />
             )}
             <span className="sr-only">Export CSV</span>
           </Button>
         )}
         {onNewApplication && (
-          <Button onClick={onNewApplication} size="sm" className="btn-glass px-3">
-            <Plus className="h-4 w-4" />
+          <Button
+            onClick={onNewApplication}
+            size="sm"
+            variant="outline"
+            className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all px-3 shadow-xs"
+          >
+            <Plus className="h-4 w-4 text-neutral-900 dark:text-foreground" />
             <span className="sr-only">New Application</span>
           </Button>
         )}

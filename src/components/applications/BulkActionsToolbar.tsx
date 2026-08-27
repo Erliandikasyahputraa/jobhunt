@@ -122,12 +122,12 @@ export function BulkActionsToolbar({
                 variant="outline"
                 size="sm"
                 disabled={isMutating}
-                className="glass-light font-medium flex items-center gap-1.5"
+                className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium flex items-center gap-1.5 hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
                 data-testid="bulk-status-trigger"
               >
-                <Layers className="h-3.5 w-3.5 text-label-secondary" />
+                <Layers className="h-3.5 w-3.5 text-neutral-900 dark:text-label-secondary" />
                 <span>Status</span>
-                <ChevronDown className="h-3 w-3 text-label-tertiary" />
+                <ChevronDown className="h-3 w-3 text-neutral-900 dark:text-label-tertiary" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 max-h-[300px] overflow-y-auto">
@@ -153,12 +153,12 @@ export function BulkActionsToolbar({
                 variant="outline"
                 size="sm"
                 disabled={isMutating}
-                className="glass-light font-medium flex items-center gap-1.5"
+                className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium flex items-center gap-1.5 hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
                 data-testid="bulk-column-trigger"
               >
-                <Columns className="h-3.5 w-3.5 text-label-secondary" />
+                <Columns className="h-3.5 w-3.5 text-neutral-900 dark:text-label-secondary" />
                 <span>Column</span>
-                <ChevronDown className="h-3 w-3 text-label-tertiary" />
+                <ChevronDown className="h-3 w-3 text-neutral-900 dark:text-label-tertiary" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 max-h-[300px] overflow-y-auto">
@@ -190,7 +190,7 @@ export function BulkActionsToolbar({
             size="sm"
             disabled={isMutating}
             onClick={() => setIsDeleteDialogOpen(true)}
-            className="font-medium flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white shadow-xs border border-red-700/20 disabled:opacity-50 disabled:pointer-events-none transition-all"
+            className="font-medium flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white shadow-xs border border-red-700/20 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] transition-all"
             data-testid="bulk-delete-trigger"
           >
             {isMutating ? (
@@ -207,7 +207,7 @@ export function BulkActionsToolbar({
             size="sm"
             disabled={isMutating}
             onClick={onClearSelection}
-            className="text-label-secondary hover:text-label-primary px-2"
+            className="text-neutral-900 hover:bg-neutral-100 dark:text-label-secondary dark:hover:text-label-primary px-2 active:scale-[0.98] transition-all"
             aria-label="Clear selection"
             data-testid="bulk-clear-selection-btn"
           >
