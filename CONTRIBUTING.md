@@ -1,6 +1,6 @@
-# Contributing to JobHunt
+# Contributing to Anti-Nganggur
 
-Thank you for your interest in contributing to JobHunt! This guide will help you get started.
+Thank you for your interest in contributing to Anti-Nganggur! This guide will help you get started.
 
 ## 🤝 How to Contribute
 
@@ -35,7 +35,7 @@ We welcome contributions of all kinds:
 1. **Fork and clone the repository**
 
 ```bash
-git clone https://github.com/kaitranntt/jobhunt.git
+git clone https://github.com/Erliandikasyahputraa/jobhunt.git
 cd jobhunt
 ```
 
@@ -54,8 +54,6 @@ docker-compose up -d
 
 # Access at http://localhost:3000
 ```
-
-See [DOCKER.md](./DOCKER.md) for detailed Docker instructions.
 
 **Method B: Local Development**
 

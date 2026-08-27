@@ -16,23 +16,23 @@ export function ValuePropositionsSection() {
               <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl gradient-brand text-white">
                 <Briefcase className="h-7 w-7" />
               </div>
-              <h3 className="mb-4 text-2xl font-bold text-foreground">For Job Seekers</h3>
+              <h3 className="mb-4 text-2xl font-bold text-foreground">Untuk Job Seeker</h3>
               <ul className="space-y-3 text-foreground/80">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Simple Kanban board interface</span>
+                  <span>Papan Kanban visual yang simpel & jelas</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Mobile-ready for on-the-go tracking</span>
+                  <span>Responsif di ponsel maupun laptop</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Your data stays private</span>
+                  <span>Data pribadi aman dan terisolasi</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Export anytime, no lock-in</span>
+                  <span>Ekspor data kapan saja tanpa batasan</span>
                 </li>
               </ul>
             </div>
@@ -42,49 +42,49 @@ export function ValuePropositionsSection() {
               <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl gradient-brand text-white">
                 <Code className="h-7 w-7" />
               </div>
-              <h3 className="mb-4 text-2xl font-bold text-foreground">For Developers</h3>
+              <h3 className="mb-4 text-2xl font-bold text-foreground">Untuk Developer</h3>
               <ul className="space-y-3 text-foreground/80">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Fully customizable source code</span>
+                  <span>Source code 100% terbuka & modular</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Full source code access</span>
+                  <span>Next.js 15 App Router & Server Actions</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>API available for integrations</span>
+                  <span>Supabase PostgreSQL dengan Row Level Security</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Modern tech stack (Next.js 15)</span>
+                  <span>600+ automated test suite terintegrasi</span>
                 </li>
               </ul>
             </div>
 
-            {/* For Teams */}
+            {/* For Community */}
             <div className="glass rounded-2xl p-8 shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
               <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl gradient-brand text-white">
                 <Users className="h-7 w-7" />
               </div>
-              <h3 className="mb-4 text-2xl font-bold text-foreground">For Teams</h3>
+              <h3 className="mb-4 text-2xl font-bold text-foreground">Bebas & Terbuka</h3>
               <ul className="space-y-3 text-foreground/80">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Self-host for complete control</span>
+                  <span>Bisa di-self-host secara mandiri</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>GDPR and compliance ready</span>
+                  <span>Lisensi MIT bebas digunakan siapa saja</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Zero per-user licensing costs</span>
+                  <span>Tanpa langganan tersembunyi</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>On-premise deployment option</span>
+                  <span>Didukung komunitas dan feedback aktif</span>
                 </li>
               </ul>
             </div>

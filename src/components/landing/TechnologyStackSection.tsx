@@ -41,20 +41,20 @@ export function TechnologyStackSection() {
 
   const developerBenefits = [
     {
-      title: 'Type-Safe Throughout',
-      description: 'TypeScript + Zod schemas catch errors before production',
+      title: 'Type-Safe Menyeluruh',
+      description: 'Validasi skema TypeScript + Zod mencegah bug sejak tahap penulisan kode',
     },
     {
-      title: 'Optimized Performance',
-      description: 'React Server Components and automatic code splitting',
+      title: 'Performa Optimal',
+      description: 'React Server Components dan Server Actions tanpa round-trip waterfall',
     },
     {
-      title: 'Modern DX',
-      description: 'Hot reload, ESLint, Prettier - batteries included',
+      title: 'Desain Glassmorphism',
+      description: 'Antarmuka modern berbasis Tailwind CSS dan token warna yang nyaman di mata',
     },
     {
-      title: 'Test Coverage',
-      description: 'Vitest for fast unit and integration testing',
+      title: 'Keamanan Multi-Tenant',
+      description: 'PostgreSQL Row Level Security (RLS) menjamin privasi data setiap pengguna',
     },
   ]
 
@@ -64,10 +64,10 @@ export function TechnologyStackSection() {
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Built with Modern, <span className="gradient-brand-text">Production-Ready Tools</span>
+              Dibangun dengan Teknologi <span className="gradient-brand-text">Modern & Handal</span>
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-foreground/90">
-              Fast, secure, and scalable technology choices you can trust
+              Pondasi arsitektur yang cepat, aman, dan siap digunakan untuk kebutuhan nyata
             </p>
           </div>
 
@@ -98,7 +98,7 @@ export function TechnologyStackSection() {
           {/* Developer Benefits */}
           <div className="glass-strong rounded-2xl p-8 sm:p-12">
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
-              Why Developers Love This Stack
+              Keunggulan Arsitektur & Keamanan
             </h3>
             <div className="grid gap-6 md:grid-cols-2">
               {developerBenefits.map(benefit => (

@@ -31,16 +31,15 @@ export function HeroSection() {
             <span className="block text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
               <span className="gradient-brand-text animate-gradient">Anti-Nganggur</span>
             </span>
-            <span className="mt-2 block text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              <span className="gradient-brand-text">Job Application Tracker</span>
+            <span className="mt-2 block text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl text-foreground/90">
+              Tempat Kamu Ngatur Perjalanan Cari Kerja Tanpa Ribet
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="mx-auto mb-12 max-w-4xl text-lg text-foreground/90 sm:text-xl lg:text-2xl animate-slide-up opacity-0 stagger-3">
-            Kelola dan lacak semua lamaran kerja kamu secara rapi dengan Kanban board modern.
-            <br />
-            Gratis, cepat, dan data kamu terisolasi secara aman.
+          <p className="mx-auto mb-12 max-w-3xl text-lg text-foreground/80 sm:text-xl animate-slide-up opacity-0 stagger-3">
+            Simpan lowongan, lacak status, kelola dokumen, dan pantau perkembangan lamaran kerja
+            kamu dalam satu Kanban board modern yang rapi.
           </p>
 
           {/* Dual CTA Buttons */}

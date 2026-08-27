@@ -1,6 +1,6 @@
 # macOS 26 "Liquid Glass" Design System
 
-Production-ready design tokens for JobHunt's macOS 26-inspired UI redesign.
+Production-ready design tokens for Anti-Nganggur's macOS-inspired UI design.
 
 ## Overview
 

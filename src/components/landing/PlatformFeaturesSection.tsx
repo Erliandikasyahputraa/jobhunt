@@ -9,44 +9,44 @@ export function PlatformFeaturesSection() {
   const features = [
     {
       icon: Kanban,
-      title: 'Customizable Kanban Board',
+      title: 'Papan Kanban Interaktif',
       description:
-        'Drag-and-drop interface with stages that match your workflow. Add custom columns and automate transitions.',
+        'Geser dan susun kartu lamaran sesuai tahapan proses seleksi kamu dengan animasi transisi yang mulus.',
       gradient: 'from-purple-500 to-blue-500',
     },
     {
       icon: Target,
-      title: 'Smart Application Tracking',
+      title: 'Pelacakan Lamaran Rapi',
       description:
-        'Add custom fields for your needs. Track salary, locations, contacts, and any data points you want.',
+        'Catat ekspektasi gaji, kontak recruiter, link lowongan, dan status follow-up setiap lamaran kerja.',
       gradient: 'from-blue-500 to-cyan-500',
     },
     {
       icon: Download,
-      title: 'Your Data, Your Export',
+      title: 'Ekspor Data Mudah',
       description:
-        'Your data belongs to you. Export to CSV, JSON anytime. No vendor lock-in, complete data portability.',
+        'Download seluruh rekap data lamaran kerja kamu ke format CSV kapan saja tanpa batasan.',
       gradient: 'from-cyan-500 to-teal-500',
     },
     {
       icon: Lock,
-      title: 'Privacy First',
+      title: 'Privasi & Isolasi Terjamin',
       description:
-        'Self-host for complete control. Bank-level encryption on cloud. Your job search data stays yours.',
+        'Data kamu terlindungi penuh dengan PostgreSQL Row Level Security. Tidak ada pengguna lain yang bisa melihat datamu.',
       gradient: 'from-teal-500 to-green-500',
     },
     {
       icon: BarChart3,
-      title: 'Analytics Dashboard',
+      title: 'Pantau Perkembangan',
       description:
-        'Track response rates and conversion metrics. Understand what works and optimize your strategy.',
+        'Lihat ringkasan status lamaran yang sedang aktif, interview terjadwal, hingga riwayat tawaran kerja.',
       gradient: 'from-green-500 to-emerald-500',
     },
     {
       icon: Wrench,
-      title: 'Open Source Freedom',
+      title: '100% Open Source',
       description:
-        'Customize anything. Add features you need. Contribute improvements back to the community.',
+        'Bebas biaya lisensi, bebas iklan, dan kamu bisa melakukan self-host kapan saja di server sendiri.',
       gradient: 'from-purple-500 to-pink-500',
     },
   ]
@@ -57,10 +57,10 @@ export function PlatformFeaturesSection() {
         <div className="container mx-auto max-w-7xl">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Powerful Features, <span className="gradient-brand-text">Your Control</span>
+              Fitur Lengkap, <span className="gradient-brand-text">Kendali di Tanganmu</span>
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-foreground/90">
-              Everything you need to manage your job search, with the freedom to customize
+              Semua kebutuhan mengelola perjalanan karir dan pencarian kerja dalam satu tempat
             </p>
           </div>
 

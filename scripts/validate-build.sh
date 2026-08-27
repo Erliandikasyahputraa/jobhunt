@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Build validation script for JobHunt
+# Build validation script for Anti-Nganggur
 # Catches common issues before deployment
 
 set -e  # Exit on any error
 
-echo "🔍 JobHunt Build Validation"
-echo "=========================="
+echo "🔍 Anti-Nganggur Build Validation"
+echo "=================================="
 echo ""
 
 # Colors for output

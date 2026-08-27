@@ -8,34 +8,29 @@ import { AnimatedSection } from './AnimatedSection'
 export function FAQSection() {
   const faqs = [
     {
-      question: 'Is this really free?',
+      question: 'Apakah aplikasi ini benar-benar gratis?',
       answer:
-        'Yes! Anti-Nganggur is MIT licensed open-source software. The cloud-hosted version is free forever with no hidden costs. You can also self-host for complete control at no licensing cost.',
+        'Ya! Anti-Nganggur berlisensi open-source MIT. Versi cloud dapat digunakan gratis tanpa biaya langganan. Kamu juga bisa melakukan self-host di infrastruktur sendiri kapan saja.',
     },
     {
-      question: 'Cloud vs self-hosted: which should I choose?',
+      question: 'Bagaimana keamanan dan privasi data lamaran saya?',
       answer:
-        'Cloud hosting is perfect for quick setup - sign up and start tracking immediately. Self-hosting gives you complete control over data, infrastructure, and customization. Both use the same codebase.',
+        'Sangat aman. Database kami dilindungi oleh PostgreSQL Row Level Security (RLS) di Supabase. Data lamaran kerja kamu hanya dapat diakses oleh akun kamu sendiri dan terisolasi dari pengguna lain.',
     },
     {
-      question: 'Is my data secure?',
+      question: 'Apakah saya bisa mengekspor data saya?',
       answer:
-        'Absolutely. Cloud hosting uses bank-level encryption and secure authentication via Supabase. Self-hosting gives you complete control - your data never leaves your infrastructure. All code is open for security audit.',
+        'Tentu saja. Kamu dapat mengunduh seluruh data lamaran kerja kamu ke format CSV kapan saja melalui tombol ekspor di workspace.',
     },
     {
-      question: 'How is this sustainable?',
+      question: 'Apakah ada fitur AI atau fitur lanjutan di masa depan?',
       answer:
-        "Anti-Nganggur is a passion project built to solve a real problem. It's community-driven and transparent. We believe great software should be accessible to everyone.",
+        'Kami terus mengembangkan Anti-Nganggur secara bertahap, termasuk rencana fitur Focus Workspace, pengingat jadwal wawancara, dan integrasi bantuan resume.',
     },
     {
-      question: 'Can I contribute?',
+      question: 'Bagaimana cara berkontribusi ke proyek ini?',
       answer:
-        'Yes! We welcome contributions of all kinds - code, documentation, bug reports, feature suggestions, and community support. Check our GitHub repository for contribution guidelines and good first issues.',
-    },
-    {
-      question: 'What if I need help?',
-      answer:
-        'We have comprehensive documentation, GitHub Discussions for community support, and GitHub Issues for bug reports. The community is active and helpful.',
+        'Kami menyambut baik segala bentuk kontribusi — mulai dari saran fitur, laporan bug, hingga pull request kode. Kunjungi repositori GitHub kami untuk panduan kontribusi.',
     },
   ]
 
@@ -45,7 +40,7 @@ export function FAQSection() {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12">
             <h2 className="mb-4 text-4xl font-bold text-foreground sm:text-5xl">
-              Frequently Asked <span className="gradient-brand-text">Questions</span>
+              Pertanyaan yang Sering <span className="gradient-brand-text">Diajukan (FAQ)</span>
             </h2>
           </div>
 
