@@ -70,7 +70,7 @@ const STATUS_OPTIONS: { value: ApplicationStatus; label: string }[] = [
   { value: 'phone_screen', label: 'Phone Screen' },
   { value: 'assessment', label: 'Assessment' },
   { value: 'take_home', label: 'Take Home' },
-  { value: 'interviewing', label: 'Interviewing' },
+  { value: 'interviewing', label: 'Interview' },
   { value: 'final_round', label: 'Final Round' },
   { value: 'offered', label: 'Offered' },
   { value: 'accepted', label: 'Accepted' },
@@ -115,7 +115,7 @@ export default function ApplicationForm({
             name="company_name"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-label-primary font-semibold">
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
                   Company Name <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
@@ -125,7 +125,7 @@ export default function ApplicationForm({
                     required
                     disabled={isLoading}
                     aria-required="true"
-                    className="glass-ultra border-0 text-label-primary placeholder:text-label-tertiary"
+                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -139,7 +139,7 @@ export default function ApplicationForm({
             name="job_title"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-label-primary font-semibold">
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
                   Job Title <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
@@ -149,7 +149,7 @@ export default function ApplicationForm({
                     required
                     disabled={isLoading}
                     aria-required="true"
-                    className="glass-ultra border-0 text-label-primary placeholder:text-label-tertiary"
+                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -163,7 +163,9 @@ export default function ApplicationForm({
             name="job_url"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-label-primary font-semibold">Job URL</FormLabel>
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                  Job URL
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -171,7 +173,7 @@ export default function ApplicationForm({
                     placeholder="https://example.com/job-posting"
                     disabled={isLoading}
                     value={field.value ?? ''}
-                    className="glass-ultra border-0 text-label-primary placeholder:text-label-tertiary"
+                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -185,14 +187,16 @@ export default function ApplicationForm({
             name="location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-label-primary font-semibold">Location</FormLabel>
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                  Location
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="e.g., Remote, San Francisco, CA"
                     disabled={isLoading}
                     value={field.value ?? ''}
-                    className="glass-ultra border-0 text-label-primary placeholder:text-label-tertiary"
+                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -206,14 +210,16 @@ export default function ApplicationForm({
             name="salary_range"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-label-primary font-semibold">Salary Range</FormLabel>
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                  Salary Range
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="e.g., $100k-$150k"
                     disabled={isLoading}
                     value={field.value ?? ''}
-                    className="glass-ultra border-0 text-label-primary placeholder:text-label-tertiary"
+                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -227,7 +233,7 @@ export default function ApplicationForm({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-label-primary font-semibold">
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
                   Status <span className="text-red-500">*</span>
                 </FormLabel>
                 <Select
@@ -236,13 +242,16 @@ export default function ApplicationForm({
                   disabled={isLoading}
                 >
                   <FormControl>
-                    <SelectTrigger aria-label="Status" variant="glass">
+                    <SelectTrigger
+                      aria-label="Status"
+                      className="bg-white text-neutral-900 border-neutral-900/40 focus:border-neutral-900 shadow-xs dark:border-border dark:text-foreground"
+                    >
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent variant="glass">
+                  <SelectContent className="bg-white text-neutral-900 border-neutral-900/20 dark:bg-card dark:text-foreground dark:border-border">
                     {STATUS_OPTIONS.map(option => (
-                      <SelectItem key={option.value} value={option.value} variant="glass">
+                      <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
                     ))}
@@ -259,7 +268,7 @@ export default function ApplicationForm({
             name="date_applied"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-label-primary font-semibold">
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
                   Date Applied <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
@@ -267,7 +276,7 @@ export default function ApplicationForm({
                     {...field}
                     type="date"
                     disabled={isLoading}
-                    className="glass-ultra border-0 text-label-primary"
+                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -281,15 +290,17 @@ export default function ApplicationForm({
             name="notes"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-label-primary font-semibold">Notes</FormLabel>
-                <p className="text-xs text-label-tertiary mb-2">
+                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                  Notes
+                </FormLabel>
+                <p className="text-xs text-neutral-600 dark:text-label-tertiary mb-2">
                   Additional notes, interview details, etc.
                 </p>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="Add any additional notes or interview details here..."
-                    className="min-h-[120px] resize-y glass-ultra border-0 text-label-primary placeholder:text-label-tertiary"
+                    className="min-h-[120px] resize-y bg-white text-neutral-900 border border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary rounded-md p-3"
                     disabled={isLoading}
                     value={field.value ?? ''}
                   />
@@ -300,19 +311,24 @@ export default function ApplicationForm({
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-label-quaternary">
+        <div className="flex justify-end gap-3 pt-4 border-t border-neutral-200 dark:border-label-quaternary">
           {onCancel && (
             <Button
               type="button"
-              variant="glass"
+              variant="outline"
               onClick={onCancel}
               disabled={isLoading}
-              className="min-w-[100px]"
+              className="min-w-[100px] bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
             >
               Cancel
             </Button>
           )}
-          <Button type="submit" variant="glass" disabled={isLoading} className="min-w-[160px]">
+          <Button
+            type="submit"
+            variant="default"
+            disabled={isLoading}
+            className="min-w-[160px] bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 active:scale-[0.98] transition-all font-semibold shadow-xs"
+          >
             {isLoading
               ? submitButtonText === 'Save Changes'
                 ? 'Saving...'

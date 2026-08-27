@@ -5,6 +5,7 @@ import type { Application } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { TabType } from '../types'
 import { CompanyLogo } from '@/components/ui/company-logo'
+import { getStatusLabel } from '@/lib/utils/status-colors'
 import { TabNavigation } from './LeftPanel/TabNavigation'
 import { MainPanel } from './MainPanel/MainPanel'
 import { ApplicationTimeline } from './RightPanel/ApplicationTimeline'
@@ -86,8 +87,8 @@ export function ApplicationDetailLayout({
           {/* Status */}
           <div className="flex items-center gap-2">
             <span className="text-label-tertiary">📊</span>
-            <span className="text-label-primary font-medium capitalize">
-              {application.status.replace('_', ' ')}
+            <span className="text-label-primary font-medium">
+              {getStatusLabel(application.status)}
             </span>
           </div>
 

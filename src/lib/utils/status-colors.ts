@@ -1,5 +1,3 @@
-
-
 export type StatusCategory =
   | 'Wishlist'
   | 'Applied'
@@ -8,6 +6,28 @@ export type StatusCategory =
   | 'Rejected'
   | 'Closed'
   | 'Other'
+
+export const CANONICAL_STATUS_LABELS: Record<string, string> = {
+  wishlist: 'Wishlist',
+  applied: 'Applied',
+  phone_screen: 'Phone Screen',
+  assessment: 'Assessment',
+  take_home: 'Take Home',
+  interviewing: 'Interview',
+  final_round: 'Final Round',
+  offered: 'Offered',
+  accepted: 'Accepted',
+  rejected: 'Rejected',
+  withdrawn: 'Withdrawn',
+  ghosted: 'Ghosted',
+}
+
+export function getStatusLabel(status: string): string {
+  return (
+    CANONICAL_STATUS_LABELS[status] ||
+    status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  )
+}
 
 export function getStatusCategory(status: string): StatusCategory {
   switch (status) {
@@ -36,10 +56,7 @@ export function getStatusCategory(status: string): StatusCategory {
 
 // Map each category to specific CSS variables defined in semantic-colors.css
 // or use Tailwind classes directly for badges.
-export const STATUS_STYLES: Record<
-  StatusCategory,
-  { chart: string; badge: string }
-> = {
+export const STATUS_STYLES: Record<StatusCategory, { chart: string; badge: string }> = {
   Wishlist: {
     chart: '#94a3b8',
     badge:

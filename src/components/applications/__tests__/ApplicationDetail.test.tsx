@@ -76,7 +76,7 @@ describe('ApplicationDetail', () => {
       // Check that metadata appears in header (not as separate cards)
       expect(screen.getByText('San Francisco, CA')).toBeInTheDocument()
       expect(screen.getByText('$120k - $180k')).toBeInTheDocument()
-      expect(screen.getByText('applied')).toBeInTheDocument()
+      expect(screen.getByText('Applied')).toBeInTheDocument()
 
       // Check for date in formatted format (mock has 2025-10-01, may show as Sep 30 or Oct 1 due to timezone)
       expect(
@@ -135,7 +135,7 @@ describe('ApplicationDetail', () => {
       expect(screen.getByText(/you will work on cutting-edge technologies/i)).toBeInTheDocument()
     })
 
-    it('displays status with proper formatting', () => {
+    it('displays status with proper canonical formatting', () => {
       const application = createMockApplication({ status: 'phone_screen' })
       render(
         <ApplicationDetail
@@ -147,11 +147,11 @@ describe('ApplicationDetail', () => {
         />
       )
 
-      // Should display status with space instead of underscore
-      expect(screen.getByText('phone screen')).toBeInTheDocument()
+      // Should display canonical status label
+      expect(screen.getByText('Phone Screen')).toBeInTheDocument()
     })
 
-    it('displays interviewing status without underscore changes', () => {
+    it('displays interviewing status with canonical label Interview', () => {
       const application = createMockApplication({ status: 'interviewing' })
       render(
         <ApplicationDetail
@@ -163,8 +163,8 @@ describe('ApplicationDetail', () => {
         />
       )
 
-      // Should display status as is (interviewing doesn't need underscore replacement)
-      expect(screen.getByText('interviewing')).toBeInTheDocument()
+      // Should display canonical status label Interview
+      expect(screen.getByText('Interview')).toBeInTheDocument()
     })
 
     it('handles null optional fields gracefully in header', () => {

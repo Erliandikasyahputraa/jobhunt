@@ -4,7 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { applicationFormSchema } from '@/lib/schemas/application.schema'
 import type { ApplicationFormData, ApplicationStatus } from '@/lib/schemas/application.schema'
-import type { Application, ApplicationInsert, ApplicationUpdate } from '@/lib/types/database.types'
+import type {
+  Application,
+  ApplicationInsert,
+  ApplicationUpdate,
+  ApplicationStatusHistoryDB,
+} from '@/lib/types/database.types'
 import {
   createApplication,
   updateApplication,
@@ -15,6 +20,7 @@ import {
   bulkDeleteApplications,
   bulkUpdateApplicationStatus,
   bulkUpdateApplicationCustomColumn,
+  getApplicationHistory,
 } from '@/lib/api/applications'
 
 /**
@@ -615,5 +621,32 @@ export async function unlinkCompanyAction(applicationId: string): Promise<void> 
       console.error('Failed to unlink company in action:', error)
     }
     throw new Error('Failed to unlink company')
+  }
+}
+
+/**
+ * Get status and column transition history for a specific application
+ */
+export async function getApplicationHistoryAction(
+  applicationId: string
+): Promise<ApplicationStatusHistoryDB[]> {
+  try {
+    const supabase = await createClient()
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized: No user session found')
+    }
+
+    return await getApplicationHistory(supabase, applicationId)
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to get application history in action:', error)
+    }
+    return []
   }
 }

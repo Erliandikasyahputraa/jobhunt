@@ -4,6 +4,7 @@ import type {
   ApplicationInsert,
   ApplicationUpdate,
   ApplicationStatus,
+  ApplicationStatusHistoryDB,
 } from '@/lib/types/database.types'
 import {
   bulkApplicationIdsSchema,
@@ -461,5 +462,37 @@ export async function bulkUpdateApplicationCustomColumn(
       console.error('bulkUpdateApplicationCustomColumn error:', error)
     }
     throw error
+  }
+}
+
+/**
+ * Get status and column transition history for a specific application
+ */
+export async function getApplicationHistory(
+  supabase: SupabaseClient,
+  applicationId: string
+): Promise<ApplicationStatusHistoryDB[]> {
+  try {
+    await verifyAuthenticationContext(supabase)
+
+    const { data, error } = await supabase
+      .from('application_status_history')
+      .select('*')
+      .eq('application_id', applicationId)
+      .order('created_at', { ascending: true })
+
+    if (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to fetch application status history:', error)
+      }
+      return []
+    }
+
+    return (data as ApplicationStatusHistoryDB[]) || []
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('getApplicationHistory error:', error)
+    }
+    return []
   }
 }

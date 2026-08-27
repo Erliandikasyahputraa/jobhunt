@@ -95,3 +95,19 @@ export type ApplicationDocumentInsert = Omit<
 export type ApplicationDocumentUpdate = Partial<
   Omit<ApplicationDocumentDB, 'id' | 'created_at' | 'updated_at' | 'user_id' | 'application_id'>
 >
+
+export interface ApplicationStatusHistoryDB {
+  id: string
+  application_id: string
+  user_id: string
+  from_status: ApplicationStatus | null
+  to_status: ApplicationStatus
+  from_custom_column_id: string | null
+  to_custom_column_id: string | null
+  created_at: string
+}
+
+export type ApplicationStatusHistoryInsert = Omit<
+  ApplicationStatusHistoryDB,
+  'id' | 'created_at' | 'user_id'
+>

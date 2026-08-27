@@ -29,7 +29,7 @@ const CORE_STATUSES: Array<{ value: ApplicationStatus; label: string }> = [
   { value: 'phone_screen', label: 'Phone Screen' },
   { value: 'assessment', label: 'Assessment' },
   { value: 'take_home', label: 'Take Home' },
-  { value: 'interviewing', label: 'Interviewing' },
+  { value: 'interviewing', label: 'Interview' },
   { value: 'final_round', label: 'Final Round' },
   { value: 'offered', label: 'Offered' },
   { value: 'accepted', label: 'Accepted' },

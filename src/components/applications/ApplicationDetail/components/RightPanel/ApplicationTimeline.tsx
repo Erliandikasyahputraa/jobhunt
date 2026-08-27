@@ -1,55 +1,142 @@
 'use client'
 
 import * as React from 'react'
-import { format } from 'date-fns'
-import { Circle, CheckCircle, Clock, FileText, Calendar } from 'lucide-react'
+import { format, parseISO, isValid } from 'date-fns'
+import { Circle, CheckCircle, Clock, FileText, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Application } from '@/lib/types/database.types'
+import type {
+  Application,
+  ApplicationStatusHistoryDB,
+  ApplicationDocumentDB,
+} from '@/lib/types/database.types'
+import { getStatusLabel } from '@/lib/utils/status-colors'
+import { getApplicationHistoryAction } from '@/app/dashboard/actions'
+import { getDocumentsByApplicationAction } from '@/app/dashboard/actions/documents'
 
-interface TimelineEvent {
+export interface TimelineEvent {
   id: string
-  type: 'status_change' | 'note_added' | 'interview_scheduled' | 'document_added'
+  type: 'creation' | 'status_change' | 'column_move' | 'document_added' | 'note_added'
   title: string
   description: string
   timestamp: Date
   icon?: React.ComponentType<{ className?: string }>
 }
 
-interface ApplicationTimelineProps {
+export interface ApplicationTimelineProps {
   application: Application
   className?: string
+  initialHistory?: ApplicationStatusHistoryDB[]
+  initialDocuments?: ApplicationDocumentDB[]
 }
 
-export function ApplicationTimeline({ application, className }: ApplicationTimelineProps) {
-  // Generate timeline events based on application data
+export function ApplicationTimeline({
+  application,
+  className,
+  initialHistory,
+  initialDocuments,
+}: ApplicationTimelineProps) {
+  const [history, setHistory] = React.useState<ApplicationStatusHistoryDB[]>(initialHistory || [])
+  const [documents, setDocuments] = React.useState<ApplicationDocumentDB[]>(initialDocuments || [])
+  const [_isLoading, setIsLoading] = React.useState(!initialHistory && !initialDocuments)
+
+  React.useEffect(() => {
+    let isMounted = true
+    async function loadTimelineData() {
+      try {
+        const [fetchedHistory, fetchedDocs] = await Promise.all([
+          getApplicationHistoryAction(application.id).catch(() => []),
+          getDocumentsByApplicationAction(application.id).catch(() => []),
+        ])
+        if (isMounted) {
+          setHistory(fetchedHistory)
+          setDocuments(fetchedDocs)
+          setIsLoading(false)
+        }
+      } catch {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadTimelineData()
+    return () => {
+      isMounted = false
+    }
+  }, [application.id])
+
+  // Generate timeline events based on real application created_at, status history, and documents
   const timelineEvents: TimelineEvent[] = React.useMemo(() => {
     const events: TimelineEvent[] = []
 
-    // Application creation event
+    // 1. Application Creation Event (MUST use applications.created_at, NEVER date_applied)
+    let creationDate: Date
+    try {
+      creationDate = application.created_at ? parseISO(application.created_at) : new Date()
+      if (!isValid(creationDate)) creationDate = new Date()
+    } catch {
+      creationDate = new Date()
+    }
+
+    let appliedDateNote = ''
+    if (application.date_applied) {
+      try {
+        const parsedApplied = parseISO(application.date_applied)
+        if (isValid(parsedApplied)) {
+          appliedDateNote = `Applied on ${format(parsedApplied, 'MMM dd, yyyy')}`
+        }
+      } catch {
+        // ignore date parse error
+      }
+    }
+
     events.push({
       id: 'application-created',
-      type: 'status_change',
+      type: 'creation',
       title: 'Application Created',
-      description: `You added a new job application for ${application.job_title} at ${application.company_name}`,
-      timestamp: new Date(application.date_applied),
+      description: appliedDateNote
+        ? `Added job application for ${application.job_title} at ${application.company_name} · ${appliedDateNote}`
+        : `Added job application for ${application.job_title} at ${application.company_name}`,
+      timestamp: creationDate,
       icon: Plus,
     })
 
-    // Status change event
-    if (application.status !== 'wishlist') {
+    // 2. Real Historical Status Transitions (from application_status_history)
+    history.forEach(item => {
+      // Only include actual transitions where from_status was previously recorded
+      if (item.from_status && item.from_status !== item.to_status) {
+        let eventDate = parseISO(item.created_at)
+        if (!isValid(eventDate)) eventDate = new Date()
+
+        events.push({
+          id: `status-history-${item.id}`,
+          type: 'status_change',
+          title: 'Status Changed',
+          description: `${getStatusLabel(item.from_status)} → ${getStatusLabel(item.to_status)}`,
+          timestamp: eventDate,
+          icon: CheckCircle,
+        })
+      }
+    })
+
+    // 3. Document Upload Events (from application_documents)
+    documents.forEach(doc => {
+      let docDate = parseISO(doc.created_at)
+      if (!isValid(docDate)) docDate = new Date()
+
       events.push({
-        id: 'status-changed',
-        type: 'status_change',
-        title: `Status: ${application.status.replace('_', ' ')}`,
-        description: `Application status updated to ${application.status.replace('_', ' ')}`,
-        timestamp: new Date(application.date_applied),
-        icon: CheckCircle,
+        id: `doc-${doc.id}`,
+        type: 'document_added',
+        title: 'Document Added',
+        description: `Uploaded ${doc.name} (${doc.document_type.replace('_', ' ')})`,
+        timestamp: docDate,
+        icon: FileText,
       })
-    }
+    })
 
     // Sort events by timestamp (newest first)
     return events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-  }, [application])
+  }, [application, history, documents])
 
   const formatDate = (date: Date): string => {
     return format(date, 'MMM dd, yyyy')
@@ -61,13 +148,13 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
 
   const _getEventIcon = (type: TimelineEvent['type']) => {
     switch (type) {
+      case 'creation':
+        return Plus
       case 'status_change':
         return CheckCircle
-      case 'note_added':
-        return FileText
-      case 'interview_scheduled':
-        return Calendar
       case 'document_added':
+        return FileText
+      case 'note_added':
         return FileText
       default:
         return Circle
@@ -76,14 +163,13 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
 
   const getEventColor = (type: TimelineEvent['type']) => {
     switch (type) {
+      case 'creation':
       case 'status_change':
-        return 'text-foreground dark:text-copper'
-      case 'note_added':
-        return 'text-blue-500'
-      case 'interview_scheduled':
-        return 'text-purple-500'
+        return 'text-neutral-900 dark:text-copper'
       case 'document_added':
-        return 'text-green-500'
+        return 'text-neutral-900 dark:text-emerald-400'
+      case 'note_added':
+        return 'text-neutral-900 dark:text-blue-400'
       default:
         return 'text-label-tertiary'
     }
@@ -92,8 +178,8 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
   return (
     <div className={cn('p-6', className)}>
       <div className="flex items-center gap-2 mb-6">
-        <Clock className="w-5 h-5 text-foreground dark:text-copper" />
-        <h3 className="text-lg font-semibold text-label-primary">Timeline</h3>
+        <Clock className="w-5 h-5 text-neutral-900 dark:text-copper" />
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-label-primary">Timeline</h3>
       </div>
 
       <div className="space-y-4">
@@ -116,7 +202,7 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
               {/* Timeline line - connecting vertical line between dots */}
               {!isLast && (
                 <div
-                  className="absolute left-[7px] top-[16px] h-full border-l-2 border-border dark:border-copper/50"
+                  className="absolute left-[7px] top-[16px] h-full border-l-2 border-neutral-300 dark:border-copper/50"
                   aria-hidden="true"
                 />
               )}
@@ -124,15 +210,21 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
               {/* Event content */}
               <div className="space-y-1">
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-medium text-label-primary text-sm">{event.title}</h4>
+                  <h4 className="font-medium text-neutral-900 dark:text-label-primary text-sm">
+                    {event.title}
+                  </h4>
                   <div className="flex flex-col items-end text-right">
-                    <div className="text-xs text-label-tertiary">{formatDate(event.timestamp)}</div>
-                    <div className="text-xs text-label-quaternary">
+                    <div className="text-xs text-neutral-600 dark:text-label-tertiary">
+                      {formatDate(event.timestamp)}
+                    </div>
+                    <div className="text-xs text-neutral-500 dark:text-label-quaternary">
                       {formatTime(event.timestamp)}
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-label-secondary leading-relaxed">{event.description}</p>
+                <p className="text-xs text-neutral-600 dark:text-label-secondary leading-relaxed">
+                  {event.description}
+                </p>
               </div>
             </div>
           )
@@ -141,14 +233,16 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
         {/* Empty state for future events */}
         {timelineEvents.length === 0 && (
           <div className="text-center py-8">
-            <Clock className="w-8 h-8 text-label-tertiary mx-auto mb-2" />
-            <p className="text-sm text-label-secondary">No timeline events yet</p>
+            <Clock className="w-8 h-8 text-neutral-400 dark:text-label-tertiary mx-auto mb-2" />
+            <p className="text-sm text-neutral-600 dark:text-label-secondary">
+              No timeline events yet
+            </p>
           </div>
         )}
 
         {/* Add more events prompt */}
-        <div className="pt-4 border-t border-label-quaternary/20">
-          <p className="text-xs text-label-tertiary text-center">
+        <div className="pt-4 border-t border-neutral-200 dark:border-label-quaternary/20">
+          <p className="text-xs text-neutral-500 dark:text-label-tertiary text-center">
             Timeline will update as your application progresses
           </p>
         </div>
@@ -156,11 +250,3 @@ export function ApplicationTimeline({ application, className }: ApplicationTimel
     </div>
   )
 }
-
-// Add missing Plus icon
-const Plus = ({ className }: { className?: string }) => (
-  <div className={cn('w-4 h-4 border-2 border-current rounded-sm', className)}>
-    <div className="w-full h-0.5 bg-current absolute top-1/2 left-0 -translate-y-1/2" />
-    <div className="h-full w-0.5 bg-current absolute left-1/2 top-0 -translate-x-1/2" />
-  </div>
-)

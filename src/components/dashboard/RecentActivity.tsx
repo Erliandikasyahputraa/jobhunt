@@ -3,7 +3,7 @@
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Application } from '@/lib/types/database.types'
-import { getStatusStyles } from '@/lib/utils/status-colors'
+import { getStatusStyles, getStatusLabel } from '@/lib/utils/status-colors'
 
 export function RecentActivity({ applications }: { applications: Application[] }) {
   return (
@@ -31,7 +31,7 @@ export function RecentActivity({ applications }: { applications: Application[] }
                   <span
                     className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${getStatusStyles(app.status).badge}`}
                   >
-                    {app.status.replace('_', ' ').toUpperCase()}
+                    {getStatusLabel(app.status)}
                   </span>
                 </div>
                 <p className="text-[10px] text-label-secondary">

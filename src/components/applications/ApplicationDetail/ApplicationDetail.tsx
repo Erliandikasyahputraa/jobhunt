@@ -112,9 +112,11 @@ export function ApplicationDetail({
           {isEditMode ? (
             <div className="flex flex-col max-h-[90vh]">
               {/* Edit Mode Header */}
-              <div className="glass-ultra border-b border-label-quaternary/20 rounded-t-glass-lg p-6 shrink-0">
-                <h2 className="text-2xl font-bold text-label-primary">Edit Application</h2>
-                <p className="text-label-secondary mt-1">
+              <div className="bg-white dark:glass-ultra border-b border-neutral-200 dark:border-label-quaternary/20 rounded-t-glass-lg p-6 shrink-0">
+                <h2 className="text-2xl font-bold text-neutral-900 dark:text-label-primary">
+                  Edit Application
+                </h2>
+                <p className="text-neutral-600 dark:text-label-secondary mt-1">
                   Update the details for your application to {application.company_name}
                 </p>
               </div>

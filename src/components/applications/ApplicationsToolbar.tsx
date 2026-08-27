@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dialog'
 import type { FilterState, SortOption, DateFilterOption } from '@/lib/utils/filter-utils'
 import type { ApplicationStatus, CustomColumnDB } from '@/lib/types/database.types'
+import { getStatusLabel } from '@/lib/utils/status-colors'
 
 // We will export a subset of application statuses that make sense to filter by directly
 const CORE_STATUSES: ApplicationStatus[] = [
@@ -76,10 +77,7 @@ export function ApplicationsToolbar({
 
   // Status mapping
   const getStatusName = (status: ApplicationStatus) => {
-    return status
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
+    return getStatusLabel(status)
   }
 
   const FilterContent = () => (
