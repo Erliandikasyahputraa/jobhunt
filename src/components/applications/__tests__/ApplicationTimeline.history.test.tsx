@@ -152,6 +152,71 @@ describe('ApplicationTimeline Data and Ordering', () => {
     expect(screen.getByText('Interview Pipeline → Executive Review')).toBeInTheDocument()
   })
 
+  it('renders simultaneous status and custom column transition correctly', async () => {
+    const mockHistory: ApplicationStatusHistoryDB[] = [
+      {
+        id: 'hist-comb-1',
+        application_id: 'app-uuid-1',
+        user_id: 'user-uuid-1',
+        from_status: 'applied',
+        to_status: 'interviewing',
+        from_custom_column_id: 'col-1',
+        to_custom_column_id: 'col-2',
+        created_at: '2026-08-27T11:30:00.000Z',
+      },
+    ]
+
+    ;(getApplicationHistoryAction as any).mockResolvedValue(mockHistory)
+
+    render(<ApplicationTimeline application={mockApplication} customColumns={mockCustomColumns} />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Status & Column Changed')).toBeInTheDocument()
+    })
+
+    expect(screen.getByText(/Applied → Interview/i)).toBeInTheDocument()
+    expect(screen.getByText(/Interview Pipeline → Executive Review/i)).toBeInTheDocument()
+  })
+
+  it('reactively re-fetches history when application.status or updated_at changes without unmounting', async () => {
+    ;(getApplicationHistoryAction as any).mockResolvedValueOnce([])
+
+    const { rerender } = render(
+      <ApplicationTimeline application={mockApplication} customColumns={mockCustomColumns} />
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('Application Created')).toBeInTheDocument()
+    })
+
+    // Now simulate application update from drag-and-drop or edit form
+    const updatedMockHistory: ApplicationStatusHistoryDB[] = [
+      {
+        id: 'hist-2',
+        application_id: 'app-uuid-1',
+        user_id: 'user-uuid-1',
+        from_status: 'phone_screen',
+        to_status: 'interviewing',
+        from_custom_column_id: null,
+        to_custom_column_id: null,
+        created_at: '2026-08-27T12:00:00.000Z',
+      },
+    ]
+    ;(getApplicationHistoryAction as any).mockResolvedValueOnce(updatedMockHistory)
+
+    const updatedApp: Application = {
+      ...mockApplication,
+      status: 'interviewing',
+      updated_at: '2026-08-27T12:00:00.000Z',
+    }
+
+    rerender(<ApplicationTimeline application={updatedApp} customColumns={mockCustomColumns} />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Phone Screen → Interview')).toBeInTheDocument()
+    })
+  })
+
   it('renders document upload events alongside status changes ordered chronologically', async () => {
     const mockHistory: ApplicationStatusHistoryDB[] = [
       {
