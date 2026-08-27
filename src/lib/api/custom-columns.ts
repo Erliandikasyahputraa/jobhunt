@@ -5,7 +5,14 @@ import type {
   CustomColumnUpdate,
 } from '@/lib/types/database.types'
 
-async function verifyAuthenticationContext(supabase: SupabaseClient): Promise<string> {
+async function verifyAuthenticationContext(
+  supabase: SupabaseClient,
+  userId?: string
+): Promise<string> {
+  if (userId) {
+    return userId
+  }
+
   const {
     data: { user },
     error: authError,
@@ -18,14 +25,17 @@ async function verifyAuthenticationContext(supabase: SupabaseClient): Promise<st
   return user.id
 }
 
-export async function getCustomColumns(supabase: SupabaseClient): Promise<CustomColumnDB[]> {
+export async function getCustomColumns(
+  supabase: SupabaseClient,
+  userId?: string
+): Promise<CustomColumnDB[]> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('custom_columns')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
       .order('order', { ascending: true })
 
     if (error) {
@@ -43,12 +53,13 @@ export async function getCustomColumns(supabase: SupabaseClient): Promise<Custom
 
 export async function createCustomColumn(
   supabase: SupabaseClient,
-  column: CustomColumnInsert
+  column: CustomColumnInsert,
+  userId?: string
 ): Promise<CustomColumnDB> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
-    const columnWithUser = { ...column, user_id: userId }
+    const columnWithUser = { ...column, user_id: authenticatedUserId }
 
     const { data, error } = await supabase
       .from('custom_columns')
@@ -72,16 +83,17 @@ export async function createCustomColumn(
 export async function updateCustomColumn(
   supabase: SupabaseClient,
   id: string,
-  updates: CustomColumnUpdate
+  updates: CustomColumnUpdate,
+  userId?: string
 ): Promise<CustomColumnDB> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('custom_columns')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
       .select()
       .single()
 
@@ -98,15 +110,19 @@ export async function updateCustomColumn(
   }
 }
 
-export async function deleteCustomColumn(supabase: SupabaseClient, id: string): Promise<void> {
+export async function deleteCustomColumn(
+  supabase: SupabaseClient,
+  id: string,
+  userId?: string
+): Promise<void> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { error } = await supabase
       .from('custom_columns')
       .delete()
       .eq('id', id)
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
 
     if (error) {
       throw new Error(`Failed to delete custom column: ${error.message}`)
@@ -121,17 +137,18 @@ export async function deleteCustomColumn(supabase: SupabaseClient, id: string): 
 
 export async function reorderCustomColumns(
   supabase: SupabaseClient,
-  updates: Array<{ id: string; order: number }>
+  updates: Array<{ id: string; order: number }>,
+  userId?: string
 ): Promise<void> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const updatePromises = updates.map(({ id, order }) =>
       supabase
         .from('custom_columns')
         .update({ order, updated_at: new Date().toISOString() })
         .eq('id', id)
-        .eq('user_id', userId)
+        .eq('user_id', authenticatedUserId)
     )
 
     const results = await Promise.all(updatePromises)

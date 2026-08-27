@@ -20,6 +20,7 @@ function renderWithTheme(ui: React.ReactElement) {
 
 // Mock server actions
 vi.mock('../actions', () => ({
+  getApplicationsWorkspaceDataAction: vi.fn(),
   createApplicationAction: vi.fn(),
   updateApplicationAction: vi.fn(),
   deleteApplicationAction: vi.fn(),
@@ -102,6 +103,15 @@ describe('DashboardPage', () => {
     vi.clearAllMocks()
     setupMatchMedia()
     mockPush.mockClear()
+    vi.mocked(actions.getApplicationsWorkspaceDataAction).mockResolvedValue({
+      applications: mockApplications,
+      customColumns: [],
+      user: {
+        id: 'user-123',
+        email: 'test@example.com',
+        user_metadata: { full_name: 'Test User' },
+      } as any,
+    })
     vi.mocked(actions.getApplicationsAction).mockResolvedValue(mockApplications)
 
     // Mock authenticated user
@@ -122,6 +132,15 @@ describe('DashboardPage', () => {
 
   describe('Rendering and Layout', () => {
     it('should render enhanced global empty state for new users (0 applications)', async () => {
+      vi.mocked(actions.getApplicationsWorkspaceDataAction).mockResolvedValue({
+        applications: [],
+        customColumns: [],
+        user: {
+          id: 'user-123',
+          email: 'test@example.com',
+          user_metadata: { full_name: 'Test User' },
+        } as any,
+      })
       vi.mocked(actions.getApplicationsAction).mockResolvedValue([])
 
       renderWithTheme(<DashboardPage />)
@@ -155,6 +174,9 @@ describe('DashboardPage', () => {
     })
 
     it('should show loading state initially', async () => {
+      vi.mocked(actions.getApplicationsWorkspaceDataAction).mockImplementation(
+        () => new Promise(() => {}) // Never resolves
+      )
       vi.mocked(actions.getApplicationsAction).mockImplementation(
         () => new Promise(() => {}) // Never resolves
       )

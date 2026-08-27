@@ -37,6 +37,7 @@ vi.mock('@/components/ui/ThemeToggle', () => ({
   ThemeToggle: () => null,
 }))
 vi.mock('@/app/dashboard/actions', () => ({
+  getApplicationsWorkspaceDataAction: vi.fn(),
   getApplicationsAction: vi.fn(),
   getCustomColumnsAction: vi.fn(),
 }))
@@ -91,6 +92,11 @@ describe('ApplicationsPage Export', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    ;(actions.getApplicationsWorkspaceDataAction as Mock).mockResolvedValue({
+      applications: mockApplications,
+      customColumns: [],
+      user: { id: 'user-123' },
+    })
     ;(actions.getApplicationsAction as Mock).mockResolvedValue(mockApplications)
     ;(actions.getCustomColumnsAction as Mock).mockResolvedValue([])
     ;(filterApplications as Mock).mockReturnValue(mockApplications)

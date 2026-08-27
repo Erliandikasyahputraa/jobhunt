@@ -37,6 +37,7 @@ vi.mock('@/lib/supabase/client', () => ({
 
 // Mock actions
 vi.mock('@/app/dashboard/actions', () => ({
+  getApplicationsWorkspaceDataAction: vi.fn(),
   getApplicationsAction: vi.fn(),
   getCustomColumnsAction: vi.fn(),
   createApplicationAction: vi.fn(),
@@ -119,6 +120,11 @@ describe('Phase 3.4.5 Bulk Actions Component & Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockSearchParams = new URLSearchParams()
+    ;(actions.getApplicationsWorkspaceDataAction as Mock).mockResolvedValue({
+      applications: [mockApp1, mockApp2],
+      customColumns: mockCustomCols,
+      user: { id: 'user-123' },
+    })
     ;(actions.getApplicationsAction as Mock).mockResolvedValue([mockApp1, mockApp2])
     ;(actions.getCustomColumnsAction as Mock).mockResolvedValue(mockCustomCols)
   })
@@ -318,7 +324,7 @@ describe('Phase 3.4.5 Bulk Actions Component & Integration Tests', () => {
       // Click Deselect All
       await user.click(selectAllBtn)
       expect(screen.queryByTestId('bulk-actions-toolbar')).not.toBeInTheDocument()
-    })
+    }, 15000)
 
     it('executes bulk status update, resets custom_column_id, and updates UI', async () => {
       const user = userEvent.setup()

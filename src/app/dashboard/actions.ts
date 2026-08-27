@@ -10,6 +10,7 @@ import type {
   ApplicationUpdate,
   ApplicationStatusHistoryDB,
 } from '@/lib/types/database.types'
+import type { User } from '@supabase/supabase-js'
 import {
   createApplication,
   updateApplication,
@@ -22,6 +23,57 @@ import {
   bulkUpdateApplicationCustomColumn,
   getApplicationHistory,
 } from '@/lib/api/applications'
+
+/**
+ * Get initial workspace data (applications, custom columns, and user)
+ * in a single server round-trip to avoid auth waterfall
+ */
+export async function getApplicationsWorkspaceDataAction(): Promise<{
+  applications: Application[]
+  customColumns: CustomColumnDB[]
+  user: User
+}> {
+  try {
+    const supabase = await createClient()
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Authentication error in getApplicationsWorkspaceDataAction:', authError)
+      }
+      throw new Error(`Authentication failed: ${authError.message}`)
+    }
+
+    if (!user) {
+      throw new Error('Unauthorized: No user session found. Please log in again.')
+    }
+
+    const [applications, customColumns] = await Promise.all([
+      getApplications(supabase, user.id),
+      getCustomColumns(supabase, user.id),
+    ])
+
+    return {
+      applications,
+      customColumns,
+      user,
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to fetch workspace data in action:', error)
+    }
+
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch workspace data: ${error.message}`)
+    }
+
+    throw new Error('Failed to fetch workspace data: Unknown error occurred')
+  }
+}
 
 /**
  * Get all applications for the authenticated user
@@ -46,7 +98,7 @@ export async function getApplicationsAction(): Promise<Application[]> {
       throw new Error('Unauthorized: No user session found. Please log in again.')
     }
 
-    const applications = await getApplications(supabase)
+    const applications = await getApplications(supabase, user.id)
     return applications
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
@@ -106,7 +158,7 @@ export async function createApplicationAction(formData: ApplicationFormData): Pr
   }
 
   try {
-    const newApplication = await createApplication(supabase, applicationData)
+    const newApplication = await createApplication(supabase, applicationData, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
     return newApplication
@@ -168,7 +220,7 @@ export async function updateApplicationAction(
   }
 
   try {
-    const updatedApplication = await updateApplication(supabase, id, updates)
+    const updatedApplication = await updateApplication(supabase, id, updates, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
     return updatedApplication
@@ -195,7 +247,7 @@ export async function deleteApplicationAction(id: string): Promise<void> {
   }
 
   try {
-    await deleteApplication(supabase, id)
+    await deleteApplication(supabase, id, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
   } catch (error) {
@@ -229,7 +281,7 @@ export async function updateApplicationStatusAction(
   }
 
   try {
-    const updatedApplication = await updateApplication(supabase, id, updates)
+    const updatedApplication = await updateApplication(supabase, id, updates, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
     return updatedApplication
@@ -259,7 +311,7 @@ export async function reorderApplicationsAction(
   }
 
   try {
-    await reorderApplicationsInColumn(supabase, updates)
+    await reorderApplicationsInColumn(supabase, updates, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
   } catch (error) {
@@ -296,7 +348,8 @@ export async function updateApplicationPositionAction(
       id,
       position,
       status,
-      customColumnId
+      customColumnId,
+      user.id
     )
     revalidatePath('/dashboard')
     revalidatePath('/applications')
@@ -324,7 +377,7 @@ export async function bulkDeleteApplicationsAction(ids: string[]): Promise<void>
   }
 
   try {
-    await bulkDeleteApplications(supabase, ids)
+    await bulkDeleteApplications(supabase, ids, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
   } catch (error) {
@@ -356,7 +409,7 @@ export async function bulkUpdateApplicationStatusAction(
   }
 
   try {
-    await bulkUpdateApplicationStatus(supabase, ids, status)
+    await bulkUpdateApplicationStatus(supabase, ids, status, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
   } catch (error) {
@@ -388,7 +441,7 @@ export async function bulkUpdateApplicationColumnAction(
   }
 
   try {
-    await bulkUpdateApplicationCustomColumn(supabase, ids, customColumnId)
+    await bulkUpdateApplicationCustomColumn(supabase, ids, customColumnId, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
   } catch (error) {
@@ -422,7 +475,16 @@ import type {
 export async function getCustomColumnsAction(): Promise<CustomColumnDB[]> {
   try {
     const supabase = await createClient()
-    return await getCustomColumns(supabase)
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized: No user session found')
+    }
+
+    return await getCustomColumns(supabase, user.id)
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Failed to get custom columns in action:', error)
@@ -436,7 +498,16 @@ export async function createCustomColumnAction(
 ): Promise<CustomColumnDB> {
   try {
     const supabase = await createClient()
-    const newColumn = await createCustomColumn(supabase, column)
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized')
+    }
+
+    const newColumn = await createCustomColumn(supabase, column, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
     return newColumn
@@ -454,7 +525,16 @@ export async function updateCustomColumnAction(
 ): Promise<CustomColumnDB> {
   try {
     const supabase = await createClient()
-    const updatedColumn = await updateCustomColumn(supabase, id, updates)
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized')
+    }
+
+    const updatedColumn = await updateCustomColumn(supabase, id, updates, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
     return updatedColumn
@@ -469,7 +549,16 @@ export async function updateCustomColumnAction(
 export async function deleteCustomColumnAction(id: string): Promise<void> {
   try {
     const supabase = await createClient()
-    await deleteCustomColumn(supabase, id)
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized')
+    }
+
+    await deleteCustomColumn(supabase, id, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
   } catch (error) {
@@ -485,7 +574,16 @@ export async function reorderCustomColumnsAction(
 ): Promise<void> {
   try {
     const supabase = await createClient()
-    await reorderCustomColumns(supabase, updates)
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized')
+    }
+
+    await reorderCustomColumns(supabase, updates, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
   } catch (error) {
@@ -508,7 +606,16 @@ import type { CompanyDB } from '@/lib/types/database.types'
 export async function getCompaniesAction(): Promise<CompanyDB[]> {
   try {
     const supabase = await createClient()
-    return await getCompanies(supabase)
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized: No user session found')
+    }
+
+    return await getCompanies(supabase, user.id)
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Failed to get companies in action:', error)
@@ -520,7 +627,16 @@ export async function getCompaniesAction(): Promise<CompanyDB[]> {
 export async function getCompanyByIdAction(id: string): Promise<CompanyDB> {
   try {
     const supabase = await createClient()
-    return await getCompanyById(supabase, id)
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      throw new Error('Unauthorized: No user session found')
+    }
+
+    return await getCompanyById(supabase, id, user.id)
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Failed to get company by id in action:', error)
@@ -542,7 +658,7 @@ export async function createCompanyAction(formData: CompanyFormData): Promise<Co
     // Validate
     const validatedData = createCompanySchema.parse(formData)
 
-    const newCompany = await createCompany(supabase, validatedData as any)
+    const newCompany = await createCompany(supabase, validatedData as any, user.id)
     return newCompany
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
@@ -559,10 +675,15 @@ export async function updateCompanyAction(
   try {
     const supabase = await createClient()
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error('Unauthorized')
+
     // Validate
     const validatedData = updateCompanySchema.parse(formData)
 
-    const updatedCompany = await updateCompany(supabase, id, validatedData as any)
+    const updatedCompany = await updateCompany(supabase, id, validatedData as any, user.id)
     revalidatePath('/dashboard')
     revalidatePath('/applications')
     return updatedCompany
@@ -584,10 +705,15 @@ export async function linkCompanyAction(applicationId: string, companyId: string
     if (!user) throw new Error('Unauthorized')
 
     // Update the application
-    await updateApplication(supabase, applicationId, {
-      company_id: companyId,
-      updated_at: new Date().toISOString(),
-    })
+    await updateApplication(
+      supabase,
+      applicationId,
+      {
+        company_id: companyId,
+        updated_at: new Date().toISOString(),
+      },
+      user.id
+    )
 
     revalidatePath('/dashboard')
     revalidatePath('/applications')
@@ -609,10 +735,15 @@ export async function unlinkCompanyAction(applicationId: string): Promise<void> 
     if (!user) throw new Error('Unauthorized')
 
     // Update the application to remove company_id
-    await updateApplication(supabase, applicationId, {
-      company_id: null,
-      updated_at: new Date().toISOString(),
-    })
+    await updateApplication(
+      supabase,
+      applicationId,
+      {
+        company_id: null,
+        updated_at: new Date().toISOString(),
+      },
+      user.id
+    )
 
     revalidatePath('/dashboard')
     revalidatePath('/applications')
@@ -642,7 +773,7 @@ export async function getApplicationHistoryAction(
       throw new Error('Unauthorized: No user session found')
     }
 
-    return await getApplicationHistory(supabase, applicationId)
+    return await getApplicationHistory(supabase, applicationId, user.id)
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Failed to get application history in action:', error)

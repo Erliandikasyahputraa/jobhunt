@@ -39,6 +39,7 @@ vi.mock('@/components/ui/ThemeToggle', () => ({
 
 // Mock Supabase Actions
 vi.mock('@/app/dashboard/actions', () => ({
+  getApplicationsWorkspaceDataAction: vi.fn(),
   getApplicationsAction: vi.fn(),
   getCustomColumnsAction: vi.fn(),
 }))
@@ -57,43 +58,52 @@ vi.mock('next/navigation', () => ({
 }))
 
 describe('ApplicationsPage URL Sync', () => {
+  const mockApps = [
+    {
+      id: 'app-1',
+      position: 0,
+      status: 'applied',
+      company_name: 'Test',
+      job_title: 'Test',
+      created_at: '',
+      updated_at: '',
+      user_id: '1',
+    },
+  ] as any
+  const mockCols = [
+    {
+      id: 'valid-id-1',
+      name: 'Valid 1',
+      order: 0,
+      user_id: '1',
+      description: null,
+      icon: null,
+      created_at: '',
+      updated_at: '',
+    },
+    {
+      id: 'valid-id-2',
+      name: 'Valid 2',
+      order: 1,
+      user_id: '1',
+      description: null,
+      icon: null,
+      created_at: '',
+      updated_at: '',
+    },
+  ] as any
+
   beforeEach(() => {
     vi.clearAllMocks()
     mockSearchParams = new URLSearchParams()
-    vi.mocked(actions.getApplicationsAction).mockResolvedValue([
-      {
-        id: 'app-1',
-        position: 0,
-        status: 'applied',
-        company_name: 'Test',
-        job_title: 'Test',
-        created_at: '',
-        updated_at: '',
-        user_id: '1',
-      },
-    ] as any)
-    vi.mocked(actions.getCustomColumnsAction).mockResolvedValue([
-      {
-        id: 'valid-id-1',
-        name: 'Valid 1',
-        order: 0,
-        user_id: '1',
-        description: null,
-        icon: null,
-        created_at: '',
-        updated_at: '',
-      },
-      {
-        id: 'valid-id-2',
-        name: 'Valid 2',
-        order: 1,
-        user_id: '1',
-        description: null,
-        icon: null,
-        created_at: '',
-        updated_at: '',
-      },
-    ])
+
+    vi.mocked(actions.getApplicationsWorkspaceDataAction).mockResolvedValue({
+      applications: mockApps,
+      customColumns: mockCols,
+      user: { id: '1' } as any,
+    })
+    vi.mocked(actions.getApplicationsAction).mockResolvedValue(mockApps)
+    vi.mocked(actions.getCustomColumnsAction).mockResolvedValue(mockCols)
   })
 
   it('1. valid custom ID remains after loading', async () => {
@@ -102,7 +112,7 @@ describe('ApplicationsPage URL Sync', () => {
 
     // Wait for async load to finish
     await waitFor(() => {
-      expect(actions.getCustomColumnsAction).toHaveBeenCalled()
+      expect(actions.getApplicationsWorkspaceDataAction).toHaveBeenCalled()
     })
 
     // After load: valid-id-1 should STILL be there, updateUrl should NOT be called
@@ -185,7 +195,7 @@ describe('ApplicationsPage URL Sync', () => {
 
     // Make the mock take some time to ensure it doesn't instantly resolve
     let resolvePromise: any
-    vi.mocked(actions.getCustomColumnsAction).mockReturnValue(
+    vi.mocked(actions.getApplicationsWorkspaceDataAction).mockReturnValue(
       new Promise(resolve => {
         resolvePromise = resolve
       })
@@ -199,18 +209,22 @@ describe('ApplicationsPage URL Sync', () => {
     expect(mockReplace).not.toHaveBeenCalled()
 
     // Resolve the loading
-    resolvePromise([
-      {
-        id: 'valid-id-1',
-        name: 'Valid 1',
-        order: 0,
-        user_id: '1',
-        description: null,
-        icon: null,
-        created_at: '',
-        updated_at: '',
-      },
-    ])
+    resolvePromise({
+      applications: mockApps,
+      customColumns: [
+        {
+          id: 'valid-id-1',
+          name: 'Valid 1',
+          order: 0,
+          user_id: '1',
+          description: null,
+          icon: null,
+          created_at: '',
+          updated_at: '',
+        },
+      ],
+      user: { id: '1' } as any,
+    })
 
     await waitFor(() => {
       expect(screen.getByTestId('toolbar-custom').textContent).toBe('valid-id-1')
@@ -223,12 +237,14 @@ describe('ApplicationsPage URL Sync', () => {
     mockSearchParams.append('custom', 'fake-id')
 
     // Fail the fetch
-    vi.mocked(actions.getCustomColumnsAction).mockRejectedValue(new Error('Fetch failed'))
+    vi.mocked(actions.getApplicationsWorkspaceDataAction).mockRejectedValue(
+      new Error('Fetch failed')
+    )
 
     render(<ApplicationsPage />)
 
     await waitFor(() => {
-      expect(actions.getCustomColumnsAction).toHaveBeenCalled()
+      expect(actions.getApplicationsWorkspaceDataAction).toHaveBeenCalled()
     })
 
     // Because it errored, it should NOT aggressively prune fake-id

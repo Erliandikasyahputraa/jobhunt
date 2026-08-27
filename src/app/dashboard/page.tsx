@@ -27,8 +27,7 @@ import {
 import { Button } from '@/components/ui/button'
 import type { Application } from '@/lib/types/database.types'
 import type { User } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/client'
-import { getApplicationsAction } from './actions'
+import { getApplicationsWorkspaceDataAction } from './actions'
 import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
@@ -53,25 +52,10 @@ export default function DashboardPage() {
         setIsLoading(true)
         setError(null)
 
-        // Get authenticated user session
-        const supabase = createClient()
-        const {
-          data: { user: currentUser },
-          error: authError,
-        } = await supabase.auth.getUser()
-
-        if (authError || !currentUser) {
-          console.error('Authentication error:', authError)
-          setError('Authentication required. Please log in.')
-          return
-        }
-
-        // Set user information
-        setUser(currentUser)
-
-        // Load applications
-        const apps = await getApplicationsAction()
-        setApplications(apps)
+        // Load applications and user in a single authenticated server action
+        const data = await getApplicationsWorkspaceDataAction()
+        setUser(data.user)
+        setApplications(data.applications)
       } catch (err) {
         console.error('Failed to load data:', err)
         setError('Failed to load applications. Please try again.')

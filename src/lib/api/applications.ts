@@ -12,7 +12,14 @@ import {
   bulkCustomColumnUpdateSchema,
 } from '@/lib/schemas/bulk.schema'
 
-async function verifyAuthenticationContext(supabase: SupabaseClient): Promise<string> {
+async function verifyAuthenticationContext(
+  supabase: SupabaseClient,
+  userId?: string
+): Promise<string> {
+  if (userId) {
+    return userId
+  }
+
   const {
     data: { user },
     error: authError,
@@ -32,10 +39,13 @@ async function verifyAuthenticationContext(supabase: SupabaseClient): Promise<st
   return user.id
 }
 
-export async function getApplications(supabase: SupabaseClient): Promise<Application[]> {
+export async function getApplications(
+  supabase: SupabaseClient,
+  userId?: string
+): Promise<Application[]> {
   try {
     // Verify authentication context first
-    await verifyAuthenticationContext(supabase)
+    await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('applications')
@@ -70,15 +80,19 @@ export async function getApplications(supabase: SupabaseClient): Promise<Applica
   }
 }
 
-export async function getApplication(supabase: SupabaseClient, id: string): Promise<Application> {
+export async function getApplication(
+  supabase: SupabaseClient,
+  id: string,
+  userId?: string
+): Promise<Application> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('applications')
       .select('*')
       .eq('id', id)
-      .eq('user_id', userId) // Ensure user can only access their own applications
+      .eq('user_id', authenticatedUserId) // Ensure user can only access their own applications
       .single()
 
     if (error) {
@@ -99,13 +113,14 @@ export async function getApplication(supabase: SupabaseClient, id: string): Prom
 
 export async function createApplication(
   supabase: SupabaseClient,
-  application: ApplicationInsert
+  application: ApplicationInsert,
+  userId?: string
 ): Promise<Application> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     // Ensure the application is created for the authenticated user
-    const applicationWithUser = { ...application, user_id: userId }
+    const applicationWithUser = { ...application, user_id: authenticatedUserId }
 
     const { data, error } = await supabase
       .from('applications')
@@ -132,16 +147,17 @@ export async function createApplication(
 export async function updateApplication(
   supabase: SupabaseClient,
   id: string,
-  updates: ApplicationUpdate
+  updates: ApplicationUpdate,
+  userId?: string
 ): Promise<Application> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('applications')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', userId) // Ensure user can only update their own applications
+      .eq('user_id', authenticatedUserId) // Ensure user can only update their own applications
       .select()
       .single()
 
@@ -161,15 +177,19 @@ export async function updateApplication(
   }
 }
 
-export async function deleteApplication(supabase: SupabaseClient, id: string): Promise<void> {
+export async function deleteApplication(
+  supabase: SupabaseClient,
+  id: string,
+  userId?: string
+): Promise<void> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { error } = await supabase
       .from('applications')
       .delete()
       .eq('id', id)
-      .eq('user_id', userId) // Ensure user can only delete their own applications
+      .eq('user_id', authenticatedUserId) // Ensure user can only delete their own applications
 
     if (error) {
       if (process.env.NODE_ENV === 'development') {
@@ -187,16 +207,17 @@ export async function deleteApplication(supabase: SupabaseClient, id: string): P
 
 export async function getApplicationsByStatus(
   supabase: SupabaseClient,
-  status: Application['status']
+  status: Application['status'],
+  userId?: string
 ): Promise<Application[]> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('applications')
       .select('*')
       .eq('status', status)
-      .eq('user_id', userId) // Ensure user can only access their own applications
+      .eq('user_id', authenticatedUserId) // Ensure user can only access their own applications
       .order('position', { ascending: true })
 
     if (error) {
@@ -221,10 +242,11 @@ export async function getApplicationsByStatus(
  */
 export async function reorderApplicationsInColumn(
   supabase: SupabaseClient,
-  updates: Array<{ id: string; position: number }>
+  updates: Array<{ id: string; position: number }>,
+  userId?: string
 ): Promise<void> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     // Execute all updates in parallel
     const updatePromises = updates.map(
@@ -233,7 +255,7 @@ export async function reorderApplicationsInColumn(
           .from('applications')
           .update({ position, updated_at: new Date().toISOString() })
           .eq('id', id)
-          .eq('user_id', userId) // Ensure user can only update their own applications
+          .eq('user_id', authenticatedUserId) // Ensure user can only update their own applications
     )
 
     const results = await Promise.all(updatePromises)
@@ -263,10 +285,11 @@ export async function updateApplicationPosition(
   id: string,
   position: number,
   status?: Application['status'],
-  customColumnId?: string | null
+  customColumnId?: string | null,
+  userId?: string
 ): Promise<Application> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const updates: Partial<Application> = {
       position,
@@ -285,7 +308,7 @@ export async function updateApplicationPosition(
       .from('applications')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', userId) // Ensure user can only update their own applications
+      .eq('user_id', authenticatedUserId) // Ensure user can only update their own applications
       .select()
       .single()
 
@@ -314,10 +337,11 @@ export async function updateApplicationPosition(
  */
 export async function bulkDeleteApplications(
   supabase: SupabaseClient,
-  applicationIds: string[]
+  applicationIds: string[],
+  userId?: string
 ): Promise<void> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
     const validatedIds = bulkApplicationIdsSchema.parse(applicationIds)
     const uniqueIds = Array.from(new Set(validatedIds))
 
@@ -326,7 +350,7 @@ export async function bulkDeleteApplications(
       .from('application_documents')
       .select('storage_path')
       .in('application_id', uniqueIds)
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
 
     if (docError) {
       if (process.env.NODE_ENV === 'development') {
@@ -357,7 +381,7 @@ export async function bulkDeleteApplications(
       .from('applications')
       .delete()
       .in('id', uniqueIds)
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
 
     if (deleteError) {
       if (process.env.NODE_ENV === 'development') {
@@ -380,10 +404,11 @@ export async function bulkDeleteApplications(
 export async function bulkUpdateApplicationStatus(
   supabase: SupabaseClient,
   applicationIds: string[],
-  status: ApplicationStatus
+  status: ApplicationStatus,
+  userId?: string
 ): Promise<void> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
     const validated = bulkStatusUpdateSchema.parse({ ids: applicationIds, status })
     const uniqueIds = Array.from(new Set(validated.ids))
 
@@ -395,7 +420,7 @@ export async function bulkUpdateApplicationStatus(
         updated_at: new Date().toISOString(),
       })
       .in('id', uniqueIds)
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
 
     if (updateError) {
       if (process.env.NODE_ENV === 'development') {
@@ -418,10 +443,11 @@ export async function bulkUpdateApplicationStatus(
 export async function bulkUpdateApplicationCustomColumn(
   supabase: SupabaseClient,
   applicationIds: string[],
-  customColumnId: string | null
+  customColumnId: string | null,
+  userId?: string
 ): Promise<void> {
   try {
-    const userId = await verifyAuthenticationContext(supabase)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
     const validated = bulkCustomColumnUpdateSchema.parse({
       ids: applicationIds,
       customColumnId,
@@ -434,7 +460,7 @@ export async function bulkUpdateApplicationCustomColumn(
         .from('custom_columns')
         .select('id')
         .eq('id', validated.customColumnId)
-        .eq('user_id', userId)
+        .eq('user_id', authenticatedUserId)
         .single()
 
       if (colError || !column) {
@@ -449,7 +475,7 @@ export async function bulkUpdateApplicationCustomColumn(
         updated_at: new Date().toISOString(),
       })
       .in('id', uniqueIds)
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
 
     if (updateError) {
       if (process.env.NODE_ENV === 'development') {
@@ -470,10 +496,11 @@ export async function bulkUpdateApplicationCustomColumn(
  */
 export async function getApplicationHistory(
   supabase: SupabaseClient,
-  applicationId: string
+  applicationId: string,
+  userId?: string
 ): Promise<ApplicationStatusHistoryDB[]> {
   try {
-    await verifyAuthenticationContext(supabase)
+    await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('application_status_history')

@@ -23,14 +23,12 @@ import {
 import type { Application, ApplicationStatus } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { User } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/client'
 import {
   createApplicationAction,
   updateApplicationAction,
   deleteApplicationAction,
   updateApplicationPositionAction,
-  getApplicationsAction,
-  getCustomColumnsAction,
+  getApplicationsWorkspaceDataAction,
   createCustomColumnAction,
   bulkDeleteApplicationsAction,
   bulkUpdateApplicationStatusAction,
@@ -212,30 +210,14 @@ function ApplicationsPageContent() {
         setIsLoading(true)
         setError(null)
 
-        // Get authenticated user session
-        const supabase = createClient()
-        const {
-          data: { user: currentUser },
-          error: authError,
-        } = await supabase.auth.getUser()
-
-        if (authError || !currentUser) {
-          console.error('Authentication error:', authError)
-          setError('Authentication required. Please log in.')
-          return
-        }
-
-        setUser(currentUser)
-
-        // Load applications and custom columns
-        const [apps, dbColumns] = await Promise.all([
-          getApplicationsAction(),
-          getCustomColumnsAction(),
-        ])
+        // Load applications, custom columns, and user in a single authenticated server action
+        const data = await getApplicationsWorkspaceDataAction()
+        setUser(data.user)
+        setApplications(data.applications)
 
         // Handle LocalStorage Migration
-        let finalColumns = dbColumns
-        if (dbColumns.length === 0) {
+        let finalColumns = data.customColumns
+        if (data.customColumns.length === 0) {
           const localData = columnStorage.getColumns().filter(col => col.isCustom)
           if (localData.length > 0) {
             try {
@@ -261,11 +243,10 @@ function ApplicationsPageContent() {
           }
         }
 
-        setApplications(apps)
         setCustomColumns(finalColumns)
       } catch (err) {
-        console.error('Failed to load data:', err)
-        setError('Failed to load applications. Please try again.')
+        console.error('Failed to load applications:', err)
+        setError('Authentication required or failed to load data. Please log in.')
       } finally {
         setIsLoading(false)
       }

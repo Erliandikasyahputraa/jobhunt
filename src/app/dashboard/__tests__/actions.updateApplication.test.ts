@@ -76,7 +76,8 @@ describe('updateApplicationAction (Phase 3.1 Custom Column Consistency)', () => 
       expect.objectContaining({
         status: 'interviewing',
         custom_column_id: null,
-      })
+      }),
+      mockUserId
     )
   })
 
@@ -96,7 +97,8 @@ describe('updateApplicationAction (Phase 3.1 Custom Column Consistency)', () => 
       mockApplicationId,
       expect.not.objectContaining({
         custom_column_id: null,
-      })
+      }),
+      mockUserId
     )
   })
 

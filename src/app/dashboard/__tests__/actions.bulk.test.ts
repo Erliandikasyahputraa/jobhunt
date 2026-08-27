@@ -72,7 +72,11 @@ describe('Bulk Server Actions', () => {
     it('successfully calls API and revalidates paths', async () => {
       await bulkDeleteApplicationsAction(mockAppIds)
 
-      expect(appApi.bulkDeleteApplications).toHaveBeenCalledWith(mockSupabase, mockAppIds)
+      expect(appApi.bulkDeleteApplications).toHaveBeenCalledWith(
+        mockSupabase,
+        mockAppIds,
+        mockUserId
+      )
       expect(revalidatePath).toHaveBeenCalledWith('/dashboard')
       expect(revalidatePath).toHaveBeenCalledWith('/applications')
     })
@@ -107,7 +111,8 @@ describe('Bulk Server Actions', () => {
       expect(appApi.bulkUpdateApplicationStatus).toHaveBeenCalledWith(
         mockSupabase,
         mockAppIds,
-        'offered'
+        'offered',
+        mockUserId
       )
       expect(revalidatePath).toHaveBeenCalledWith('/dashboard')
       expect(revalidatePath).toHaveBeenCalledWith('/applications')
@@ -143,7 +148,8 @@ describe('Bulk Server Actions', () => {
       expect(appApi.bulkUpdateApplicationCustomColumn).toHaveBeenCalledWith(
         mockSupabase,
         mockAppIds,
-        mockColId
+        mockColId,
+        mockUserId
       )
       expect(revalidatePath).toHaveBeenCalledWith('/dashboard')
       expect(revalidatePath).toHaveBeenCalledWith('/applications')
