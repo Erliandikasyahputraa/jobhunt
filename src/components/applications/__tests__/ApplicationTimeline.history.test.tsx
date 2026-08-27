@@ -1,10 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ApplicationTimeline } from '../ApplicationDetail/components/RightPanel/ApplicationTimeline'
+import { ApplicationDetail } from '../ApplicationDetail/ApplicationDetail'
 import type {
   Application,
   ApplicationStatusHistoryDB,
   ApplicationDocumentDB,
+  CustomColumnDB,
 } from '@/lib/types/database.types'
 import { getStatusLabel, getStatusCategory } from '@/lib/utils/status-colors'
 
@@ -36,6 +38,29 @@ const mockApplication: Application = {
   created_at: '2026-08-26T14:32:00.000Z',
   updated_at: '2026-08-26T15:00:00.000Z',
 }
+
+const mockCustomColumns: CustomColumnDB[] = [
+  {
+    id: 'col-1',
+    user_id: 'user-uuid-1',
+    name: 'Interview Pipeline',
+    description: null,
+    icon: 'briefcase',
+    order: 0,
+    created_at: '2026-08-20T00:00:00Z',
+    updated_at: '2026-08-20T00:00:00Z',
+  },
+  {
+    id: 'col-2',
+    user_id: 'user-uuid-1',
+    name: 'Executive Review',
+    description: null,
+    icon: 'user-check',
+    order: 1,
+    created_at: '2026-08-20T00:00:00Z',
+    updated_at: '2026-08-20T00:00:00Z',
+  },
+]
 
 describe('Canonical Status Terminology', () => {
   it('maps phone_screen to "Phone Screen"', () => {
@@ -102,6 +127,31 @@ describe('ApplicationTimeline Data and Ordering', () => {
     expect(screen.getByText(/Aug 27, 2026/i)).toBeInTheDocument()
   })
 
+  it('renders custom column movement events correctly', async () => {
+    const mockHistory: ApplicationStatusHistoryDB[] = [
+      {
+        id: 'hist-col-1',
+        application_id: 'app-uuid-1',
+        user_id: 'user-uuid-1',
+        from_status: 'phone_screen',
+        to_status: 'phone_screen',
+        from_custom_column_id: 'col-1',
+        to_custom_column_id: 'col-2',
+        created_at: '2026-08-27T11:00:00.000Z',
+      },
+    ]
+
+    ;(getApplicationHistoryAction as any).mockResolvedValue(mockHistory)
+
+    render(<ApplicationTimeline application={mockApplication} customColumns={mockCustomColumns} />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Column Moved')).toBeInTheDocument()
+    })
+
+    expect(screen.getByText('Interview Pipeline → Executive Review')).toBeInTheDocument()
+  })
+
   it('renders document upload events alongside status changes ordered chronologically', async () => {
     const mockHistory: ApplicationStatusHistoryDB[] = [
       {
@@ -145,5 +195,32 @@ describe('ApplicationTimeline Data and Ordering', () => {
     // Verify canonical status label in transition
     expect(screen.getByText('Applied → Interview')).toBeInTheDocument()
     expect(screen.getByText(/resume_staff\.pdf/i)).toBeInTheDocument()
+  })
+})
+
+describe('Job Detail Distinct Status and Column', () => {
+  it('distinguishes between Status and Column in ApplicationDetail', () => {
+    const appWithCustomCol: Application = {
+      ...mockApplication,
+      status: 'phone_screen',
+      custom_column_id: 'col-1',
+    }
+
+    render(
+      <ApplicationDetail
+        application={appWithCustomCol}
+        customColumns={mockCustomColumns}
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+        onClose={vi.fn()}
+        isOpen={true}
+      />
+    )
+
+    // Status shows Phone Screen
+    expect(screen.getByText('Phone Screen')).toBeInTheDocument()
+
+    // Column shows Column: Interview Pipeline
+    expect(screen.getByText('Column: Interview Pipeline')).toBeInTheDocument()
   })
 })

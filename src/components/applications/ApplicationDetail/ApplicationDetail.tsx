@@ -17,7 +17,7 @@ import {
 import { ApplicationDetailLayout } from './components/ApplicationDetailLayout'
 import { useApplicationDetail } from './hooks/useApplicationDetail'
 import ApplicationForm from '../ApplicationForm'
-import type { Application } from '@/lib/types/database.types'
+import type { Application, CustomColumnDB } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import { VisuallyHidden } from '@/components/ui/visually-hidden'
 
@@ -35,7 +35,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-glass-lg bg-[var(--glass-medium)] backdrop-blur-[30px] [-webkit-backdrop-filter:blur(30px)] saturate-[200%] border-[var(--glass-border-strong)] data-[state=open]:animate-spring-bounce-in',
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-glass-lg bg-white text-neutral-900 border-neutral-200 dark:bg-[var(--glass-medium)] dark:text-foreground dark:backdrop-blur-[30px] dark:[-webkit-backdrop-filter:blur(30px)] dark:saturate-[200%] dark:border-[var(--glass-border-strong)] data-[state=open]:animate-spring-bounce-in',
         className
       )}
       {...props}
@@ -48,6 +48,7 @@ DialogContent.displayName = DialogPrimitive.Content.displayName
 
 export interface ApplicationDetailProps {
   application: Application
+  customColumns?: CustomColumnDB[]
   onUpdate: (id: string, data: ApplicationFormData) => Promise<void>
   onDelete: (id: string) => Promise<void>
   onClose: () => void
@@ -56,6 +57,7 @@ export interface ApplicationDetailProps {
 
 export function ApplicationDetail({
   application,
+  customColumns = [],
   onUpdate,
   onDelete,
   onClose,
@@ -89,7 +91,7 @@ export function ApplicationDetail({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
           className={cn(
-            'w-full overflow-hidden p-0 glass-light rounded-glass-lg shadow-glass-dramatic backdrop-blur-[20px] [-webkit-backdrop-filter:blur(20px)] saturate-[180%] border-[var(--glass-border-strong)]',
+            'w-full overflow-hidden p-0 bg-white text-neutral-900 border border-neutral-200 shadow-2xl rounded-glass-lg dark:glass-light dark:rounded-glass-lg dark:shadow-glass-dramatic dark:backdrop-blur-[20px] dark:[-webkit-backdrop-filter:blur(20px)] dark:saturate-[180%] dark:border-[var(--glass-border-strong)] dark:bg-[var(--glass-medium)]',
             isEditMode ? 'max-w-5xl h-auto max-h-[90vh]' : 'max-w-[85vw] h-full max-h-[90vh]'
           )}
         >
@@ -104,13 +106,13 @@ export function ApplicationDetail({
             </DialogDescription>
           </VisuallyHidden>
           {error && (
-            <div className="glass-light bg-red-500/10 border border-red-300/40 dark:border-red-600/40 rounded-glass-sm m-4 p-4 text-sm text-red-700 dark:text-red-300">
+            <div className="bg-red-50 border border-red-200 dark:glass-light dark:bg-red-500/10 dark:border-red-600/40 rounded-glass-sm m-4 p-4 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}
 
           {isEditMode ? (
-            <div className="flex flex-col max-h-[90vh]">
+            <div className="flex flex-col max-h-[90vh] bg-white dark:bg-transparent">
               {/* Edit Mode Header */}
               <div className="bg-white dark:glass-ultra border-b border-neutral-200 dark:border-label-quaternary/20 rounded-t-glass-lg p-6 shrink-0">
                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-label-primary">
@@ -122,7 +124,7 @@ export function ApplicationDetail({
               </div>
 
               {/* Form Content - Scrollable if needed */}
-              <div className="overflow-y-auto p-6">
+              <div className="overflow-y-auto p-6 bg-white dark:bg-transparent">
                 <ApplicationForm
                   onSubmit={handleFormSubmit}
                   onCancel={handleCancelEdit}
@@ -144,6 +146,7 @@ export function ApplicationDetail({
           ) : (
             <ApplicationDetailLayout
               application={application}
+              customColumns={customColumns}
               onUpdate={onUpdate}
               onDelete={onDelete}
               onClose={onClose}
@@ -159,16 +162,22 @@ export function ApplicationDetail({
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white text-neutral-900 border-neutral-200 dark:bg-card dark:text-foreground dark:border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-neutral-900 dark:text-foreground">
+              Are you sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-neutral-600 dark:text-muted-foreground">
               This action cannot be undone. This will permanently delete the application for{' '}
               <strong>{application.company_name}</strong>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleDeleteCancel} disabled={isDeleting}>
+            <AlertDialogCancel
+              onClick={handleDeleteCancel}
+              disabled={isDeleting}
+              className="bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border"
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction

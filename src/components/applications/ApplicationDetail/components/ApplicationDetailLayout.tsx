@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import type { Application } from '@/lib/types/database.types'
+import type { Application, CustomColumnDB } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { TabType } from '../types'
 import { CompanyLogo } from '@/components/ui/company-logo'
@@ -13,6 +13,7 @@ import { ActionButtons } from './ActionButtons'
 
 interface ApplicationDetailLayoutProps {
   application: Application
+  customColumns?: CustomColumnDB[]
   onUpdate: (id: string, data: ApplicationFormData) => Promise<void>
   onDelete: (id: string) => Promise<void>
   onClose: () => void
@@ -25,6 +26,7 @@ interface ApplicationDetailLayoutProps {
 
 export function ApplicationDetailLayout({
   application,
+  customColumns = [],
   onUpdate: _onUpdate,
   onDelete: _onDelete,
   onClose,
@@ -34,10 +36,14 @@ export function ApplicationDetailLayout({
   onEdit,
   onDeleteClick,
 }: ApplicationDetailLayoutProps) {
+  const columnName = application.custom_column_id
+    ? customColumns.find(c => c.id === application.custom_column_id)?.name || 'Custom Column'
+    : getStatusLabel(application.status)
+
   return (
-    <div className="flex flex-col h-full max-h-[90vh]">
+    <div className="flex flex-col h-full max-h-[90vh] bg-white dark:bg-transparent">
       {/* Header */}
-      <div className="glass-ultra border-b border-label-quaternary/20 rounded-t-glass-lg shrink-0">
+      <div className="bg-white dark:glass-ultra border-b border-neutral-200 dark:border-label-quaternary/20 rounded-t-glass-lg shrink-0">
         {/* Primary Header Info */}
         <div className="flex items-start justify-between gap-4 p-6 pb-2">
           <div className="flex items-center gap-4">
@@ -47,10 +53,10 @@ export function ApplicationDetailLayout({
               className="flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-semibold text-label-primary truncate leading-tight">
+              <h1 className="text-2xl font-semibold text-neutral-900 dark:text-label-primary truncate leading-tight">
                 {application.job_title}
               </h1>
-              <p className="text-lg text-label-secondary truncate leading-tight">
+              <p className="text-lg text-neutral-600 dark:text-label-secondary truncate leading-tight">
                 {application.company_name}
               </p>
             </div>
@@ -72,7 +78,9 @@ export function ApplicationDetailLayout({
           {application.location && (
             <div className="flex items-center gap-2">
               <span className="text-label-tertiary">📍</span>
-              <span className="text-label-primary font-medium">{application.location}</span>
+              <span className="text-neutral-900 dark:text-label-primary font-medium">
+                {application.location}
+              </span>
             </div>
           )}
 
@@ -80,22 +88,32 @@ export function ApplicationDetailLayout({
           {application.salary_range && (
             <div className="flex items-center gap-2">
               <span className="text-label-tertiary">💰</span>
-              <span className="text-label-primary font-medium">{application.salary_range}</span>
+              <span className="text-neutral-900 dark:text-label-primary font-medium">
+                {application.salary_range}
+              </span>
             </div>
           )}
 
           {/* Status */}
           <div className="flex items-center gap-2">
             <span className="text-label-tertiary">📊</span>
-            <span className="text-label-primary font-medium">
+            <span className="text-neutral-900 dark:text-label-primary font-medium">
               {getStatusLabel(application.status)}
+            </span>
+          </div>
+
+          {/* Column */}
+          <div className="flex items-center gap-2">
+            <span className="text-label-tertiary">📁</span>
+            <span className="text-neutral-900 dark:text-label-primary font-medium">
+              Column: {columnName}
             </span>
           </div>
 
           {/* Date Applied */}
           <div className="flex items-center gap-2">
             <span className="text-label-tertiary">📅</span>
-            <span className="text-label-primary font-medium">
+            <span className="text-neutral-900 dark:text-label-primary font-medium">
               {new Date(application.date_applied).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric',
@@ -107,7 +125,7 @@ export function ApplicationDetailLayout({
           {/* Source */}
           <div className="flex items-center gap-2">
             <span className="text-label-tertiary">🔗</span>
-            <span className="text-label-primary font-medium">
+            <span className="text-neutral-900 dark:text-label-primary font-medium">
               Added from {application.source || 'external'}
             </span>
           </div>
@@ -117,23 +135,23 @@ export function ApplicationDetailLayout({
       {/* Three Panel Layout */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left Panel - Navigation */}
-        <div className="hidden lg:block w-64 shrink-0 border-r border-label-quaternary/20 overflow-y-auto">
+        <div className="hidden lg:block w-64 shrink-0 border-r border-neutral-200 dark:border-label-quaternary/20 overflow-y-auto bg-white dark:bg-transparent">
           <TabNavigation activeTab={activeTab} onTabChange={onTabChange} disabled={isEditMode} />
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 min-w-0 overflow-y-auto">
+        <div className="flex-1 min-w-0 overflow-y-auto bg-white dark:bg-transparent">
           <MainPanel application={application} activeTab={activeTab} />
         </div>
 
         {/* Right Panel - Timeline */}
-        <div className="hidden xl:block w-80 shrink-0 border-l border-label-quaternary/20 overflow-y-auto">
-          <ApplicationTimeline application={application} />
+        <div className="hidden xl:block w-80 shrink-0 border-l border-neutral-200 dark:border-label-quaternary/20 overflow-y-auto bg-white dark:bg-transparent">
+          <ApplicationTimeline application={application} customColumns={customColumns} />
         </div>
       </div>
 
       {/* Mobile Tab Navigation */}
-      <div className="lg:hidden border-t border-label-quaternary/20 glass-light">
+      <div className="lg:hidden border-t border-neutral-200 dark:border-label-quaternary/20 glass-light">
         <TabNavigation activeTab={activeTab} onTabChange={onTabChange} disabled={isEditMode} />
       </div>
     </div>

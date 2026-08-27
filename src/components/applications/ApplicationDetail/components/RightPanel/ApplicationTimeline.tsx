@@ -2,12 +2,13 @@
 
 import * as React from 'react'
 import { format, parseISO, isValid } from 'date-fns'
-import { Circle, CheckCircle, Clock, FileText, Plus } from 'lucide-react'
+import { Circle, CheckCircle, Clock, FileText, Plus, Columns } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type {
   Application,
   ApplicationStatusHistoryDB,
   ApplicationDocumentDB,
+  CustomColumnDB,
 } from '@/lib/types/database.types'
 import { getStatusLabel } from '@/lib/utils/status-colors'
 import { getApplicationHistoryAction } from '@/app/dashboard/actions'
@@ -24,6 +25,7 @@ export interface TimelineEvent {
 
 export interface ApplicationTimelineProps {
   application: Application
+  customColumns?: CustomColumnDB[]
   className?: string
   initialHistory?: ApplicationStatusHistoryDB[]
   initialDocuments?: ApplicationDocumentDB[]
@@ -31,6 +33,7 @@ export interface ApplicationTimelineProps {
 
 export function ApplicationTimeline({
   application,
+  customColumns = [],
   className,
   initialHistory,
   initialDocuments,
@@ -63,7 +66,18 @@ export function ApplicationTimeline({
     return () => {
       isMounted = false
     }
-  }, [application.id])
+  }, [application.id, application.updated_at, application.status, application.custom_column_id])
+
+  const resolveColumnName = React.useCallback(
+    (customColumnId: string | null, statusFallback: string) => {
+      if (customColumnId) {
+        const found = customColumns.find(c => c.id === customColumnId)
+        return found ? found.name : 'Custom Column'
+      }
+      return getStatusLabel(statusFallback)
+    },
+    [customColumns]
+  )
 
   // Generate timeline events based on real application created_at, status history, and documents
   const timelineEvents: TimelineEvent[] = React.useMemo(() => {
@@ -101,20 +115,55 @@ export function ApplicationTimeline({
       icon: Plus,
     })
 
-    // 2. Real Historical Status Transitions (from application_status_history)
+    // 2. Real Historical Status & Column Transitions (from application_status_history)
     history.forEach(item => {
-      // Only include actual transitions where from_status was previously recorded
-      if (item.from_status && item.from_status !== item.to_status) {
-        let eventDate = parseISO(item.created_at)
-        if (!isValid(eventDate)) eventDate = new Date()
+      // Skip the baseline insert where from_status and from_custom_column_id are both null
+      if (item.from_status === null && item.from_custom_column_id === null) {
+        return
+      }
 
+      let eventDate = parseISO(item.created_at)
+      if (!isValid(eventDate)) eventDate = new Date()
+
+      const hasStatusChange = item.from_status && item.from_status !== item.to_status
+      const hasColumnChange = item.from_custom_column_id !== item.to_custom_column_id
+
+      if (hasStatusChange && hasColumnChange) {
+        const fromCol = resolveColumnName(
+          item.from_custom_column_id,
+          item.from_status || 'wishlist'
+        )
+        const toCol = resolveColumnName(item.to_custom_column_id, item.to_status)
+        events.push({
+          id: `status-history-${item.id}`,
+          type: 'status_change',
+          title: 'Status & Column Changed',
+          description: `${getStatusLabel(item.from_status!)} → ${getStatusLabel(item.to_status)} (${fromCol} → ${toCol})`,
+          timestamp: eventDate,
+          icon: CheckCircle,
+        })
+      } else if (hasStatusChange) {
         events.push({
           id: `status-history-${item.id}`,
           type: 'status_change',
           title: 'Status Changed',
-          description: `${getStatusLabel(item.from_status)} → ${getStatusLabel(item.to_status)}`,
+          description: `${getStatusLabel(item.from_status!)} → ${getStatusLabel(item.to_status)}`,
           timestamp: eventDate,
           icon: CheckCircle,
+        })
+      } else if (hasColumnChange) {
+        const fromCol = resolveColumnName(
+          item.from_custom_column_id,
+          item.from_status || item.to_status
+        )
+        const toCol = resolveColumnName(item.to_custom_column_id, item.to_status)
+        events.push({
+          id: `column-history-${item.id}`,
+          type: 'column_move',
+          title: 'Column Moved',
+          description: `${fromCol} → ${toCol}`,
+          timestamp: eventDate,
+          icon: Columns,
         })
       }
     })
@@ -136,7 +185,7 @@ export function ApplicationTimeline({
 
     // Sort events by timestamp (newest first)
     return events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-  }, [application, history, documents])
+  }, [application, history, documents, resolveColumnName])
 
   const formatDate = (date: Date): string => {
     return format(date, 'MMM dd, yyyy')
@@ -152,6 +201,8 @@ export function ApplicationTimeline({
         return Plus
       case 'status_change':
         return CheckCircle
+      case 'column_move':
+        return Columns
       case 'document_added':
         return FileText
       case 'note_added':
@@ -165,6 +216,7 @@ export function ApplicationTimeline({
     switch (type) {
       case 'creation':
       case 'status_change':
+      case 'column_move':
         return 'text-neutral-900 dark:text-copper'
       case 'document_added':
         return 'text-neutral-900 dark:text-emerald-400'
@@ -176,7 +228,7 @@ export function ApplicationTimeline({
   }
 
   return (
-    <div className={cn('p-6', className)}>
+    <div className={cn('p-6 bg-white dark:bg-transparent', className)}>
       <div className="flex items-center gap-2 mb-6">
         <Clock className="w-5 h-5 text-neutral-900 dark:text-copper" />
         <h3 className="text-lg font-semibold text-neutral-900 dark:text-label-primary">Timeline</h3>
@@ -184,7 +236,6 @@ export function ApplicationTimeline({
 
       <div className="space-y-4">
         {timelineEvents.map((event, index) => {
-          const _Icon = event.icon || _getEventIcon(event.type)
           const isLast = index === timelineEvents.length - 1
 
           return (

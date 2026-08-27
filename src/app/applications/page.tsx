@@ -771,6 +771,7 @@ function ApplicationsPageContent() {
         {selectedApplication && (
           <ApplicationDetail
             application={selectedApplication}
+            customColumns={customColumns}
             onUpdate={handleUpdateApplication}
             onDelete={handleDeleteApplication}
             onClose={handleCloseDetail}
