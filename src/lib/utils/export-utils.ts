@@ -1,6 +1,6 @@
 import type { Application, CustomColumnDB } from '@/lib/types/database.types'
 
-export function escapeCSVField(value: any): string {
+export function escapeCSVField(value: unknown): string {
   if (value === null || value === undefined) {
     return ''
   }

@@ -21,7 +21,13 @@ const ALLOWED_MIME_TYPES = [
 ]
 const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx']
 
-async function verifyApplicationOwnership(supabase: any, applicationId: string, userId: string) {
+type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
+
+async function verifyApplicationOwnership(
+  supabase: SupabaseServerClient,
+  applicationId: string,
+  userId: string
+) {
   const { data, error } = await supabase
     .from('applications')
     .select('id')

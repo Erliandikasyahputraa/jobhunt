@@ -106,9 +106,11 @@ export function Documents({ _application, className }: DocumentsProps) {
       setIsUploadDialogOpen(false)
       setSelectedFile(null)
       fetchDocuments()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Upload error:', error)
-      toast.error(error.message || 'Failed to upload document. Please try again.')
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to upload document. Please try again.'
+      )
     } finally {
       setIsUploading(false)
     }
@@ -119,9 +121,9 @@ export function Documents({ _application, className }: DocumentsProps) {
       setIsDownloadingId(doc.id)
       const url = await getDocumentUrlAction(doc.id)
       window.open(url, '_blank', 'noopener,noreferrer')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Download error:', error)
-      toast.error(error.message || 'Unable to access this document.')
+      toast.error(error instanceof Error ? error.message : 'Unable to access this document.')
     } finally {
       setIsDownloadingId(null)
     }
@@ -136,9 +138,11 @@ export function Documents({ _application, className }: DocumentsProps) {
       toast.success('Document deleted')
       setDocumentToDelete(null)
       fetchDocuments()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Delete error:', error)
-      toast.error(error.message || 'Failed to delete document. Please try again.')
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to delete document. Please try again.'
+      )
     } finally {
       setIsDeleting(false)
     }

@@ -25,8 +25,11 @@ async function testDevServer() {
           )
         }
       }
-    } catch (err: any) {
-      console.error(`  -> ERROR fetching ${route}:`, err.message)
+    } catch (err: unknown) {
+      console.error(
+        `  -> ERROR fetching ${route}:`,
+        err instanceof Error ? err.message : String(err)
+      )
     }
   }
 }

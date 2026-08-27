@@ -96,8 +96,8 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
       setCompany(newCompany)
       setIsCreating(false)
       toast.success('Company profile created and linked')
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create company')
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Failed to create company')
     } finally {
       setIsLoading(false)
     }
@@ -112,8 +112,8 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
       setCompany(updatedCompany)
       setIsEditing(false)
       toast.success('Company profile updated')
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update company')
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update company')
     } finally {
       setIsLoading(false)
     }
@@ -132,8 +132,8 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
       }
       setIsLinking(false)
       toast.success('Company linked')
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to link company')
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Failed to link company')
     } finally {
       setIsLoading(false)
     }
@@ -145,8 +145,8 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
       await unlinkCompanyAction(application.id)
       setCompany(null)
       toast.success('Company unlinked')
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to unlink company')
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Failed to unlink company')
     } finally {
       setIsLoading(false)
     }

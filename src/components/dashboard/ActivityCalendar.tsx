@@ -12,12 +12,17 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+export interface ActivityCalendarDatum {
+  day: string
+  value: number
+}
+
 export function ActivityCalendar({
   years,
   dataByYear,
 }: {
   years: string[]
-  dataByYear: Record<string, any[]>
+  dataByYear: Record<string, ActivityCalendarDatum[]>
 }) {
   const [year, setYear] = useState(years.at(-1))
   const data = dataByYear[year ?? ''] ?? []
