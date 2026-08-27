@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { NavBar } from '@/components/layout/NavBar'
 import { AnimatedBackground } from '@/components/layout/AnimatedBackground'
@@ -11,6 +12,7 @@ function LoginForm() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const searchParams = useSearchParams()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -57,7 +59,7 @@ function LoginForm() {
         <div className="text-center">
           <h2 className="text-3xl font-bold text-foreground">Masuk ke Anti-Nganggur</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Kelola dan pantau semua lamaran kerja kamu di satu tempat
+            Selamat datang kembali 👋 Masuk untuk melanjutkan perjalanan cari kerja kamu.
           </p>
         </div>
 
@@ -77,6 +79,7 @@ function LoginForm() {
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                placeholder="nama@email.com"
                 className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-ring"
               />
             </div>
@@ -85,14 +88,26 @@ function LoginForm() {
               <label htmlFor="password" className="block text-sm font-medium text-foreground">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-ring"
-              />
+              <div className="relative mt-1">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="block w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-ring"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Sembunyikan sandi' : 'Lihat sandi'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                  disabled={loading}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
           </div>
 

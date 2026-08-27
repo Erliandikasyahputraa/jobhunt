@@ -17,9 +17,19 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Anti-Nganggur — Kelola & Lacak Lamaran Kerja Kamu',
+  title: 'Anti-Nganggur — Biar Cari Kerja Nggak Berantakan',
   description:
-    'Aplikasi pelacak lamaran kerja modern berbasis Kanban board & analytics untuk memudahkan proses job hunting kamu.',
+    'Tempat menyimpan, mengatur, dan memantau semua lamaran kerja kamu dalam satu tempat. Gratis dan mudah digunakan.',
+  metadataBase: new URL('https://anti-nganggur.vercel.app'),
+  openGraph: {
+    title: 'Anti-Nganggur — Biar Cari Kerja Nggak Berantakan',
+    description:
+      'Tempat menyimpan, mengatur, dan memantau semua lamaran kerja kamu dalam satu tempat. Gratis dan mudah digunakan.',
+    url: 'https://anti-nganggur.vercel.app',
+    siteName: 'Anti-Nganggur',
+    locale: 'id_ID',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({

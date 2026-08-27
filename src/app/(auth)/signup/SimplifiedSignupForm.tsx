@@ -125,16 +125,17 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
             </div>
           )}
 
-          {/* Name Fields Section */}
+          {/* Personal Information Section */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h3 className="text-lg font-semibold text-foreground">Informasi Pribadi</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
                   htmlFor="firstName"
                   className="block text-sm font-medium text-foreground mb-2"
                 >
-                  First name *
+                  Nama Depan *
                 </label>
                 <Input
                   id="firstName"
@@ -143,16 +144,17 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
                   value={formData.firstName}
                   onChange={e => updateFormData('firstName', e.target.value)}
                   variant="glass"
-                  placeholder="John"
+                  placeholder="Budi"
                   disabled={loading}
                 />
               </div>
+
               <div>
                 <label
                   htmlFor="lastName"
                   className="block text-sm font-medium text-foreground mb-2"
                 >
-                  Last name *
+                  Nama Belakang *
                 </label>
                 <Input
                   id="lastName"
@@ -161,7 +163,7 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
                   value={formData.lastName}
                   onChange={e => updateFormData('lastName', e.target.value)}
                   variant="glass"
-                  placeholder="Doe"
+                  placeholder="Santoso"
                   disabled={loading}
                 />
               </div>
@@ -170,11 +172,11 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
 
           {/* Account Information Section */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">Account Information</h3>
+            <h3 className="text-lg font-semibold text-foreground">Informasi Akun</h3>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                Email address *
+                Alamat Email *
               </label>
               <Input
                 id="email"
@@ -183,14 +185,14 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
                 value={formData.email}
                 onChange={e => updateFormData('email', e.target.value)}
                 variant="glass"
-                placeholder="you@example.com"
+                placeholder="nama@email.com"
                 disabled={loading}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
-                Password (min. 6 characters) *
+                Password (min. 6 karakter) *
               </label>
               <div className="relative">
                 <Input
@@ -207,6 +209,7 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   disabled={loading}
                 >
@@ -220,7 +223,7 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
                 htmlFor="confirmPassword"
                 className="block text-sm font-medium text-foreground mb-2"
               >
-                Confirm password *
+                Konfirmasi Password *
               </label>
               <div className="relative">
                 <Input
@@ -237,6 +240,11 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={
+                    showConfirmPassword
+                      ? 'Sembunyikan konfirmasi password'
+                      : 'Tampilkan konfirmasi password'
+                  }
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   disabled={loading}
                 >
@@ -248,18 +256,17 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
 
           {/* Create Account Button */}
           <Button type="submit" disabled={loading} className="w-full btn-brand-gradient py-3">
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? 'Sedang membuat akun...' : 'Buat Akun Gratis'}
           </Button>
 
           {/* Sign In Link */}
           <div className="text-center pt-4 border-t border-border/50">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link
-              href="/login"
-              className="font-medium text-brand-primary hover:text-brand-primary/80"
-            >
-              Sign in
-            </Link>
+            <p className="text-sm text-muted-foreground">
+              Sudah punya akun?{' '}
+              <Link href="/login" className="text-brand-primary hover:underline font-semibold">
+                Masuk di sini
+              </Link>
+            </p>
           </div>
         </form>
       </div>

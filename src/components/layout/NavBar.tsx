@@ -62,6 +62,19 @@ export function NavBar({
 
             {/* Navigation Links & Actions */}
             <div className="flex items-center gap-4">
+              {/* Section Anchors */}
+              <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-label-secondary mr-2">
+                <a href="#fitur" className="hover:text-label-primary transition-colors">
+                  Fitur
+                </a>
+                <a href="#cara-kerja" className="hover:text-label-primary transition-colors">
+                  Cara Kerja
+                </a>
+                <a href="#faq" className="hover:text-label-primary transition-colors">
+                  FAQ
+                </a>
+              </nav>
+
               {user ? (
                 <>
                   <Link
@@ -85,7 +98,7 @@ export function NavBar({
 
                   <Link
                     href="/signup"
-                    className="hidden sm:inline-flex items-center gap-2 rounded-glass-sm glass-medium px-4 py-2 text-sm font-semibold text-label-primary shadow-glass-subtle hover:glass-heavy transition-all duration-300"
+                    className="hidden sm:inline-flex items-center gap-2 rounded-glass-sm btn-brand-gradient px-4 py-2 text-sm font-semibold text-white shadow-glass-subtle hover:scale-105 transition-all duration-300"
                     style={{
                       border: '1px solid var(--glass-border-strong)',
                     }}
@@ -140,10 +153,10 @@ export function NavBar({
               <Link
                 href="/dashboard"
                 className={cn(
-                  'text-sm font-medium transition-all px-3 py-1.5 rounded-md',
+                  'px-3 py-1.5 text-sm font-medium rounded-glass-sm transition-all',
                   pathname === '/dashboard'
-                    ? 'bg-accent/80 text-label-primary font-semibold shadow-xs'
-                    : 'text-label-secondary hover:text-label-primary hover:bg-accent/40'
+                    ? 'bg-label-quaternary/10 text-label-primary font-semibold'
+                    : 'text-label-secondary hover:text-label-primary hover:bg-label-quaternary/5'
                 )}
               >
                 Dashboard
@@ -151,13 +164,13 @@ export function NavBar({
               <Link
                 href="/applications"
                 className={cn(
-                  'text-sm font-medium transition-all px-3 py-1.5 rounded-md',
+                  'px-3 py-1.5 text-sm font-medium rounded-glass-sm transition-all',
                   pathname === '/applications'
-                    ? 'bg-accent/80 text-label-primary font-semibold shadow-xs'
-                    : 'text-label-secondary hover:text-label-primary hover:bg-accent/40'
+                    ? 'bg-label-quaternary/10 text-label-primary font-semibold'
+                    : 'text-label-secondary hover:text-label-primary hover:bg-label-quaternary/5'
                 )}
               >
-                Applications
+                Lamaran
               </Link>
             </div>
 
@@ -168,10 +181,6 @@ export function NavBar({
                   user={user}
                   onProfileClick={() => {
                     router.push('/profile')
-                  }}
-                  onSettingsClick={() => {
-                    // TODO: Navigate to settings page when it exists
-                    console.log('Settings page not implemented yet')
                   }}
                   onLogoutClick={logout}
                 />

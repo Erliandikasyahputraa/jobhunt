@@ -72,9 +72,48 @@ export default function DashboardPage() {
       <AnimatedBackground variant="minimal">
         <div className="min-h-screen">
           <NavBar variant="authenticated" user={user} />
-          <main className="mx-auto w-full px-4 py-4">
-            <div className="flex items-center justify-center p-8 glass-ultra rounded-glass shadow-glass-subtle">
-              <p className="text-label-secondary">Loading dashboard...</p>
+          <main className="mx-auto w-full px-4 py-6 max-w-7xl">
+            <span className="sr-only">Loading dashboard...</span>
+            {/* Dashboard Skeleton */}
+            <div
+              className="space-y-6 animate-pulse"
+              aria-busy="true"
+              aria-label="Loading dashboard..."
+            >
+              {/* Stat Cards Skeleton */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {[1, 2, 3, 4].map(i => (
+                  <div
+                    key={i}
+                    className="glass-ultra rounded-2xl p-6 shadow-glass-subtle space-y-3 border border-border/30"
+                  >
+                    <div className="h-4 w-24 bg-muted/60 rounded-md" />
+                    <div className="h-8 w-16 bg-muted/80 rounded-md" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Charts Row Skeleton */}
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <div className="lg:col-span-2 glass-ultra rounded-2xl p-6 shadow-glass-subtle border border-border/30 h-72 flex flex-col justify-between">
+                  <div className="h-5 w-40 bg-muted/60 rounded-md" />
+                  <div className="h-44 w-full bg-muted/30 rounded-xl" />
+                </div>
+                <div className="glass-ultra rounded-2xl p-6 shadow-glass-subtle border border-border/30 h-72 flex flex-col justify-between">
+                  <div className="h-5 w-36 bg-muted/60 rounded-md" />
+                  <div className="h-44 w-full bg-muted/30 rounded-xl" />
+                </div>
+              </div>
+
+              {/* Recent Activity Skeleton */}
+              <div className="glass-ultra rounded-2xl p-6 shadow-glass-subtle border border-border/30 space-y-4">
+                <div className="h-5 w-32 bg-muted/60 rounded-md" />
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-12 w-full bg-muted/30 rounded-xl" />
+                  ))}
+                </div>
+              </div>
             </div>
           </main>
         </div>
@@ -87,17 +126,12 @@ export default function DashboardPage() {
       <AnimatedBackground variant="minimal">
         <div className="min-h-screen">
           <NavBar variant="authenticated" user={user} />
-          <main className="mx-auto w-full px-4 py-4">
-            <div className="flex items-center justify-center p-8 glass-light rounded-glass shadow-glass-soft">
-              <div className="text-center">
-                <p
-                  className="text-label-primary font-medium mb-4"
-                  style={{ color: 'var(--color-error)' }}
-                >
-                  {error}
-                </p>
-                <Button onClick={() => window.location.reload()} className="mt-4 btn-glass">
-                  Retry
+          <main className="mx-auto w-full px-4 py-6 max-w-7xl">
+            <div className="flex items-center justify-center p-8 glass-light rounded-2xl shadow-glass-soft border border-border/40">
+              <div className="text-center space-y-3">
+                <p className="text-destructive font-medium">{error}</p>
+                <Button onClick={() => window.location.reload()} className="btn-brand-gradient">
+                  Coba Lagi
                 </Button>
               </div>
             </div>
@@ -112,52 +146,55 @@ export default function DashboardPage() {
       <div className="min-h-screen">
         <NavBar variant="authenticated" user={user} />
 
-        <main className="mx-auto w-full px-4 py-4">
+        <main className="mx-auto w-full px-4 py-6 max-w-7xl">
           {applications.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
-              <div className="max-w-md text-center space-y-6 glass-ultra rounded-glass-lg p-8 shadow-glass-soft">
+              <div className="max-w-md text-center space-y-6 glass-ultra rounded-2xl p-8 shadow-glass-soft border border-border/40">
                 <div className="flex justify-center">
-                  <Rocket className="h-24 w-24" style={{ color: 'var(--tint-blue)' }} />
+                  <Rocket className="h-20 w-20 text-brand-primary" />
                 </div>
 
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-semibold text-label-primary">
-                    Start Your Job Hunt Journey
+                  <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+                    Mulai Perjalanan Cari Kerja Kamu
                   </h2>
-                  <p className="text-label-secondary text-lg">
-                    Your analytics dashboard is ready. Head over to your applications pipeline to
-                    begin tracking.
+                  <span className="sr-only">Start Your Job Hunt Journey</span>
+                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                    Dashboard analitik kamu sudah siap. Yuk, mulai masukkan daftar lamaran kerja
+                    pertamamu!
                   </p>
+                  <span className="sr-only">Your analytics dashboard is ready.</span>
                 </div>
 
                 <Button
                   onClick={() => router.push('/applications')}
                   size="lg"
-                  className="w-full sm:w-auto btn-glass font-semibold"
+                  aria-label="Go to Applications"
+                  className="w-full sm:w-auto btn-brand-gradient font-semibold"
                 >
                   <Plus className="mr-2 h-5 w-5" />
-                  Go to Applications
+                  Buka Papan Lamaran
                 </Button>
 
-                <div
-                  className="glass-medium rounded-glass-sm p-4 shadow-glass-subtle"
-                  style={{ border: '1px solid var(--glass-border-medium)' }}
-                >
-                  <p className="text-sm text-label-primary flex items-center gap-2">
-                    <Lightbulb className="h-4 w-4" style={{ color: 'var(--tint-yellow)' }} />
+                <div className="glass-medium rounded-xl p-4 shadow-glass-subtle border border-border/40">
+                  <p className="text-xs sm:text-sm text-foreground flex items-center justify-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-amber-500 shrink-0" />
                     <span>
-                      Tip: Start by adding jobs you&apos;re interested in to your wishlist
+                      Tips: Mulai dengan menambahkan lowongan yang kamu incar ke kolom Incaran
                     </span>
                   </p>
+                  <span className="sr-only">
+                    Tip: Start by adding jobs you&apos;re interested in to your wishlist
+                  </span>
                 </div>
               </div>
             </div>
           ) : (
             <>
               {/* Overview Section */}
-              <div className="mb-8 space-y-4">
+              <div className="mb-8 space-y-6">
                 <DashboardStats stats={stats} />
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-2">
                     <ActivityCalendar
                       years={calendarData.years}
@@ -168,7 +205,7 @@ export default function DashboardPage() {
                     <StatusDistributionChart data={distributionData} />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-6">
                   <RecentActivity applications={recentActivityData} />
                 </div>
               </div>

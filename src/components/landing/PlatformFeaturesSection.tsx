@@ -1,92 +1,96 @@
-import { Kanban, Target, Download, Lock, BarChart3, Wrench } from 'lucide-react'
+'use client'
+
+import { LayoutGrid, CheckCircle2, Bookmark, FolderCheck, History, ShieldCheck } from 'lucide-react'
 import { AnimatedSection } from './AnimatedSection'
 
-/**
- * Platform features showcase section with 6 feature cards
- * Each card has an icon, title, description, and gradient background
- */
 export function PlatformFeaturesSection() {
   const features = [
     {
-      icon: Kanban,
-      title: 'Papan Kanban Interaktif',
+      icon: LayoutGrid,
+      title: 'Semua Lamaran di Satu Tempat',
       description:
-        'Geser dan susun kartu lamaran sesuai tahapan proses seleksi kamu dengan animasi transisi yang mulus.',
-      gradient: 'from-purple-500 to-blue-500',
+        'Nggak perlu lagi buka-buka 10 tab browser, Excel berat, atau nyari chat WhatsApp yang tenggelam.',
+      gradient: 'from-orange-500 to-amber-500',
     },
     {
-      icon: Target,
-      title: 'Pelacakan Lamaran Rapi',
+      icon: CheckCircle2,
+      title: 'Tahu Status Tanpa Nebak',
       description:
-        'Catat ekspektasi gaji, kontak recruiter, link lowongan, dan status follow-up setiap lamaran kerja.',
+        'Langsung kelihatan mana yang baru diincar, sudah dilamar, lagi tahap interview, atau sudah offering.',
+      gradient: 'from-amber-500 to-yellow-500',
+    },
+    {
+      icon: Bookmark,
+      title: 'Simpan Link & Kontak HRD',
+      description:
+        'Catat link lowongan asli, kontak recruiter, ekspektasi gaji, sampai catatan khusus yang sudah kamu siapkan.',
       gradient: 'from-blue-500 to-cyan-500',
     },
     {
-      icon: Download,
-      title: 'Ekspor Data Mudah',
+      icon: FolderCheck,
+      title: 'CV & Dokumen Nggak Ketuker',
       description:
-        'Download seluruh rekap data lamaran kerja kamu ke format CSV kapan saja tanpa batasan.',
-      gradient: 'from-cyan-500 to-teal-500',
+        'Simpan versi resume dan portfolio yang kamu kirim ke masing-masing perusahaan biar nggak salah bawa.',
+      gradient: 'from-purple-500 to-indigo-500',
     },
     {
-      icon: Lock,
-      title: 'Privasi & Isolasi Terjamin',
+      icon: History,
+      title: 'Jadwal & Riwayat Rapi',
       description:
-        'Data kamu terlindungi penuh dengan PostgreSQL Row Level Security. Tidak ada pengguna lain yang bisa melihat datamu.',
-      gradient: 'from-teal-500 to-green-500',
+        'Tahu kapan tanggal apply dan kapan waktunya follow-up, biar nggak kelupaan atau keburu telat.',
+      gradient: 'from-emerald-500 to-teal-500',
     },
     {
-      icon: BarChart3,
-      title: 'Pantau Perkembangan',
+      icon: ShieldCheck,
+      title: 'Data Kamu Aman & Privat',
       description:
-        'Lihat ringkasan status lamaran yang sedang aktif, interview terjadwal, hingga riwayat tawaran kerja.',
-      gradient: 'from-green-500 to-emerald-500',
-    },
-    {
-      icon: Wrench,
-      title: '100% Open Source',
-      description:
-        'Bebas biaya lisensi, bebas iklan, dan kamu bisa melakukan self-host kapan saja di server sendiri.',
-      gradient: 'from-purple-500 to-pink-500',
+        'Cuma kamu yang bisa melihat dan mengelola data lamaranmu. Terisolasi aman di database.',
+      gradient: 'from-rose-500 to-pink-500',
     },
   ]
 
   return (
     <AnimatedSection delay={100}>
-      <section className="px-4 py-16 sm:py-24" aria-label="Platform features">
-        <div className="container mx-auto max-w-7xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Fitur Lengkap, <span className="gradient-brand-text">Kendali di Tanganmu</span>
+      <section
+        id="fitur"
+        className="px-4 py-16 sm:py-24 scroll-mt-20"
+        aria-label="Platform features"
+      >
+        <div className="container mx-auto max-w-5xl">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-brand-primary">
+              Fitur Praktis
+            </span>
+            <h2 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
+              Yang Bisa Kamu <span className="gradient-brand-text">Rapihin di Sini</span>
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-foreground/90">
-              Semua kebutuhan mengelola perjalanan karir dan pencarian kerja dalam satu tempat
+            <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-foreground/80">
+              Dibuat simpel buat menjawab hal-hal yang sering bikin pusing saat lagi berjuang cari
+              kerja.
             </p>
           </div>
 
-          <div className="perspective-1000 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, index) => (
-              <article
+          {/* Features Grid */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map(feature => (
+              <div
                 key={feature.title}
-                className="group relative"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="glass group rounded-2xl p-6 sm:p-7 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 border border-border/40 flex flex-col justify-between"
               >
-                <div className="glass h-full rounded-2xl p-8 shadow-xl transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
-                  {/* Icon with gradient background */}
+                <div>
                   <div
-                    className={`mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} p-3 shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}
+                    className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} text-white shadow-md transition-transform duration-300 group-hover:scale-110`}
                   >
-                    <feature.icon className="h-full w-full text-white" aria-hidden="true" />
+                    <feature.icon className="h-5 w-5" aria-hidden="true" />
                   </div>
 
-                  <h3 className="mb-4 text-2xl font-bold text-foreground">{feature.title}</h3>
-
-                  <p className="text-foreground/80 leading-relaxed">{feature.description}</p>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/0 to-blue-500/0 opacity-0 transition-opacity duration-500 group-hover:from-purple-500/5 group-hover:to-blue-500/5 group-hover:opacity-100" />
+                  <h3 className="mb-2 text-lg font-bold text-foreground">{feature.title}</h3>
+                  <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-              </article>
+              </div>
             ))}
           </div>
         </div>
