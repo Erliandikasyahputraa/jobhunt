@@ -43,11 +43,10 @@ export interface UseHorizontalScrollReturn<T extends HTMLElement = HTMLElement> 
 export function useHorizontalScroll<T extends HTMLElement>(
   options: UseHorizontalScrollOptions = {}
 ): UseHorizontalScrollReturn<T> {
-  const { enabled = true, behavior = 'auto', throttleMs = 8 } = options
+  const { enabled = true, behavior = 'auto' } = options
 
   const ref = React.useRef<T>(null)
   const [isScrollable, setIsScrollable] = React.useState(false)
-  const lastScrollTime = React.useRef(0)
 
   // Store the current element to trigger useEffect when it changes
   const [element, setElement] = React.useState<T | null>(null)
@@ -66,27 +65,14 @@ export function useHorizontalScroll<T extends HTMLElement>(
     return element.scrollWidth > element.clientWidth
   }, [])
 
-  // Optimized throttle function using requestAnimationFrame for better performance
-  const throttleRAF = React.useCallback(
-    (func: () => void) => {
-      const now = performance.now()
-      if (now - lastScrollTime.current >= throttleMs) {
-        func()
-        lastScrollTime.current = now
-      }
-    },
-    [throttleMs]
-  )
-
   // Enhanced wheel event handler that preserves native horizontal scrolling
   const handleWheel = React.useCallback(
     (event: WheelEvent) => {
       if (!enabled || !ref.current) return
 
-      // Don't interfere with native horizontal scrolling
-      // If the browser already supports horizontal scrolling (touchpad, mouse wheel), let it work
-      if (event.deltaX !== 0) {
-        return // Let native horizontal scrolling handle it
+      // Don't interfere with native horizontal scrolling (trackpad deltaX or Shift+Wheel)
+      if (event.deltaX !== 0 || event.shiftKey) {
+        return
       }
 
       // Only handle pure vertical wheel events
@@ -95,18 +81,13 @@ export function useHorizontalScroll<T extends HTMLElement>(
       // Check if element is horizontally scrollable
       if (!checkScrollable()) return
 
-      // Use RAF-based throttling for smooth performance
-      throttleRAF(() => {
-        if (!ref.current) return
+      // Prevent vertical page scroll synchronously
+      event.preventDefault()
 
-        // Prevent default only when we're going to handle it
-        event.preventDefault()
-
-        // Instant scrolling for better responsiveness
-        ref.current.scrollLeft += event.deltaY
-      })
+      // Smooth & responsive horizontal scrollLeft adjustment
+      ref.current.scrollLeft += event.deltaY
     },
-    [enabled, checkScrollable, throttleRAF]
+    [enabled, checkScrollable]
   )
 
   // Scroll to specific position

@@ -281,4 +281,33 @@ describe('useHorizontalScroll', () => {
     expect(horizontalWheelEvent.preventDefault).not.toHaveBeenCalled()
     expect(mockElement.scrollLeft).toBe(0) // Should remain unchanged
   })
+
+  it('should preserve native Shift + Wheel scrolling', () => {
+    const { result } = renderHook(() => useHorizontalScroll())
+    let wheelHandler: ((event: any) => void) | undefined
+
+    mockElement.addEventListener = vi.fn((event, handler) => {
+      if (event === 'wheel') {
+        wheelHandler = handler as (event: any) => void
+      }
+    })
+
+    act(() => {
+      result.current.ref(mockElement)
+    })
+
+    const shiftWheelEvent = {
+      deltaY: 50,
+      deltaX: 0,
+      shiftKey: true,
+      preventDefault: vi.fn(),
+    }
+
+    act(() => {
+      wheelHandler!(shiftWheelEvent)
+    })
+
+    expect(shiftWheelEvent.preventDefault).not.toHaveBeenCalled()
+    expect(mockElement.scrollLeft).toBe(0)
+  })
 })
