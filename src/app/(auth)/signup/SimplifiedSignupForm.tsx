@@ -110,9 +110,9 @@ export function SimplifiedSignupForm({ onSuccess }: SimplifiedSignupFormProps) {
   return (
     <div className="w-full max-w-2xl space-y-8">
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-foreground">Create your account</h2>
+        <h2 className="text-3xl font-bold text-foreground">Buat Akun Anti-Nganggur</h2>
         <p className="mt-2 text-lg text-muted-foreground">
-          Join thousands of professionals who trust JobHunt for career tracking
+          Kelola semua perjalanan karir dan lamaran kerja kamu secara teratur dan gratis
         </p>
       </div>
 

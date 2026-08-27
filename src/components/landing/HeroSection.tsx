@@ -11,9 +11,9 @@ export function HeroSection() {
           {/* Open Source Badge */}
           <div className="mb-8 flex justify-center animate-slide-up opacity-0 stagger-1">
             <Link
-              href="https://github.com/kaitranntt/jobhunt.git"
+              href="https://github.com/Erliandikasyahputraa/jobhunt"
               className="glass-strong group inline-flex items-center gap-3 rounded-full px-6 py-3 text-sm font-medium shadow-lg transition-all duration-300 hover:scale-105"
-              aria-label="View JobHunt on GitHub"
+              aria-label="View Anti-Nganggur on GitHub"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -29,7 +29,7 @@ export function HeroSection() {
           {/* Main heading with gradient */}
           <h1 className="mb-6 animate-slide-up opacity-0 stagger-2">
             <span className="block text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              <span className="gradient-brand-text animate-gradient">Open-Source</span>
+              <span className="gradient-brand-text animate-gradient">Anti-Nganggur</span>
             </span>
             <span className="mt-2 block text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
               <span className="gradient-brand-text">Job Application Tracker</span>
@@ -38,9 +38,9 @@ export function HeroSection() {
 
           {/* Subtitle */}
           <p className="mx-auto mb-12 max-w-4xl text-lg text-foreground/90 sm:text-xl lg:text-2xl animate-slide-up opacity-0 stagger-3">
-            Your data, your way. Track applications with a modern Kanban board.
+            Kelola dan lacak semua lamaran kerja kamu secara rapi dengan Kanban board modern.
             <br />
-            Start free on our cloud or self-host with one command.
+            Gratis, cepat, dan data kamu terisolasi secara aman.
           </p>
 
           {/* Dual CTA Buttons */}
@@ -48,10 +48,10 @@ export function HeroSection() {
             <Link
               href="/signup"
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl btn-brand-gradient px-8 py-4 text-lg font-semibold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50 dark:shadow-orange-900/50"
-              aria-label="Start tracking applications for free"
+              aria-label="Mulai lacak lamaran gratis"
             >
               <span className="relative z-10 flex items-center gap-2">
-                Start Tracking Free
+                Mulai Gratis
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </span>
               <div className="absolute inset-0 btn-brand-gradient-hover opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -59,15 +59,15 @@ export function HeroSection() {
             </Link>
 
             <Link
-              href="https://github.com/kaitranntt/jobhunt"
+              href="https://github.com/Erliandikasyahputraa/jobhunt"
               className="glass-strong group inline-flex items-center justify-center rounded-xl px-8 py-4 text-lg font-semibold text-foreground shadow-lg transition-all duration-300 hover:scale-105"
-              aria-label="Self-host JobHunt from GitHub"
+              aria-label="Lihat source code di GitHub"
               target="_blank"
               rel="noopener noreferrer"
             >
               <span className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-yellow-500" />
-                Self-Host on GitHub
+                GitHub Repo
                 <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </span>
             </Link>

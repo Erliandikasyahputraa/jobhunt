@@ -41,11 +41,11 @@ export function LandingContent({ user }: LandingContentProps) {
           <div className="container mx-auto max-w-6xl">
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-foreground/80 text-sm">
-                &copy; {new Date().getFullYear()} JobHunt. Open source under MIT License.
+                &copy; {new Date().getFullYear()} Anti-Nganggur. Open source under MIT License.
               </p>
               <div className="flex items-center gap-6">
                 <Link
-                  href="https://github.com/kaitranntt/jobhunt.git"
+                  href="https://github.com/Erliandikasyahputraa/jobhunt"
                   className="text-foreground/80 hover:text-brand-primary transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -54,7 +54,7 @@ export function LandingContent({ user }: LandingContentProps) {
                   <Github className="h-5 w-5" />
                 </Link>
                 <Link
-                  href="https://github.com/kaitranntt/jobhunt.git/blob/main/LICENSE"
+                  href="https://github.com/Erliandikasyahputraa/jobhunt/blob/main/LICENSE"
                   className="text-sm text-foreground/80 hover:text-brand-primary transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"

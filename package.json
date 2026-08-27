@@ -1,26 +1,26 @@
 {
-  "name": "jobhunt",
+  "name": "anti-nganggur",
   "version": "0.1.0",
-  "description": "Modern job application tracking system with Kanban board interface",
+  "description": "Aplikasi pelacak lamaran kerja modern berbasis Kanban board & Next.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaitranntt/jobhunt.git"
+    "url": "https://github.com/Erliandikasyahputraa/jobhunt.git"
   },
   "keywords": [
+    "anti-nganggur",
     "job-tracker",
-    "job-hunt",
     "application-tracker",
     "kanban",
     "nextjs",
     "supabase",
     "typescript"
   ],
-  "author": "Kai Tran",
+  "author": "Erliandika Syahputra",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kaitranntt/jobhunt/issues"
+    "url": "https://github.com/Erliandikasyahputraa/jobhunt/issues"
   },
-  "homepage": "https://github.com/kaitranntt/jobhunt#readme",
+  "homepage": "https://anti-nganggur.vercel.app",
   "scripts": {
     "dev": "next dev -H 0.0.0.0 --port 3000",
     "build": "./scripts/validate-build.sh && next build",

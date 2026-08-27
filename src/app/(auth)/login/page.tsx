@@ -55,9 +55,9 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center pt-20">
       <div className="w-full max-w-md space-y-8 p-6">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-foreground">Sign in to JobHunt</h2>
+          <h2 className="text-3xl font-bold text-foreground">Masuk ke Anti-Nganggur</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Track your job applications efficiently
+            Kelola dan pantau semua lamaran kerja kamu di satu tempat
           </p>
         </div>
 
@@ -99,18 +99,18 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md btn-brand-gradient px-4 py-2 text-white hover:btn-brand-gradient-hover disabled:opacity-50"
+            className="w-full rounded-md btn-brand-gradient px-4 py-2 text-white hover:btn-brand-gradient-hover disabled:opacity-50 font-semibold"
           >
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading ? 'Sedang masuk...' : 'Masuk'}
           </button>
 
           <p className="text-center text-sm text-foreground">
-            Don&apos;t have an account?{' '}
+            Belum punya akun?{' '}
             <Link
               href="/signup"
               className="font-medium text-brand-primary hover:text-brand-primary/80"
             >
-              Sign up
+              Daftar sekarang
             </Link>
           </p>
         </form>

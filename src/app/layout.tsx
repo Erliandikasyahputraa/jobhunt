@@ -17,8 +17,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'JobHunt - Track Your Applications',
-  description: 'Streamline your job search with intelligent application tracking and analytics',
+  title: 'Anti-Nganggur — Kelola & Lacak Lamaran Kerja Kamu',
+  description:
+    'Aplikasi pelacak lamaran kerja modern berbasis Kanban board & analytics untuk memudahkan proses job hunting kamu.',
 }
 
 export default function RootLayout({

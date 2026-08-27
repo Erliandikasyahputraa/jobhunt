@@ -52,12 +52,12 @@ export function NavBar({
             >
               <Image
                 src="/logo.png"
-                alt="JobHunt Logo"
+                alt="Anti-Nganggur Logo"
                 width={24}
                 height={24}
                 className="h-6 w-6"
               />
-              <span className="gradient-brand-text">JobHunt</span>
+              <span className="gradient-brand-text">Anti-Nganggur</span>
             </Link>
 
             {/* Navigation Links & Actions */}
@@ -71,7 +71,7 @@ export function NavBar({
                       border: '1px solid var(--glass-border-strong)',
                     }}
                   >
-                    Go to Dashboard
+                    Buka Dashboard
                   </Link>
                 </>
               ) : (
@@ -80,7 +80,7 @@ export function NavBar({
                     href="/login"
                     className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-label-primary hover:text-label-secondary transition-colors glass-interactive"
                   >
-                    Log In
+                    Masuk
                   </Link>
 
                   <Link
@@ -90,13 +90,13 @@ export function NavBar({
                       border: '1px solid var(--glass-border-strong)',
                     }}
                   >
-                    Get Started
+                    Daftar
                   </Link>
                 </>
               )}
 
               <Link
-                href="https://github.com/kaitranntt/jobhunt"
+                href="https://github.com/Erliandikasyahputraa/jobhunt"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View on GitHub"
@@ -127,12 +127,12 @@ export function NavBar({
             >
               <Image
                 src="/logo.png"
-                alt="JobHunt Logo"
+                alt="Anti-Nganggur Logo"
                 width={24}
                 height={24}
                 className="h-6 w-6"
               />
-              <span className="gradient-brand-text hidden sm:inline-block">JobHunt</span>
+              <span className="gradient-brand-text hidden sm:inline-block">Anti-Nganggur</span>
             </Link>
 
             {/* Desktop Navigation Links */}
@@ -224,12 +224,12 @@ export function NavBar({
             >
               <Image
                 src="/logo.png"
-                alt="JobHunt Logo"
+                alt="Anti-Nganggur Logo"
                 width={24}
                 height={24}
                 className="h-6 w-6"
               />
-              <span className="gradient-brand-text">JobHunt</span>
+              <span className="gradient-brand-text">Anti-Nganggur</span>
             </Link>
 
             {/* Theme Toggle */}

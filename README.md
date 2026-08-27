@@ -1,302 +1,186 @@
-# JobHunt
+# Anti-Nganggur 🚀
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15.x-black.svg)](https://nextjs.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.com/)
-[![Tests](https://img.shields.io/badge/Tests-399%20passing-brightgreen.svg)](https://github.com/kaitranntt/jobhunt)
-[![Quality](https://img.shields.io/badge/Quality-A%2B-orange.svg)](https://github.com/kaitranntt/jobhunt)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL%20RLS-green.svg)](https://supabase.com/)
+[![Tests](https://img.shields.io/badge/Tests-613%20passing-brightgreen.svg)](https://github.com/Erliandikasyahputraa/jobhunt)
+[![Quality Gate](https://img.shields.io/badge/Quality%20Gate-100%25%20Passing-success.svg)](https://github.com/Erliandikasyahputraa/jobhunt)
 
-> **A streamlined, modern job application tracking system with beautiful glass-morphism UI.**
+> **Aplikasi pelacak lamaran kerja modern berbasis Kanban board & Server Actions, dirancang dengan antarmuka Glassmorphism yang elegan, performa cepat, dan keamanan multi-tenant berlapis.**
 
-Track your job applications with an intuitive Kanban board interface. Built with cutting-edge web technologies, comprehensive testing, and a focus on core functionality that matters most to job seekers.
+Mencari pekerjaan bisa menjadi proses yang melelahkan jika lamaran tercecer di berbagai spreadsheet dan email. **Anti-Nganggur** hadir sebagai solusi terstruktur untuk membantu job seeker mengelola, memantau progress, dan menganalisis status setiap lamaran kerja secara rapi dalam satu ruang kerja terpadu.
 
-**[Live Demo](https://jobhunt.kaitran.ca/)** • **[Documentation](./docs/)** • **[Report Bug](https://github.com/kaitranntt/jobhunt/issues)** • **[Request Feature](https://github.com/kaitranntt/jobhunt/issues)**
-
-## ✨ Features
-
-### Core Functionality
-
-- 🔐 **Secure Authentication** - Email/password authentication via Supabase with session management
-- 📋 **Application Tracking** - Complete CRUD operations for job applications
-- 📊 **Kanban Board** - Intuitive drag-and-drop interface with visual status management
-- 🏢 **Company Management** - Track company information and job details
-- 🔍 **Search & Filter** - Find applications quickly by company or job title
-- 📝 **Rich Notes** - Detailed application notes and metadata tracking
-
-### User Experience
-
-- 📱 **Responsive Design** - Perfect on mobile, tablet, and desktop
-- 🎨 **Glass-morphism UI** - Modern macOS-inspired design system
-- ✨ **Fluid Animations** - Spring physics for natural interactions
-- 🌓 **Dark Mode Support** - Automatic light/dark theme adaptation
-- ⚡ **Lightning Fast** - Optimized performance with 11.7% bundle reduction
-
-### Quality Assurance
-
-- 🚫 **Zero Errors** - Clean TypeScript and ESLint compliance
-- 🔒 **Production Ready** - Deployed and battle-tested on Vercel
-- 📊 **A+ Quality** - Code quality metrics and best practices
-
-## 🛠 Technology Stack
-
-### Frontend
-
-- **Next.js 15** - React framework with App Router and Server Components
-- **TypeScript 5** - Strict type safety with zero `any` types
-- **React 18** - Modern React with hooks and concurrent features
-- **Shadcn UI** - Premium component library built on Radix UI
-- **Tailwind CSS 4** - Modern utility-first CSS framework
-- **React Hook Form + Zod** - Form validation with type safety
-- **@dnd-kit** - Accessible drag-and-drop functionality
-
-### Backend & Database
-
-- **Supabase** - Complete Backend-as-a-Service
-  - PostgreSQL database with Row Level Security (RLS)
-  - Secure authentication system
-  - Real-time subscriptions
-  - RESTful API with TypeScript types
-
-### Development & Testing
-
-- **Vitest** - Modern testing framework with UI
-- **Testing Library** - Component testing utilities
-- **ESLint + Prettier** - Code quality and formatting
-- **Husky + lint-staged** - Git hooks and pre-commit checks
-- **Bun** - Fast, reliable package management
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Node.js 22+** - Modern JavaScript runtime
-- **Bun** - Package manager (latest version)
-- **Supabase Account** - Free tier sufficient for development
-
-### Option 1: Docker (Recommended for Production)
-
-```bash
-# Clone the repository
-git clone https://github.com/kaitranntt/jobhunt.git
-cd jobhunt
-
-# Copy environment template
-cp .env.example .env.local
-
-# Edit .env.local with your Supabase credentials:
-# NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-# NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_key
-
-# Start with Docker Compose
-docker-compose up -d
-```
-
-Visit [http://localhost:3000](http://localhost:3000) 🎉
-
-### Option 2: Local Development
-
-```bash
-# Clone and install dependencies
-git clone https://github.com/kaitranntt/jobhunt.git
-cd jobhunt
-bun install
-
-# Set up Supabase (choose one method)
-
-# Method A: Link to existing Supabase project
-supabase link --project-ref your-project-ref
-supabase db push  # Apply database migrations
-
-# Method B: Start local Supabase instance
-supabase start    # Starts local development environment
-supabase db reset # Applies all migrations to local DB
-
-# Configure environment variables
-cp .env.example .env.local
-# Edit .env.local with your Supabase project details
-
-# Start development server
-bun run dev
-```
-
-Visit [http://localhost:3000](http://localhost:3000) 🎉
-
-### Environment Variables Required
-
-```bash
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key  # Server-side only
-```
-
-## 🗃 Database Management
-
-Database schema is managed via Supabase CLI migrations in `supabase/migrations/`.
-
-**Essential Commands:**
-
-```bash
-# Apply migrations to remote project
-supabase db push
-
-# Reset local database and apply all migrations
-supabase db reset
-
-# Create new migration file
-supabase migration new migration_name
-
-# Generate migration from schema changes
-supabase db diff
-```
-
-## 🛠 Development
-
-**Core Commands:**
-
-```bash
-bun run dev              # Start development server (localhost:3000)
-bun run build            # Build for production
-bun run test             # Run all tests (399 tests passing)
-bun run test:watch       # Watch mode for TDD development
-bun run test:coverage    # Generate coverage report
-bun run lint             # Run ESLint
-bun run lint:fix         # Auto-fix ESLint issues
-bun run typecheck        # TypeScript compilation check
-bun run format           # Format code with Prettier
-```
-
-**Quality Gates (MUST PASS before commit):**
-
-```bash
-bun run lint && bun run typecheck && bun run test
-```
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-```bash
-# Deploy to Vercel
-vercel
-
-# Deploy with custom domain
-vercel --prod
-```
-
-**Environment Variables in Vercel Dashboard:**
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
-
-### Docker Deployment
-
-```bash
-# Build and run with Docker Compose
-docker-compose up -d
-
-# Build Docker image manually
-docker build -t jobhunt:latest .
-docker run -p 3000:3000 --env-file .env.local jobhunt:latest
-```
-
-See [DOCKER.md](./DOCKER.md) for detailed deployment instructions.
-
-## 🎨 Design System
-
-**macOS 26 "Liquid Glass"** - A modern glass-morphism design system inspired by Apple's aesthetics.
-
-### Design Features
-
-- **Glass Materials** - Ultra, Light, Medium, Heavy, Frosted variants with realistic blur
-- **Semantic Colors** - RGBA-based colors with automatic light/dark mode adaptation
-- **Typography Scale** - Responsive type based on 4pt baseline grid
-- **Spacing System** - 8pt grid with half-step support
-- **Fluid Animations** - Spring physics for natural interactions
-
-### Design Tokens Location
-
-- **Colors**: `/src/lib/design-tokens/colors.ts`
-- **Typography**: `/src/lib/design-tokens/typography.ts`
-- **Spacing**: `/src/lib/design-tokens/spacing.ts`
-- **Global Styles**: `/src/app/globals.css`
-
-## 🤝 Contributing
-
-We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md) for:
-
-- Development environment setup
-- Code quality standards (strict TypeScript, comprehensive testing)
-- Commit message conventions (Conventional Commits enforced)
-- Quality gates and CI/CD pipeline
-- Pull request guidelines
-- Bug reporting and feature requests
-
-**Quick Contributor Setup:**
-
-```bash
-# Fork and clone repository
-git clone https://github.com/kaitranntt/jobhunt.git
-cd jobhunt
-
-# Install dependencies
-bun install
-
-# Start local development environment
-supabase start
-supabase db reset
-
-# Run development server
-bun run dev
-```
-
-## 📚 Documentation
-
-**Comprehensive Documentation Suite:**
-
-- **[./docs/project-overview-pdr.md](./docs/project-overview-pdr.md)** - Project overview and Product Development Requirements
-- **[./docs/system-architecture.md](./docs/system-architecture.md)** - System architecture, design patterns, and technical decisions
-- **[./docs/code-standards.md](./docs/code-standards.md)** - Development standards, patterns, and best practices
-- **[./docs/codebase-summary.md](./docs/codebase-summary.md)** - Comprehensive codebase analysis and summary
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines and development setup
-- **[DOCKER.md](./DOCKER.md)** - Docker deployment instructions
-
-## 🗺️ Project Roadmap
-
-See [TODO.md](./TODO.md) for detailed development phases.
-
-**Planned Enhancements:**
-
-- 📊 **Analytics Dashboard** - Job application success metrics
-- 🔍 **Advanced Search** - Enhanced filtering and search capabilities
-- 📄 **Export Features** - CSV/PDF export for application data
-- 📧 **Email Notifications** - Interview reminders and status updates
-- 📱 **Mobile App** - Progressive Web App (PWA) capabilities
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-Built with exceptional open-source technologies:
-
-- [Next.js](https://nextjs.org/) - React framework with App Router
-- [Supabase](https://supabase.com/) - Backend-as-a-Service platform
-- [Shadcn UI](https://ui.shadcn.com/) - Premium component library
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Radix UI](https://www.radix-ui.com/) - Accessible component primitives
-
-## 💬 Support & Community
-
-- 📖 **Documentation** - [./docs/](./docs/)
-- 🐛 **Report Issues** - [GitHub Issues](https://github.com/kaitranntt/jobhunt/issues)
-- 💡 **Request Features** - [GitHub Issues](https://github.com/kaitranntt/jobhunt/issues)
-- ⭐ **Star Repository** - Show your support!
+🌐 **[Live Demo di Vercel](https://anti-nganggur.vercel.app/)** • 📖 **[Dokumentasi Arsitektur](./docs/)** • 🐛 **[Laporkan Isu](https://github.com/Erliandikasyahputraa/jobhunt/issues)** • 💡 **[Request Fitur](https://github.com/Erliandikasyahputraa/jobhunt/issues)**
 
 ---
 
-**Built with ❤️ for job seekers everywhere** 🚀
+## 🎯 Kenapa Anti-Nganggur?
 
-**Current Status**: ✅ Production Ready | ✅ 399 Tests Passing | ✅ A+ Quality
+1. **Anti Lupa & Rapi**: Semua lamaran kerja, mulai dari _Applied_, _Screening_, _Interview_, _Technical Test_, _Offer_, hingga _Rejected_ terorganisir rapi dalam papan Kanban interaktif.
+2. **Performa Tinggi (Zero Waterfall)**: Dioptimasi secara mendalam untuk menghilangkan bottleneck latency. Data fetching terkonsolidasi hanya dalam 1 round-trip query.
+3. **Keamanan Multi-Tenant Berlapis**: Data setiap pengguna terisolasi total menggunakan PostgreSQL Row Level Security (RLS) di database Supabase dan validasi scoped `user_id` di application layer.
+4. **Desain Modern macOS Glassmorphism**: Pengalaman visual yang menyenangkan, responsif di mobile & desktop, serta mendukung Dark Mode otomatis.
+5. **Open Source & Bebas Iklan**: 100% open-source di bawah lisensi MIT. Anda bebas menggunakan versi cloud atau melakukan self-hosting sendiri.
+
+---
+
+## ✨ Fitur Utama
+
+- 📋 **Papan Kanban Interaktif**: Drag-and-drop kartu lamaran dengan transisi animasi halus menggunakan `@dnd-kit`.
+- 🔍 **Pencarian & Multi-Filter Real-Time**: Cari berdasarkan nama perusahaan, posisi, status, atau rentang tanggal dengan URL sync state yang presisi.
+- 🏢 **Manajemen Detail Perusahaan**: Catat detail kontak recruiter, lokasi kantor, ekspektasi gaji, hingga link lowongan.
+- 📝 **Catatan & Histori Status**: Lacak lini masa perubahan status setiap lamaran secara kronologis.
+- ⚡ **Aksi Massal (Bulk Actions)**: Update status banyak lamaran sekaligus atau hapus batch secara aman.
+- 📊 **Ekspor Data**: Download rekap seluruh lamaran kerja ke format CSV dalam satu klik.
+- 🌓 **Tema Gelap & Terang**: Dukungan Dark Mode dan Light Mode terintegrasi dengan preferensi sistem operasi.
+
+---
+
+## 🛠 Tech Stack
+
+| Layer                 | Teknologi                                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Framework**         | [Next.js 15 (App Router)](https://nextjs.org/) & React 18                                               |
+| **Bahasa**            | [TypeScript 5](https://www.typescriptlang.org/) (Strict Mode, 0 any types)                              |
+| **Styling & UI**      | [Tailwind CSS 4](https://tailwindcss.com/), Radix UI, Lucide Icons                                      |
+| **State & Drag-Drop** | [@dnd-kit](https://dndkit.com/), React Hook Form, Zod                                                   |
+| **Backend & DB**      | [Supabase](https://supabase.com/) (PostgreSQL 15, Row Level Security, Auth SSR)                         |
+| **Testing**           | [Vitest](https://vitest.dev/), Testing Library, Playwright (40 test suites, 613 unit/integration tests) |
+| **Package Manager**   | [Bun](https://bun.sh/) & Node.js 22+                                                                    |
+
+---
+
+## 🔒 Keamanan & Multi-Tenant Isolation
+
+Anti-Nganggur menerapkan prinsip **Defense-in-Depth** untuk isolasi data pengguna:
+
+1. **Database Row Level Security (PostgreSQL RLS)**:
+   - Tabel `applications`, `companies`, `application_history`, dan `documents` dilindungi RLS policies.
+   - Akses `anon` publik dicabut secara default.
+   - Setiap operasi SQL `SELECT`, `INSERT`, `UPDATE`, `DELETE` diverifikasi langsung oleh database engine: `auth.uid() = user_id`.
+2. **Server-Side Authorization**:
+   - Server Actions dan API layer memvalidasi JWT user terautentikasi melalui Supabase Auth (`getUser()`).
+   - Query data secara eksplisit difilter dengan `.eq('user_id', authenticatedUserId)`.
+3. **Session & Cookie Security**:
+   - Token otentikasi disimpan dalam cookie `httpOnly`, `secure`, dan `sameSite: lax`.
+
+---
+
+## 🚀 Memulai (Local Development)
+
+### Prasyarat
+
+- [Node.js](https://nodejs.org/) v20+ atau [Bun](https://bun.sh/)
+- Akun [Supabase](https://supabase.com/) (Tersedia tier gratis)
+
+### 1. Clone Repositori
+
+```bash
+git clone https://github.com/Erliandikasyahputraa/jobhunt.git
+cd jobhunt
+```
+
+### 2. Instal Dependensi
+
+```bash
+bun install
+# atau menggunakan npm:
+# npm install
+```
+
+### 3. Konfigurasi Environment Variables
+
+Salin file `.env.example` menjadi `.env.local`:
+
+```bash
+cp .env.example .env.local
+```
+
+Isi variabel kredensial Supabase Anda di `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-publishable-key
+```
+
+### 4. Jalankan Migrasi Database
+
+Jalankan skrip migrasi SQL yang berada di direktori `supabase/migrations/` pada SQL Editor Supabase Anda, atau gunakan Supabase CLI:
+
+```bash
+supabase db push
+```
+
+### 5. Jalankan Development Server
+
+```bash
+bun run dev
+```
+
+Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
+
+---
+
+## 🧪 Pengujian & Quality Gates
+
+Kualitas kode dijamin melalui 5 lapis pengujian otomatis:
+
+```bash
+# 1. Typecheck TypeScript
+bun run typecheck
+
+# 2. Linting & Code Style
+bun run lint
+
+# 3. Unit & Integration Tests (613 tests)
+bun run test
+
+# 4. Build Validation Script
+./scripts/validate-build.sh
+
+# 5. Production Next.js Build
+bunx next build
+```
+
+---
+
+## 📖 Kisah Pengembangan & Optimasi
+
+Anti-Nganggur melalui perjalanan optimasi performa dan keamanan yang mendalam:
+
+- **Pemberantasan Auth Waterfall**: Mengeliminasi 7x redundant Supabase Auth round-trips yang sebelumnya menyebabkan waktu loading 30 detik pada server actions, memangkas latency menjadi instan (<500ms) dengan mengkonsolidasikan autentikasi dalam 1 query context.
+- **Penguatan Multi-Tenant**: Mengisolasi penuh tabel data lamaran dengan mengaktifkan PostgreSQL Row Level Security (Migration 007) dan dual-check di layer API server.
+
+---
+
+## 🗺 Roadmap Masa Depan
+
+- [x] Papan Kanban & CRUD Lamaran Kerja
+- [x] Multi-tenant Data Isolation & PostgreSQL RLS
+- [x] Optimasi Latency Server Actions
+- [x] Ekspor CSV & Bulk Status Mutation
+- [ ] **Focus Workspace View**: Mode fokus harian untuk mempersiapkan interview berikutnya
+- [ ] **Email Reminder & Notification**: Pengingat jadwal wawancara terintegrasi kalender
+- [ ] **AI Resume & Job Matcher**: Saran kustomisasi resume berdasarkan deskripsi pekerjaan
+
+---
+
+## 🤝 Kontribusi
+
+Kontribusi selalu disambut dengan hangat! Jika Anda ingin menambahkan fitur atau memperbaiki bug:
+
+1. Fork repositori ini.
+2. Buat branch fitur baru (`git checkout -b feature/fitur-keren`).
+3. Commit perubahan Anda (`git commit -m 'feat: tambah fitur keren'`).
+4. Pastikan semua tes lolos (`bun run test`).
+5. Push ke branch Anda (`git push origin feature/fitur-keren`).
+6. Buka **Pull Request**.
+
+Silakan baca panduan lengkap di [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+---
+
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah [MIT License](./LICENSE) — silakan gunakan, pelajari, dan kembangkan secara bebas.

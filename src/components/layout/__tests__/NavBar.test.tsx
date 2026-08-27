@@ -29,35 +29,35 @@ describe('NavBar Component', () => {
   })
 
   describe('Landing Variant', () => {
-    it('should render logo with JobHunt text', () => {
+    it('should render logo with Anti-Nganggur text', () => {
       renderWithTheme(<NavBar variant="landing" />)
-      expect(screen.getByText('JobHunt')).toBeInTheDocument()
+      expect(screen.getByText('Anti-Nganggur')).toBeInTheDocument()
     })
 
     it('should render logo as link to home', () => {
       renderWithTheme(<NavBar variant="landing" />)
-      const logo = screen.getByText('JobHunt').closest('a')
+      const logo = screen.getByText('Anti-Nganggur').closest('a')
       expect(logo).toHaveAttribute('href', '/')
     })
 
     it('should render logo image', () => {
       renderWithTheme(<NavBar variant="landing" />)
-      const logo = screen.getByText('JobHunt').closest('a')
+      const logo = screen.getByText('Anti-Nganggur').closest('a')
       const image = logo?.querySelector('img')
       expect(image).toBeInTheDocument()
-      expect(image).toHaveAttribute('alt', 'JobHunt Logo')
+      expect(image).toHaveAttribute('alt', 'Anti-Nganggur Logo')
     })
 
-    it('should render Get Started link', () => {
+    it('should render Daftar link', () => {
       renderWithTheme(<NavBar variant="landing" />)
-      expect(screen.getByText('Get Started')).toBeInTheDocument()
-      expect(screen.getByText('Get Started').closest('a')).toHaveAttribute('href', '/signup')
+      expect(screen.getByText('Daftar')).toBeInTheDocument()
+      expect(screen.getByText('Daftar').closest('a')).toHaveAttribute('href', '/signup')
     })
 
     it('should render GitHub link with external attributes', () => {
       renderWithTheme(<NavBar variant="landing" />)
       const githubLink = screen.getByText('GitHub').closest('a')
-      expect(githubLink).toHaveAttribute('href', 'https://github.com/kaitranntt/jobhunt')
+      expect(githubLink).toHaveAttribute('href', 'https://github.com/Erliandikasyahputraa/jobhunt')
       expect(githubLink).toHaveAttribute('target', '_blank')
       expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer')
     })
@@ -119,14 +119,14 @@ describe('NavBar Component', () => {
       created_at: '2024-01-01T00:00:00Z',
     }
 
-    it('should render logo with JobHunt text', () => {
+    it('should render logo with Anti-Nganggur text', () => {
       renderWithTheme(<NavBar variant="authenticated" user={authMockUser} />)
-      expect(screen.getByText('JobHunt')).toBeInTheDocument()
+      expect(screen.getByText('Anti-Nganggur')).toBeInTheDocument()
     })
 
     it('should render logo as link to dashboard', () => {
       renderWithTheme(<NavBar variant="authenticated" user={authMockUser} />)
-      const logo = screen.getByText('JobHunt').closest('a')
+      const logo = screen.getByText('Anti-Nganggur').closest('a')
       expect(logo).toHaveAttribute('href', '/dashboard')
     })
 
@@ -178,7 +178,7 @@ describe('NavBar Component', () => {
 
     it('should handle null user gracefully', () => {
       renderWithTheme(<NavBar variant="authenticated" user={null} />)
-      expect(screen.getByText('JobHunt')).toBeInTheDocument()
+      expect(screen.getByText('Anti-Nganggur')).toBeInTheDocument()
       // Should not render ProfileDropdown when user is null
       expect(screen.queryByRole('button', { name: /user menu/i })).not.toBeInTheDocument()
       // Should only have ThemeToggle button
@@ -190,7 +190,7 @@ describe('NavBar Component', () => {
     it('should handle user without email gracefully', async () => {
       const userWithoutEmail = { ...authMockUser, email: '' }
       renderWithTheme(<NavBar variant="authenticated" user={userWithoutEmail} />)
-      expect(screen.getByText('JobHunt')).toBeInTheDocument()
+      expect(screen.getByText('Anti-Nganggur')).toBeInTheDocument()
       // Should still render ThemeToggle and ProfileDropdown even without email
       expect(screen.getByRole('button', { name: /user menu for user/i })).toBeInTheDocument()
       expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument()
@@ -210,14 +210,14 @@ describe('NavBar Component', () => {
   })
 
   describe('Auth Pages Variant', () => {
-    it('should render logo with JobHunt text', () => {
+    it('should render logo with Anti-Nganggur text', () => {
       renderWithTheme(<NavBar variant="auth-pages" />)
-      expect(screen.getByText('JobHunt')).toBeInTheDocument()
+      expect(screen.getByText('Anti-Nganggur')).toBeInTheDocument()
     })
 
     it('should render logo linking to home', () => {
       renderWithTheme(<NavBar variant="auth-pages" />)
-      const logo = screen.getByText('JobHunt').closest('a')
+      const logo = screen.getByText('Anti-Nganggur').closest('a')
       expect(logo).toHaveAttribute('href', '/')
     })
 
@@ -238,9 +238,9 @@ describe('NavBar Component', () => {
       expect(screen.queryByRole('button', { name: /user menu/i })).not.toBeInTheDocument()
     })
 
-    it('should not render Get Started link', () => {
+    it('should not render Daftar link', () => {
       renderWithTheme(<NavBar variant="auth-pages" />)
-      expect(screen.queryByText('Get Started')).not.toBeInTheDocument()
+      expect(screen.queryByText('Daftar')).not.toBeInTheDocument()
     })
 
     it('should not render GitHub link', () => {
@@ -265,9 +265,9 @@ describe('NavBar Component', () => {
   })
 
   describe('Responsive Behavior', () => {
-    it('should hide Get Started link on mobile for landing variant', () => {
+    it('should hide Daftar link on mobile for landing variant', () => {
       renderWithTheme(<NavBar variant="landing" />)
-      const getStartedLink = screen.getByText('Get Started').closest('a')
+      const getStartedLink = screen.getByText('Daftar').closest('a')
       expect(getStartedLink).toHaveClass('hidden')
       expect(getStartedLink).toHaveClass('sm:inline-flex')
     })
@@ -386,21 +386,21 @@ describe('NavBar Component', () => {
   describe('Brand Styling', () => {
     it('should apply brand gradient to logo text in landing variant', () => {
       renderWithTheme(<NavBar variant="landing" />)
-      const logoText = screen.getByText('JobHunt')
+      const logoText = screen.getByText('Anti-Nganggur')
       expect(logoText).toHaveClass('gradient-brand-text')
     })
 
     it('should render logo image in landing variant', () => {
       renderWithTheme(<NavBar variant="landing" />)
-      const logo = screen.getByText('JobHunt').closest('a')
+      const logo = screen.getByText('Anti-Nganggur').closest('a')
       const image = logo?.querySelector('img')
       expect(image).toBeInTheDocument()
-      expect(image).toHaveAttribute('alt', 'JobHunt Logo')
+      expect(image).toHaveAttribute('alt', 'Anti-Nganggur Logo')
     })
 
     it('should apply brand gradient to logo text in auth-pages variant', () => {
       renderWithTheme(<NavBar variant="auth-pages" />)
-      const logoText = screen.getByText('JobHunt')
+      const logoText = screen.getByText('Anti-Nganggur')
       expect(logoText).toHaveClass('gradient-brand-text')
     })
 
@@ -414,10 +414,10 @@ describe('NavBar Component', () => {
         created_at: '2024-01-01T00:00:00Z',
       }
       renderWithTheme(<NavBar variant="authenticated" user={brandUser} />)
-      const logo = screen.getByText('JobHunt').closest('a')
+      const logo = screen.getByText('Anti-Nganggur').closest('a')
       const image = logo?.querySelector('img')
       expect(image).toBeInTheDocument()
-      expect(image).toHaveAttribute('alt', 'JobHunt Logo')
+      expect(image).toHaveAttribute('alt', 'Anti-Nganggur Logo')
     })
   })
 

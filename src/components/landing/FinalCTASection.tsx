@@ -37,9 +37,9 @@ export function FinalCTASection() {
                 </Link>
 
                 <Link
-                  href="https://github.com/kaitranntt/jobhunt.git"
+                  href="https://github.com/Erliandikasyahputraa/jobhunt"
                   className="group inline-flex items-center justify-center rounded-xl border-2 border-white/30 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-white/20"
-                  aria-label="Self-host JobHunt from GitHub"
+                  aria-label="Self-host Anti-Nganggur from GitHub"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

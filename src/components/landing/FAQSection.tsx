@@ -10,7 +10,7 @@ export function FAQSection() {
     {
       question: 'Is this really free?',
       answer:
-        'Yes! JobHunt is MIT licensed open-source software. The cloud-hosted version is free forever with no hidden costs. You can also self-host for complete control at no licensing cost.',
+        'Yes! Anti-Nganggur is MIT licensed open-source software. The cloud-hosted version is free forever with no hidden costs. You can also self-host for complete control at no licensing cost.',
     },
     {
       question: 'Cloud vs self-hosted: which should I choose?',
@@ -25,7 +25,7 @@ export function FAQSection() {
     {
       question: 'How is this sustainable?',
       answer:
-        "JobHunt is a passion project built to solve a real problem. It's community-driven and transparent. We believe great software should be accessible to everyone. Future sustainability through optional premium features for advanced users.",
+        "Anti-Nganggur is a passion project built to solve a real problem. It's community-driven and transparent. We believe great software should be accessible to everyone.",
     },
     {
       question: 'Can I contribute?',

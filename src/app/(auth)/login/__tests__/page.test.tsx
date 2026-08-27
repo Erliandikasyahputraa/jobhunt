@@ -53,11 +53,11 @@ describe('LoginPage', () => {
   it('should render login form with all required fields', () => {
     renderWithTheme(<LoginPage />)
 
-    expect(screen.getByRole('heading', { name: /sign in to jobhunt/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /masuk ke anti-nganggur/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
-    expect(screen.getByText(/don't have an account/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^masuk$/i })).toBeInTheDocument()
+    expect(screen.getByText(/belum punya akun/i)).toBeInTheDocument()
   })
 
   it('should update email and password fields on input', () => {
@@ -80,7 +80,7 @@ describe('LoginPage', () => {
 
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: /^masuk$/i })
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
@@ -110,7 +110,7 @@ describe('LoginPage', () => {
 
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: /^masuk$/i })
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } })
@@ -132,17 +132,17 @@ describe('LoginPage', () => {
 
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: /^masuk$/i })
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
     fireEvent.click(submitButton)
 
-    expect(screen.getByText(/signing in/i)).toBeInTheDocument()
+    expect(screen.getByText(/sedang masuk/i)).toBeInTheDocument()
     expect(submitButton).toBeDisabled()
 
     await waitFor(() => {
-      expect(screen.getByText(/^sign in$/i)).toBeInTheDocument()
+      expect(screen.getByText(/^masuk$/i)).toBeInTheDocument()
     })
   })
 
@@ -158,7 +158,7 @@ describe('LoginPage', () => {
 
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
-    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    const submitButton = screen.getByRole('button', { name: /^masuk$/i })
 
     // First submission with error
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
@@ -193,7 +193,7 @@ describe('LoginPage', () => {
   it('should have link to signup page', () => {
     renderWithTheme(<LoginPage />)
 
-    const signupLink = screen.getByRole('link', { name: /sign up/i })
+    const signupLink = screen.getByRole('link', { name: /daftar sekarang/i })
     expect(signupLink).toHaveAttribute('href', '/signup')
   })
 
