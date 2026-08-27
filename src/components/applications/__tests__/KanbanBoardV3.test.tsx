@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { KanbanBoardV3 } from '../KanbanBoardV3'
 import type { Application, ApplicationStatus } from '@/lib/types/database.types'
 import type { ColumnConfig } from '@/lib/types/column.types'
+import { getNewStatusForDrop } from '@/lib/utils/status-mapping'
+import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 
 // Mock the column icons utility
 vi.mock('@/lib/utils/column-icons', () => ({
@@ -449,6 +451,38 @@ describe('KanbanBoardV3', () => {
       )
 
       expect(container).toBeTruthy()
+    })
+  })
+
+  describe('Kanban Status Downgrade Prevention', () => {
+    it('TEST 5: final_round dropped on Interview column remains final_round', () => {
+      const result = getNewStatusForDrop('final_round', 'interview', DEFAULT_COLUMNS)
+      expect(result).toBe('final_round')
+    })
+
+    it('TEST 6: phone_screen dropped on Interview column remains phone_screen', () => {
+      const result = getNewStatusForDrop('phone_screen', 'interview', DEFAULT_COLUMNS)
+      expect(result).toBe('phone_screen')
+    })
+
+    it('TEST 7: assessment dropped on Interview column remains assessment', () => {
+      const result = getNewStatusForDrop('assessment', 'interview', DEFAULT_COLUMNS)
+      expect(result).toBe('assessment')
+    })
+
+    it('TEST 8: take_home dropped on Interview column remains take_home', () => {
+      const result = getNewStatusForDrop('take_home', 'interview', DEFAULT_COLUMNS)
+      expect(result).toBe('take_home')
+    })
+
+    it('TEST 9: interviewing dropped on Interview column remains interviewing', () => {
+      const result = getNewStatusForDrop('interviewing', 'interview', DEFAULT_COLUMNS)
+      expect(result).toBe('interviewing')
+    })
+
+    it('TEST 10: applied dropped on Interview column receives initial interview status (phone_screen)', () => {
+      const result = getNewStatusForDrop('applied', 'interview', DEFAULT_COLUMNS)
+      expect(result).toBe('phone_screen')
     })
   })
 })

@@ -10,6 +10,7 @@ import type {
   ApplicationDocumentDB,
   CustomColumnDB,
 } from '@/lib/types/database.types'
+import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { getStatusLabel } from '@/lib/utils/status-colors'
 import { getApplicationHistoryAction } from '@/app/dashboard/actions'
 import { getDocumentsByApplicationAction } from '@/app/dashboard/actions/documents'
@@ -74,7 +75,8 @@ export function ApplicationTimeline({
         const found = customColumns.find(c => c.id === customColumnId)
         return found ? found.name : 'Custom Column'
       }
-      return getStatusLabel(statusFallback)
+      const defaultCol = DEFAULT_COLUMNS.find(c => c.statuses?.includes(statusFallback as any))
+      return defaultCol ? defaultCol.name : getStatusLabel(statusFallback)
     },
     [customColumns]
   )

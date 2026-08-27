@@ -29,7 +29,11 @@ export function getDashboardStats(applications: Application[]): DashboardStats {
         acc.active++
       }
 
-      if (['interviewing', 'final_round'].includes(app.status)) {
+      if (
+        ['phone_screen', 'assessment', 'take_home', 'interviewing', 'final_round'].includes(
+          app.status
+        )
+      ) {
         acc.interviews++
       }
 

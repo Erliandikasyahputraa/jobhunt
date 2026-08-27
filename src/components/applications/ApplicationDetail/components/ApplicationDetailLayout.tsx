@@ -5,6 +5,7 @@ import type { Application, CustomColumnDB } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { TabType } from '../types'
 import { CompanyLogo } from '@/components/ui/company-logo'
+import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { getStatusLabel } from '@/lib/utils/status-colors'
 import { TabNavigation } from './LeftPanel/TabNavigation'
 import { MainPanel } from './MainPanel/MainPanel'
@@ -38,7 +39,8 @@ export function ApplicationDetailLayout({
 }: ApplicationDetailLayoutProps) {
   const columnName = application.custom_column_id
     ? customColumns.find(c => c.id === application.custom_column_id)?.name || 'Custom Column'
-    : getStatusLabel(application.status)
+    : DEFAULT_COLUMNS.find(col => col.statuses?.includes(application.status))?.name ||
+      getStatusLabel(application.status)
 
   return (
     <div className="flex flex-col h-full max-h-[90vh] bg-white dark:bg-transparent">

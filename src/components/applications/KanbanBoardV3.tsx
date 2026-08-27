@@ -556,7 +556,13 @@ export function KanbanBoardV3({
     } else {
       // CUSTOM -> STANDARD or STANDARD -> STANDARD
       newCustomColumnId = null
-      newStatus = targetColumn.statuses ? targetColumn.statuses[0] : application.status
+      if (targetColumn.statuses && targetColumn.statuses.includes(application.status)) {
+        // Preserve granular status if already valid for this column
+        newStatus = application.status
+      } else {
+        // First entry into this column workflow: use target column's default status
+        newStatus = targetColumn.statuses ? targetColumn.statuses[0] : application.status
+      }
     }
 
     const updatedApplications = optimisticApplications.map(app =>

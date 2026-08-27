@@ -9,6 +9,7 @@ import type {
   CustomColumnDB,
 } from '@/lib/types/database.types'
 import { getStatusLabel, getStatusCategory } from '@/lib/utils/status-colors'
+import { getDashboardStats } from '@/lib/utils/dashboard'
 
 vi.mock('@/app/dashboard/actions', () => ({
   getApplicationHistoryAction: vi.fn(),
@@ -67,8 +68,20 @@ describe('Canonical Status Terminology', () => {
     expect(getStatusLabel('phone_screen')).toBe('Phone Screen')
   })
 
+  it('maps assessment to "Assessment"', () => {
+    expect(getStatusLabel('assessment')).toBe('Assessment')
+  })
+
+  it('maps take_home to "Take Home"', () => {
+    expect(getStatusLabel('take_home')).toBe('Take Home')
+  })
+
   it('maps interviewing to "Interview"', () => {
     expect(getStatusLabel('interviewing')).toBe('Interview')
+  })
+
+  it('maps final_round to "Final Round"', () => {
+    expect(getStatusLabel('final_round')).toBe('Final Round')
   })
 
   it('preserves "Interviewing" as high-level analytics category for all interview sub-stages', () => {
@@ -77,6 +90,25 @@ describe('Canonical Status Terminology', () => {
     expect(getStatusCategory('take_home')).toBe('Interviewing')
     expect(getStatusCategory('interviewing')).toBe('Interviewing')
     expect(getStatusCategory('final_round')).toBe('Interviewing')
+  })
+})
+
+describe('Dashboard KPI Interviews Aggregation', () => {
+  it('increments interviews KPI for each interview sub-status', () => {
+    const apps: Application[] = [
+      { ...mockApplication, id: '1', status: 'phone_screen' },
+      { ...mockApplication, id: '2', status: 'assessment' },
+      { ...mockApplication, id: '3', status: 'take_home' },
+      { ...mockApplication, id: '4', status: 'interviewing' },
+      { ...mockApplication, id: '5', status: 'final_round' },
+      { ...mockApplication, id: '6', status: 'applied' },
+      { ...mockApplication, id: '7', status: 'offered' },
+    ]
+
+    const stats = getDashboardStats(apps)
+    expect(stats.total).toBe(7)
+    expect(stats.interviews).toBe(5) // All 5 interview stages counted!
+    expect(stats.offers).toBe(1)
   })
 })
 
@@ -263,17 +295,17 @@ describe('ApplicationTimeline Data and Ordering', () => {
   })
 })
 
-describe('Job Detail Distinct Status and Column', () => {
-  it('distinguishes between Status and Column in ApplicationDetail', () => {
-    const appWithCustomCol: Application = {
+describe('Job Detail Distinct Status and Column Resolution', () => {
+  it('TEST 1: resolves Status = Phone Screen and Column = Interview for phone_screen in standard column', () => {
+    const app: Application = {
       ...mockApplication,
       status: 'phone_screen',
-      custom_column_id: 'col-1',
+      custom_column_id: null,
     }
 
     render(
       <ApplicationDetail
-        application={appWithCustomCol}
+        application={app}
         customColumns={mockCustomColumns}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
@@ -282,10 +314,73 @@ describe('Job Detail Distinct Status and Column', () => {
       />
     )
 
-    // Status shows Phone Screen
     expect(screen.getByText('Phone Screen')).toBeInTheDocument()
+    expect(screen.getByText('Column: Interview')).toBeInTheDocument()
+  })
 
-    // Column shows Column: Interview Pipeline
+  it('TEST 2: resolves Status = Final Round and Column = Interview for final_round in standard column', () => {
+    const app: Application = {
+      ...mockApplication,
+      status: 'final_round',
+      custom_column_id: null,
+    }
+
+    render(
+      <ApplicationDetail
+        application={app}
+        customColumns={mockCustomColumns}
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+        onClose={vi.fn()}
+        isOpen={true}
+      />
+    )
+
+    expect(screen.getByText('Final Round')).toBeInTheDocument()
+    expect(screen.getByText('Column: Interview')).toBeInTheDocument()
+  })
+
+  it('TEST 3: resolves Status = Applied and Column = Applied for applied in standard column', () => {
+    const app: Application = {
+      ...mockApplication,
+      status: 'applied',
+      custom_column_id: null,
+    }
+
+    render(
+      <ApplicationDetail
+        application={app}
+        customColumns={mockCustomColumns}
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+        onClose={vi.fn()}
+        isOpen={true}
+      />
+    )
+
+    expect(screen.getByText('Applied')).toBeInTheDocument()
+    expect(screen.getByText('Column: Applied')).toBeInTheDocument()
+  })
+
+  it('TEST 4: resolves Status = Interview and Column = custom column name when custom_column_id is present', () => {
+    const app: Application = {
+      ...mockApplication,
+      status: 'interviewing',
+      custom_column_id: 'col-1',
+    }
+
+    render(
+      <ApplicationDetail
+        application={app}
+        customColumns={mockCustomColumns}
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+        onClose={vi.fn()}
+        isOpen={true}
+      />
+    )
+
+    expect(screen.getByText('Interview')).toBeInTheDocument()
     expect(screen.getByText('Column: Interview Pipeline')).toBeInTheDocument()
   })
 })
