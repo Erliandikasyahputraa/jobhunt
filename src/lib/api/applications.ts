@@ -45,11 +45,12 @@ export async function getApplications(
 ): Promise<Application[]> {
   try {
     // Verify authentication context first
-    await verifyAuthenticationContext(supabase, userId)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('applications')
       .select('*')
+      .eq('user_id', authenticatedUserId)
       .order('status', { ascending: true })
       .order('position', { ascending: true })
 
@@ -500,12 +501,13 @@ export async function getApplicationHistory(
   userId?: string
 ): Promise<ApplicationStatusHistoryDB[]> {
   try {
-    await verifyAuthenticationContext(supabase, userId)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('application_status_history')
       .select('*')
       .eq('application_id', applicationId)
+      .eq('user_id', authenticatedUserId)
       .order('created_at', { ascending: true })
 
     if (error) {

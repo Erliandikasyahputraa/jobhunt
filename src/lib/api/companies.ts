@@ -33,11 +33,12 @@ export async function getCompanies(
   userId?: string
 ): Promise<CompanyDB[]> {
   try {
-    await verifyAuthenticationContext(supabase, userId)
+    const authenticatedUserId = await verifyAuthenticationContext(supabase, userId)
 
     const { data, error } = await supabase
       .from('companies')
       .select('*')
+      .eq('user_id', authenticatedUserId)
       .order('name', { ascending: true })
 
     if (error) {
