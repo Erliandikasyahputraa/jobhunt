@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getNormalizedErrorMessage } from '@/lib/utils/error-handler'
 import { applicationFormSchema } from '@/lib/schemas/application.schema'
 import type { ApplicationFormData, ApplicationStatus } from '@/lib/schemas/application.schema'
 import type {
@@ -45,11 +46,13 @@ export async function getApplicationsWorkspaceDataAction(): Promise<{
       if (process.env.NODE_ENV === 'development') {
         console.error('Authentication error in getApplicationsWorkspaceDataAction:', authError)
       }
-      throw new Error(`Authentication failed: ${authError.message}`)
+      throw new Error(
+        getNormalizedErrorMessage(authError, 'Sesi Anda telah berakhir. Silakan masuk kembali.')
+      )
     }
 
     if (!user) {
-      throw new Error('Unauthorized: No user session found. Please log in again.')
+      throw new Error('Sesi Anda telah berakhir. Silakan masuk kembali.')
     }
 
     const [applications, customColumns] = await Promise.all([
@@ -67,11 +70,9 @@ export async function getApplicationsWorkspaceDataAction(): Promise<{
       console.error('Failed to fetch workspace data in action:', error)
     }
 
-    if (error instanceof Error) {
-      throw new Error(`Failed to fetch workspace data: ${error.message}`)
-    }
-
-    throw new Error('Failed to fetch workspace data: Unknown error occurred')
+    throw new Error(
+      getNormalizedErrorMessage(error, 'Gagal memuat data workspace. Silakan coba lagi.')
+    )
   }
 }
 
@@ -91,11 +92,13 @@ export async function getApplicationsAction(): Promise<Application[]> {
       if (process.env.NODE_ENV === 'development') {
         console.error('Authentication error in getApplicationsAction:', authError)
       }
-      throw new Error(`Authentication failed: ${authError.message}`)
+      throw new Error(
+        getNormalizedErrorMessage(authError, 'Sesi Anda telah berakhir. Silakan masuk kembali.')
+      )
     }
 
     if (!user) {
-      throw new Error('Unauthorized: No user session found. Please log in again.')
+      throw new Error('Sesi Anda telah berakhir. Silakan masuk kembali.')
     }
 
     const applications = await getApplications(supabase, user.id)
@@ -105,12 +108,9 @@ export async function getApplicationsAction(): Promise<Application[]> {
       console.error('Failed to fetch applications in action:', error)
     }
 
-    // Re-throw with more context
-    if (error instanceof Error) {
-      throw new Error(`Failed to fetch applications: ${error.message}`)
-    }
-
-    throw new Error('Failed to fetch applications: Unknown error occurred')
+    throw new Error(
+      getNormalizedErrorMessage(error, 'Gagal memuat daftar lamaran. Silakan coba lagi.')
+    )
   }
 }
 

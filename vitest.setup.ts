@@ -21,7 +21,11 @@ expect.extend(matchers)
 
 afterEach(() => {
   cleanup()
-  localStorage.clear()
-  document.documentElement.className = ''
+  if (typeof localStorage !== 'undefined') {
+    localStorage.clear()
+  }
+  if (typeof document !== 'undefined' && document.documentElement) {
+    document.documentElement.className = ''
+  }
   vi.clearAllMocks()
 })

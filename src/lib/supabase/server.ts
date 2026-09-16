@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { fetchWithTimeout } from '@/lib/utils/network-guard'
 
 function validateEnvironmentVariables(): {
   NEXT_PUBLIC_SUPABASE_URL: string
@@ -47,6 +48,9 @@ export async function createClient() {
       envVars.NEXT_PUBLIC_SUPABASE_URL,
       envVars.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
+        global: {
+          fetch: fetchWithTimeout,
+        },
         cookies: {
           getAll() {
             return cookieStore.getAll()

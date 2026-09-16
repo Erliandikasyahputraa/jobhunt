@@ -1,8 +1,24 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import { type NextRequest, NextResponse } from 'next/server'
+import { updateSession, isPublicRoute } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  try {
+    return await updateSession(request)
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unhandled error in middleware updateSession:', error)
+    }
+
+    // Defensive fallback: if public route, allow pass-through; if protected, redirect cleanly to /login
+    if (isPublicRoute(request.nextUrl.pathname)) {
+      return NextResponse.next()
+    }
+
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = '/login'
+    loginUrl.searchParams.set('reason', 'expired')
+    return NextResponse.redirect(loginUrl)
+  }
 }
 
 export const config = {
