@@ -726,7 +726,7 @@ function ApplicationsPageContent() {
 
         {/* New Application Modal */}
         <Dialog open={isNewApplicationModalOpen} onOpenChange={handleCloseNewModal}>
-          <DialogContent variant="glass" className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-full max-sm:fixed max-sm:bottom-0 max-sm:top-auto max-sm:left-0 max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-b-none max-sm:rounded-t-2xl max-sm:max-h-[92vh] max-sm:p-5">
             <DialogHeader>
               <DialogTitle>Add New Application</DialogTitle>
               <DialogDescription>

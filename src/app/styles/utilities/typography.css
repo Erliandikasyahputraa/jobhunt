@@ -1,7 +1,74 @@
 /* ========================================================================== */
-/* Typography Color Utilities (macOS 26)                                       */
+/* Typography Hierarchy & Color Utilities (Phase 1 Foundation)               */
 /* ========================================================================== */
 
+/* Typography Scale Hierarchy */
+.text-page-title {
+  font-size: 1.875rem; /* 30px */
+  line-height: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+}
+
+@media (min-width: 640px) {
+  .text-page-title {
+    font-size: 2.25rem; /* 36px */
+    line-height: 2.5rem;
+  }
+}
+
+.text-section-heading {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.text-card-heading {
+  font-size: 1rem; /* 16px */
+  line-height: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.text-body-primary {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem;
+  color: var(--text-primary);
+}
+
+.text-body-secondary {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem;
+  color: var(--text-secondary);
+}
+
+.text-meta {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem;
+  color: var(--text-muted);
+}
+
+.text-helper {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem;
+  color: var(--text-muted);
+}
+
+.text-error-msg {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem;
+  color: hsl(var(--destructive));
+}
+
+/* Numeric alignment utility */
+.tabular-data {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Legacy & Semantic Label Utilities */
 .text-label-primary {
   color: var(--macos-label-primary);
 }
@@ -18,7 +85,7 @@
   color: var(--macos-label-quaternary);
 }
 
-/* Text colors */
+/* Brand & Semantic Text colors */
 .text-brand-primary {
   color: hsl(var(--brand-primary));
 }
@@ -27,7 +94,7 @@
   color: hsl(var(--brand-secondary));
 }
 
-/* Destructive text colors (ensure red color is properly applied) */
+/* Destructive text colors */
 .text-destructive {
   color: hsl(var(--destructive));
 }

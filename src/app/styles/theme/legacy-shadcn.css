@@ -3,24 +3,35 @@
 /* ========================================================================== */
 
 :root {
+  /* Phase 1 Semantic Design Tokens (Slate + Copper) */
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-surface-muted: #f1f5f9;
+  --border-subtle: #e2e8f0;
+  --border-focus: #f97316;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
   /* Light Mode Surface & Semantic Colors */
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215 16% 47%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 5.9% 10%;
-  --primary: 240 5.9% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
+  --popover-foreground: 222 47% 11%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 25 95% 53%;
+  --primary: 25 95% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222 47% 11%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222 47% 11%;
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 98%;
   --success: 142 71% 45%;
@@ -37,6 +48,19 @@
   --brand-secondary: var(--copper-light);
   --brand-secondary-dark: var(--copper);
   --brand-secondary-light: var(--copper-glow);
+
+  /* Phase 2 Modal Semantic Design Tokens (Light Mode) */
+  --modal-backdrop: rgba(15, 23, 42, 0.45);
+  --modal-backdrop-blur: 2px;
+  --modal-shell: #ffffff;
+  --modal-header: #ffffff;
+  --modal-sidebar: #f8fafc;
+  --modal-canvas: #f8fafc;
+  --modal-card: #ffffff;
+  --modal-input: #ffffff;
+  --modal-input-border: #cbd5e1;
+  --modal-border: #e2e8f0;
+  --modal-divider: #e2e8f0;
 }
 
 @theme inline {
@@ -68,27 +92,72 @@
   --color-copper: hsl(var(--copper));
   --color-copper-light: hsl(var(--copper-light));
   --color-copper-dark: hsl(var(--copper-dark));
+
+  /* Phase 1 Semantic Tokens */
+  --color-bg-app: var(--bg-app);
+  --color-surface: var(--bg-surface);
+  --color-surface-elevated: var(--bg-surface-elevated);
+  --color-surface-muted: var(--bg-surface-muted);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-focus: var(--border-focus);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  /* Phase 2 Modal Semantic Tokens */
+  --color-modal-shell: var(--modal-shell);
+  --color-modal-header: var(--modal-header);
+  --color-modal-sidebar: var(--modal-sidebar);
+  --color-modal-canvas: var(--modal-canvas);
+  --color-modal-card: var(--modal-card);
+  --color-modal-input: var(--modal-input);
+  --color-modal-border: var(--modal-border);
+  --color-modal-divider: var(--modal-divider);
 }
 
 /* Dark Mode Legacy Colors */
 .dark {
-  /* Legacy Compatibility (Shadcn UI) - Condensed */
-  --background: 0 0% 3.9%;
+  /* Phase 1 Semantic Design Tokens (Dark Mode Deep Slate + Luminous Amber) */
+  --bg-app: #090d16;
+  --bg-surface: #0f172a;
+  --bg-surface-elevated: #1e293b;
+  --bg-surface-muted: rgba(30, 41, 59, 0.6);
+  --border-subtle: rgba(51, 65, 85, 0.4);
+  --border-focus: #fb923c;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  /* Phase 2 Modal Semantic Design Tokens (Dark Mode Deep Slate Hierarchy) */
+  --modal-backdrop: rgba(0, 0, 0, 0.75);
+  --modal-backdrop-blur: 4px;
+  --modal-shell: #0f172a;
+  --modal-header: #0f172a;
+  --modal-sidebar: #0f172a;
+  --modal-canvas: #090d16;
+  --modal-card: #1e293b;
+  --modal-input: #090d16;
+  --modal-input-border: rgba(148, 163, 184, 0.20);
+  --modal-border: rgba(148, 163, 184, 0.14);
+  --modal-divider: rgba(148, 163, 184, 0.14);
+
+  /* Surface & Semantic Colors */
+  --background: 222 40% 6%;
   --foreground: 210 40% 98%;
   --muted: 217 33% 17%;
   --muted-foreground: 215 20% 65%;
-  --card: 222 47% 13%;
+  --card: 222 47% 11%;
   --card-foreground: 210 40% 98%;
-  --popover: 222 47% 15%;
+  --popover: 217 33% 17%;
   --popover-foreground: 210 40% 98%;
   --border: 217 33% 21%;
   --input: 217 33% 21%;
-  --ring: 224 76% 48%;
-  --primary: 210 40% 96%;
-  --primary-foreground: 222 47% 11%;
-  --secondary: 217 33% 22%;
+  --ring: 27 96% 61%;
+  --primary: 25 95% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217 33% 17%;
   --secondary-foreground: 210 40% 98%;
-  --accent: 217 33% 24%;
+  --accent: 217 33% 20%;
   --accent-foreground: 210 40% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;

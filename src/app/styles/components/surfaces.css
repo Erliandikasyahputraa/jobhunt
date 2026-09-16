@@ -1,7 +1,40 @@
 /* ========================================================================== */
-/* macOS 26 Surface Treatments                                                 */
+/* Surface & Border Hierarchy (Phase 1 Foundation)                           */
 /* ========================================================================== */
 
+/* Semantic Surface Utilities */
+.surface-app {
+  background-color: var(--bg-app);
+}
+
+.surface-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+}
+
+.surface-elevated {
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.surface-muted {
+  background-color: var(--bg-surface-muted);
+}
+
+/* Border Hierarchy Utilities */
+.border-subtle {
+  border-color: var(--border-subtle);
+}
+
+.border-default {
+  border-color: hsl(var(--border));
+}
+
+.border-focus-copper {
+  border-color: var(--border-focus);
+}
+
+/* Backward-compatible macOS surface aliases */
 .surface-primary {
   background: var(--macos-bg-primary);
 }
@@ -25,3 +58,33 @@
 .surface-fill-tertiary {
   background: var(--macos-fill-tertiary);
 }
+
+/* Phase 2 Modal Surface Utilities (100% Solid, Non-Glass) */
+.modal-shell {
+  background-color: var(--modal-shell);
+  border-color: var(--modal-border);
+}
+
+.modal-header {
+  background-color: var(--modal-header);
+  border-bottom-color: var(--modal-divider);
+}
+
+.modal-sidebar {
+  background-color: var(--modal-sidebar);
+  border-right-color: var(--modal-divider);
+}
+
+.modal-canvas {
+  background-color: var(--modal-canvas);
+}
+
+.modal-card {
+  background-color: var(--modal-card);
+  border: 1px solid var(--modal-border);
+}
+
+.modal-input {
+  background-color: var(--modal-input);
+  border: 1px solid var(--modal-input-border);
+}

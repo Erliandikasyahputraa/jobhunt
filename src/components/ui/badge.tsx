@@ -14,17 +14,18 @@ const badgeVariants = cva(
           'rounded-md border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
         destructive:
           'rounded-md border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
-        outline: 'rounded-md text-foreground',
+        outline: 'rounded-md text-foreground border-border',
+        copper: 'rounded-md border-transparent bg-copper text-white shadow-xs hover:bg-copper-dark',
         glass:
-          'rounded-full bg-[var(--glass-light)] backdrop-blur-[20px] [-webkit-backdrop-filter:blur(20px)] saturate-[180%] border-[var(--glass-border-medium)] text-[var(--macos-label-primary)] shadow-glass-subtle',
+          'rounded-full bg-[var(--glass-light)] backdrop-blur-[20px] [-webkit-backdrop-filter:blur(20px)] saturate-[180%] border-[var(--glass-border-medium)] text-[var(--text-primary)] shadow-glass-subtle',
         'glass-success':
-          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-[var(--tint-green)]/30 text-[var(--tint-green)] shadow-glass-subtle',
+          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-green-500/30 text-green-600 dark:text-green-400 shadow-glass-subtle',
         'glass-warning':
-          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-[var(--tint-yellow)]/30 text-[var(--tint-yellow)] shadow-glass-subtle',
+          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-amber-500/30 text-amber-600 dark:text-amber-400 shadow-glass-subtle',
         'glass-error':
-          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-[var(--tint-red)]/30 text-[var(--tint-red)] shadow-glass-subtle',
+          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-red-500/30 text-red-600 dark:text-red-400 shadow-glass-subtle',
         'glass-info':
-          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-[var(--tint-blue)]/30 text-[var(--tint-blue)] shadow-glass-subtle',
+          'rounded-glass-sm bg-[var(--glass-ultra)] backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border border-blue-500/30 text-blue-600 dark:text-blue-400 shadow-glass-subtle',
       },
     },
     defaultVariants: {
@@ -34,8 +35,7 @@ const badgeVariants = cva(
 )
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />

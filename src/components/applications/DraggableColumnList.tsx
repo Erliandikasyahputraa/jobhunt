@@ -54,9 +54,9 @@ function DraggableColumnItem({ column, children }: DraggableColumnItemProps) {
       <div className="flex items-start gap-3">
         <div
           {...listeners}
-          className="flex items-center justify-center w-8 h-8 rounded-md glass-light hover:glass-medium transition-all cursor-move opacity-0 group-hover:opacity-100 touch-none"
+          className="flex items-center justify-center w-8 h-8 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-move opacity-0 group-hover:opacity-100 touch-none text-slate-400 dark:text-slate-500"
         >
-          <GripVertical className="h-4 w-4 text-label-tertiary" />
+          <GripVertical className="h-4 w-4" />
         </div>
         <div className="flex-1 min-w-0">{children(isDragging)}</div>
       </div>
@@ -117,15 +117,19 @@ export function DraggableColumnList({ columns, onReorder, children }: DraggableC
 
       <DragOverlay>
         {activeColumn ? (
-          <div className="glass-heavy rounded-glass p-4 shadow-glass-dramatic rotate-2 scale-105">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-xl border border-neutral-200 dark:border-slate-700 rotate-2 scale-105">
             <div className="flex items-center gap-3">
-              <GripVertical className="h-4 w-4 text-label-tertiary" />
+              <GripVertical className="h-4 w-4 text-slate-400 dark:text-slate-500" />
               <div className="flex items-center gap-2">
                 <span className="text-lg">{getColumnIcon(activeColumn.id, activeColumn.icon)}</span>
                 <div>
-                  <h4 className="font-semibold text-label-primary">{activeColumn.name}</h4>
+                  <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                    {activeColumn.name}
+                  </h4>
                   {activeColumn.description && (
-                    <p className="text-sm text-label-secondary">{activeColumn.description}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      {activeColumn.description}
+                    </p>
                   )}
                 </div>
               </div>

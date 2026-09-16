@@ -205,13 +205,13 @@ export function ApplicationsToolbar({
       {/* Search Bar */}
       <div className="flex-1 w-full lg:mx-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-900 dark:text-label-tertiary" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
           <Input
             type="text"
             placeholder="Search by company or job title..."
             value={filters.searchQuery}
             onChange={e => onSearchChange(e.target.value)}
-            className="pl-10 bg-white border-neutral-900/40 focus-visible:border-neutral-900 text-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-light dark:border-border dark:text-foreground dark:placeholder:text-label-tertiary rounded-md w-full transition-all"
+            className="pl-10 w-full"
           />
         </div>
       </div>
@@ -362,19 +362,25 @@ export function ApplicationsToolbar({
               )}
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md w-full h-[90vh] flex flex-col p-0 glass-ultra border-0 rounded-t-xl rounded-b-none mt-auto mb-0 sm:rounded-xl">
-            <DialogHeader className="px-4 py-3 border-b border-white/10 shrink-0">
-              <DialogTitle>Filter & Sort</DialogTitle>
+          <DialogContent className="max-w-md w-full h-[90vh] flex flex-col p-0 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-t-2xl rounded-b-none mt-auto mb-0 sm:rounded-2xl">
+            <DialogHeader className="px-4 py-3 border-b border-neutral-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
+              <DialogTitle className="text-slate-900 dark:text-slate-100">
+                Filter & Sort
+              </DialogTitle>
             </DialogHeader>
-            <div className="flex-1 overflow-y-auto px-4 pb-20">
+            <div className="flex-1 overflow-y-auto px-4 pb-20 bg-slate-50 dark:bg-[#090d16]">
               <FilterContent />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 p-4 glass-heavy border-t border-white/10 flex gap-2">
-              <Button variant="outline" className="flex-1 glass-light" onClick={onClearFilters}>
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-neutral-200 dark:border-slate-800 flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1 border-neutral-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                onClick={onClearFilters}
+              >
                 Clear All
               </Button>
               <Button
-                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="flex-1 bg-orange-700 hover:bg-orange-800 dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950 font-medium"
                 onClick={() => setIsMobileFilterOpen(false)}
               >
                 Apply

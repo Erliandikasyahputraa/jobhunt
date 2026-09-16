@@ -115,7 +115,7 @@ export default function ApplicationForm({
             name="company_name"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                <FormLabel className="font-semibold text-foreground">
                   Company Name <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
@@ -125,7 +125,6 @@ export default function ApplicationForm({
                     required
                     disabled={isLoading}
                     aria-required="true"
-                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -139,7 +138,7 @@ export default function ApplicationForm({
             name="job_title"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                <FormLabel className="font-semibold text-foreground">
                   Job Title <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
@@ -149,7 +148,6 @@ export default function ApplicationForm({
                     required
                     disabled={isLoading}
                     aria-required="true"
-                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -163,9 +161,7 @@ export default function ApplicationForm({
             name="job_url"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
-                  Job URL
-                </FormLabel>
+                <FormLabel className="font-semibold text-foreground">Job URL</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -173,7 +169,6 @@ export default function ApplicationForm({
                     placeholder="https://example.com/job-posting"
                     disabled={isLoading}
                     value={field.value ?? ''}
-                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -187,16 +182,13 @@ export default function ApplicationForm({
             name="location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
-                  Location
-                </FormLabel>
+                <FormLabel className="font-semibold text-foreground">Location</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="e.g., Remote, San Francisco, CA"
                     disabled={isLoading}
                     value={field.value ?? ''}
-                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -210,16 +202,13 @@ export default function ApplicationForm({
             name="salary_range"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
-                  Salary Range
-                </FormLabel>
+                <FormLabel className="font-semibold text-foreground">Salary Range</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="e.g., $100k-$150k"
                     disabled={isLoading}
                     value={field.value ?? ''}
-                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -233,7 +222,7 @@ export default function ApplicationForm({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                <FormLabel className="font-semibold text-foreground">
                   Status <span className="text-red-500">*</span>
                 </FormLabel>
                 <Select
@@ -242,14 +231,11 @@ export default function ApplicationForm({
                   disabled={isLoading}
                 >
                   <FormControl>
-                    <SelectTrigger
-                      aria-label="Status"
-                      className="bg-white text-neutral-900 border-neutral-900/40 focus:border-neutral-900 shadow-xs dark:border-border dark:text-foreground"
-                    >
+                    <SelectTrigger aria-label="Status">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="bg-white text-neutral-900 border-neutral-900/20 dark:bg-card dark:text-foreground dark:border-border">
+                  <SelectContent>
                     {STATUS_OPTIONS.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
@@ -268,16 +254,11 @@ export default function ApplicationForm({
             name="date_applied"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
+                <FormLabel className="font-semibold text-foreground">
                   Date Applied <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    type="date"
-                    disabled={isLoading}
-                    className="bg-white text-neutral-900 border-neutral-900/40 focus-visible:border-neutral-900 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary"
-                  />
+                  <Input {...field} type="date" disabled={isLoading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -290,17 +271,15 @@ export default function ApplicationForm({
             name="notes"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel className="text-neutral-900 dark:text-label-primary font-semibold">
-                  Notes
-                </FormLabel>
-                <p className="text-xs text-neutral-600 dark:text-label-tertiary mb-2">
+                <FormLabel className="font-semibold text-foreground">Notes</FormLabel>
+                <p className="text-xs text-muted-foreground mb-2">
                   Additional notes, interview details, etc.
                 </p>
                 <FormControl>
                   <Textarea
                     {...field}
                     placeholder="Add any additional notes or interview details here..."
-                    className="min-h-[120px] resize-y bg-white text-neutral-900 border border-neutral-900/40 focus-visible:border-neutral-900 placeholder:text-neutral-500 shadow-xs dark:glass-ultra dark:border-0 dark:text-label-primary dark:placeholder:text-label-tertiary rounded-md p-3"
+                    className="min-h-[120px] p-3"
                     disabled={isLoading}
                     value={field.value ?? ''}
                   />
@@ -311,23 +290,23 @@ export default function ApplicationForm({
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-neutral-200 dark:border-label-quaternary">
+        <div className="flex justify-end gap-3 pt-4 border-t border-border">
           {onCancel && (
             <Button
               type="button"
               variant="outline"
               onClick={onCancel}
               disabled={isLoading}
-              className="min-w-[100px] bg-white text-neutral-900 border-neutral-900 dark:bg-card dark:text-foreground dark:border-border font-medium hover:bg-neutral-100 dark:hover:bg-accent active:scale-[0.98] transition-all shadow-xs"
+              className="min-w-[100px]"
             >
               Cancel
             </Button>
           )}
           <Button
             type="submit"
-            variant="default"
+            variant="copper"
             disabled={isLoading}
-            className="min-w-[160px] bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 active:scale-[0.98] transition-all font-semibold shadow-xs"
+            className="min-w-[160px] font-semibold"
           >
             {isLoading
               ? submitButtonText === 'Save Changes'

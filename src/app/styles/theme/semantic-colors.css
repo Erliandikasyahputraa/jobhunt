@@ -3,11 +3,11 @@
 /* ========================================================================== */
 
 :root {
-  /* macOS Label Colors (Using color-mix for dynamic opacity) */
-  --macos-label-primary: color-mix(in srgb, rgb(var(--macos-base-black)) 84.7%, transparent);
-  --macos-label-secondary: color-mix(in srgb, rgb(var(--macos-base-black)) 49.8%, transparent);
-  --macos-label-tertiary: color-mix(in srgb, rgb(var(--macos-base-black)) 25.9%, transparent);
-  --macos-label-quaternary: color-mix(in srgb, rgb(var(--macos-base-black)) 9.8%, transparent);
+  /* macOS Label Colors (Elevated to WCAG AA Compliant Slate Palette) */
+  --macos-label-primary: var(--text-primary);
+  --macos-label-secondary: var(--text-secondary);
+  --macos-label-tertiary: var(--text-muted);
+  --macos-label-quaternary: #94a3b8;
 
   /* macOS Fill Colors */
   --macos-fill-primary: color-mix(in srgb, rgb(var(--macos-base-gray)) 20%, transparent);
@@ -15,13 +15,13 @@
   --macos-fill-tertiary: color-mix(in srgb, rgb(var(--macos-base-gray)) 12%, transparent);
   --macos-fill-quaternary: color-mix(in srgb, rgb(var(--macos-base-gray)) 8%, transparent);
 
-  /* macOS System Backgrounds */
-  --macos-bg-primary: rgb(var(--macos-base-white));
-  --macos-bg-secondary: rgb(242, 242, 247);
-  --macos-bg-tertiary: rgb(var(--macos-base-white));
-  --macos-bg-grouped: rgb(242, 242, 247);
-  --macos-bg-grouped-secondary: rgb(var(--macos-base-white));
-  --macos-bg-grouped-tertiary: rgb(242, 242, 247);
+  /* System Backgrounds */
+  --macos-bg-primary: var(--bg-surface);
+  --macos-bg-secondary: #f1f5f9;
+  --macos-bg-tertiary: var(--bg-surface);
+  --macos-bg-grouped: #f8fafc;
+  --macos-bg-grouped-secondary: var(--bg-surface);
+  --macos-bg-grouped-tertiary: #f1f5f9;
 
   /* Liquid Glass Materials (Using color-mix for opacity) */
   --glass-ultra: color-mix(in srgb, rgb(var(--glass-base-light)) 15%, transparent);
@@ -71,11 +71,11 @@
 
 /* Dark Mode Semantic Colors */
 .dark {
-  /* macOS Label Colors (Using color-mix for dynamic opacity) */
-  --macos-label-primary: color-mix(in srgb, rgb(var(--macos-base-white)) 84.7%, transparent);
-  --macos-label-secondary: color-mix(in srgb, rgb(var(--macos-base-white)) 54.9%, transparent);
-  --macos-label-tertiary: color-mix(in srgb, rgb(var(--macos-base-white)) 25.1%, transparent);
-  --macos-label-quaternary: color-mix(in srgb, rgb(var(--macos-base-white)) 9.8%, transparent);
+  /* macOS Label Colors (Elevated to WCAG AA Compliant Slate Palette) */
+  --macos-label-primary: var(--text-primary);
+  --macos-label-secondary: var(--text-secondary);
+  --macos-label-tertiary: var(--text-muted);
+  --macos-label-quaternary: #64748b;
 
   /* macOS Fill Colors */
   --macos-fill-primary: color-mix(in srgb, rgb(var(--macos-base-gray)) 36%, transparent);
@@ -83,13 +83,13 @@
   --macos-fill-tertiary: color-mix(in srgb, rgb(var(--macos-base-gray)) 24%, transparent);
   --macos-fill-quaternary: color-mix(in srgb, rgb(var(--macos-base-gray)) 18%, transparent);
 
-  /* macOS System Backgrounds */
-  --macos-bg-primary: rgb(var(--macos-base-black));
-  --macos-bg-secondary: rgb(28, 28, 30);
-  --macos-bg-tertiary: rgb(44, 44, 46);
-  --macos-bg-grouped: rgb(var(--macos-base-black));
-  --macos-bg-grouped-secondary: rgb(28, 28, 30);
-  --macos-bg-grouped-tertiary: rgb(44, 44, 46);
+  /* System Backgrounds (Deep Slate Hierarchy - No pure #000000) */
+  --macos-bg-primary: var(--bg-app);
+  --macos-bg-secondary: var(--bg-surface);
+  --macos-bg-tertiary: var(--bg-surface-elevated);
+  --macos-bg-grouped: var(--bg-app);
+  --macos-bg-grouped-secondary: var(--bg-surface);
+  --macos-bg-grouped-tertiary: var(--bg-surface-elevated);
 
   /* Liquid Glass Materials (Using color-mix for opacity) */
   --glass-ultra: color-mix(in srgb, rgb(var(--glass-base-dark)) 40%, transparent);

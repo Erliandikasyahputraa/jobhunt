@@ -48,7 +48,7 @@ export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabN
   )
 
   return (
-    <nav className="p-4 space-y-1" role="tablist">
+    <nav className="p-3 sm:p-4 space-y-1.5" role="tablist">
       {tabItems.map(tab => {
         const Icon = tab.icon
         const isActive = activeTab === tab.id
@@ -63,30 +63,36 @@ export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabN
             disabled={disabled}
             onClick={() => handleTabClick(tab.id)}
             className={cn(
-              'w-full flex items-center gap-3 px-4 py-3 rounded-glass-sm transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+              'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition-all duration-150 text-left',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2',
               isActive
-                ? 'glass-light bg-accent text-foreground border-l-4 border-foreground dark:border-copper dark:text-copper dark:bg-copper/10 shadow-xs'
-                : 'glass-ultra text-label-secondary hover:text-label-primary hover:bg-accent/50',
+                ? 'bg-orange-500/10 dark:bg-amber-500/10 text-slate-900 dark:text-slate-50 border-l-[3px] border-orange-700 dark:border-amber-500 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/60',
               disabled && 'opacity-50 cursor-not-allowed'
             )}
           >
             <Icon
               className={cn(
-                'w-5 h-5 flex-shrink-0',
-                isActive ? 'text-foreground dark:text-copper' : 'text-label-tertiary'
+                'w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 transition-colors',
+                isActive
+                  ? 'text-orange-700 dark:text-amber-400'
+                  : 'text-slate-400 dark:text-slate-500'
               )}
             />
-            <div className="flex-1 text-left">
+            <div className="flex-1 min-w-0">
               <div
                 className={cn(
-                  'font-medium',
-                  isActive ? 'text-foreground dark:text-copper font-semibold' : 'text-label-primary'
+                  'text-sm truncate',
+                  isActive
+                    ? 'font-semibold text-slate-900 dark:text-slate-50'
+                    : 'font-medium text-slate-700 dark:text-slate-300'
                 )}
               >
                 {tab.label}
               </div>
-              <div className="text-xs text-label-tertiary mt-0.5">{tab.description}</div>
+              <div className="text-xs text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                {tab.description}
+              </div>
             </div>
           </button>
         )

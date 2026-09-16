@@ -30,14 +30,14 @@ export function ActionButtons({
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            'inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-border bg-background shadow-xs',
-            'text-label-primary hover:text-foreground hover:bg-accent',
-            'transition-all duration-200',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+            'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card shadow-xs',
+            'text-slate-700 dark:text-slate-300 hover:text-foreground hover:bg-accent',
+            'transition-all duration-150',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500',
             isDisabled && 'opacity-50 cursor-not-allowed'
           )}
         >
-          <ExternalLink className="w-4 h-4" />
+          <ExternalLink className="w-4 h-4 text-slate-500 dark:text-slate-400" />
           <span className="hidden sm:inline">View Job</span>
         </a>
       )}
@@ -48,9 +48,9 @@ export function ActionButtons({
         size="sm"
         onClick={onEdit}
         disabled={isDisabled}
-        className="transition-all duration-200"
+        className="transition-all duration-150 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border-border"
       >
-        <Edit2 className="w-4 h-4 mr-2" />
+        <Edit2 className="w-4 h-4 mr-2 text-slate-500 dark:text-slate-400" />
         <span className="hidden sm:inline">Edit</span>
       </Button>
 
@@ -61,9 +61,9 @@ export function ActionButtons({
         onClick={onDelete}
         disabled={isDisabled}
         className={cn(
-          'glass-light bg-red-500/10 text-red-700 dark:text-red-300',
-          'border-red-300/40 dark:border-red-600/40',
-          'hover:bg-red-500/20 transition-all duration-200'
+          'bg-red-500/10 text-red-700 dark:text-red-400',
+          'border-red-200 dark:border-red-900/60',
+          'hover:bg-red-500/20 transition-all duration-150 rounded-lg'
         )}
       >
         <Trash2 className="w-4 h-4 mr-2" />
@@ -72,16 +72,17 @@ export function ActionButtons({
 
       {/* Close Button */}
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={onClose}
         className={cn(
-          'glass-ultra border-label-quaternary/30 text-label-secondary hover:text-label-primary',
-          'hover:bg-label-quaternary/20 transition-all duration-200',
-          'min-w-[36px] px-2' // Ensure consistent width with other buttons
+          'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100',
+          'hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-150',
+          'min-w-[36px] px-2 rounded-lg'
         )}
+        aria-label="Close dialog"
       >
-        <X className="w-4 h-4" />
+        <X className="w-5 h-5" />
         <span className="sr-only">Close</span>
       </Button>
     </div>

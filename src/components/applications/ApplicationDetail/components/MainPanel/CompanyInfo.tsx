@@ -182,17 +182,17 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
 
   if (isCreating || isEditing) {
     return (
-      <div className={cn('space-y-6', className)}>
-        <div className="glass-ultra rounded-glass-sm p-6">
-          <h3 className="text-lg font-semibold text-label-primary mb-4 flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-foreground dark:text-copper" />
+      <div className={cn('space-y-4 sm:space-y-6', className)}>
+        <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-slate-700 dark:text-amber-400" />
             {isEditing ? 'Edit Company Profile' : 'Create Company Profile'}
           </h3>
           <form onSubmit={isEditing ? handleUpdate : handleCreate} className="space-y-4">
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-semibold text-label-secondary mb-1"
+                className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
               >
                 Company Name *
               </label>
@@ -203,13 +203,12 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                 onChange={handleInputChange}
                 required
                 disabled={isLoading}
-                className="glass-ultra border-0 text-label-primary"
               />
             </div>
             <div>
               <label
                 htmlFor="website"
-                className="block text-sm font-semibold text-label-secondary mb-1"
+                className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
               >
                 Website
               </label>
@@ -220,14 +219,13 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                 value={formData.website}
                 onChange={handleInputChange}
                 disabled={isLoading}
-                className="glass-ultra border-0 text-label-primary"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
                   htmlFor="industry"
-                  className="block text-sm font-semibold text-label-secondary mb-1"
+                  className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
                 >
                   Industry
                 </label>
@@ -237,13 +235,12 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                   value={formData.industry}
                   onChange={handleInputChange}
                   disabled={isLoading}
-                  className="glass-ultra border-0 text-label-primary"
                 />
               </div>
               <div>
                 <label
                   htmlFor="location"
-                  className="block text-sm font-semibold text-label-secondary mb-1"
+                  className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
                 >
                   Location
                 </label>
@@ -253,15 +250,14 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                   value={formData.location}
                   onChange={handleInputChange}
                   disabled={isLoading}
-                  className="glass-ultra border-0 text-label-primary"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
                   htmlFor="linkedin_url"
-                  className="block text-sm font-semibold text-label-secondary mb-1"
+                  className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
                 >
                   LinkedIn URL
                 </label>
@@ -272,13 +268,12 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                   value={formData.linkedin_url}
                   onChange={handleInputChange}
                   disabled={isLoading}
-                  className="glass-ultra border-0 text-label-primary"
                 />
               </div>
               <div>
                 <label
                   htmlFor="github_url"
-                  className="block text-sm font-semibold text-label-secondary mb-1"
+                  className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
                 >
                   GitHub URL
                 </label>
@@ -289,14 +284,13 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                   value={formData.github_url}
                   onChange={handleInputChange}
                   disabled={isLoading}
-                  className="glass-ultra border-0 text-label-primary"
                 />
               </div>
             </div>
             <div>
               <label
                 htmlFor="overview"
-                className="block text-sm font-semibold text-label-secondary mb-1"
+                className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
               >
                 Overview
               </label>
@@ -306,13 +300,13 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                 value={formData.overview}
                 onChange={handleInputChange}
                 disabled={isLoading}
-                className="glass-ultra border-0 text-label-primary min-h-[100px]"
+                className="min-h-[100px]"
               />
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button
                 type="button"
-                variant="glass"
+                variant="outline"
                 onClick={() => {
                   setIsCreating(false)
                   setIsEditing(false)
@@ -321,7 +315,11 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="glass" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-orange-700 hover:bg-orange-800 text-white dark:bg-amber-600 dark:hover:bg-amber-700"
+              >
                 {isLoading ? 'Saving...' : 'Save'}
               </Button>
             </div>
@@ -333,15 +331,15 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
 
   if (isLinking) {
     return (
-      <div className={cn('space-y-6', className)}>
-        <div className="glass-ultra rounded-glass-sm p-6">
-          <h3 className="text-lg font-semibold text-label-primary mb-4 flex items-center gap-2">
-            <LinkIcon className="w-5 h-5 text-copper" />
+      <div className={cn('space-y-4 sm:space-y-6', className)}>
+        <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+            <LinkIcon className="w-5 h-5 text-orange-700 dark:text-amber-400" />
             Link Existing Company
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-label-secondary mb-1">
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
                 Select Company
               </label>
               <Select
@@ -349,17 +347,17 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                 onValueChange={setSelectedCompanyId}
                 disabled={isLoading}
               >
-                <SelectTrigger className="glass-ultra border-0 text-label-primary">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a company..." />
                 </SelectTrigger>
-                <SelectContent variant="glass">
+                <SelectContent>
                   {availableCompanies.length === 0 ? (
                     <SelectItem value="none" disabled>
                       No companies found
                     </SelectItem>
                   ) : (
                     availableCompanies.map(c => (
-                      <SelectItem key={c.id} value={c.id} variant="glass">
+                      <SelectItem key={c.id} value={c.id}>
                         {c.name}
                       </SelectItem>
                     ))
@@ -370,7 +368,7 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
             <div className="flex justify-end gap-3 pt-4">
               <Button
                 type="button"
-                variant="glass"
+                variant="outline"
                 onClick={() => setIsLinking(false)}
                 disabled={isLoading}
               >
@@ -378,9 +376,9 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
               </Button>
               <Button
                 type="button"
-                variant="glass"
                 onClick={handleLink}
                 disabled={isLoading || !selectedCompanyId || selectedCompanyId === 'none'}
+                className="bg-orange-700 hover:bg-orange-800 text-white dark:bg-amber-600 dark:hover:bg-amber-700"
               >
                 {isLoading ? 'Linking...' : 'Link'}
               </Button>
@@ -393,19 +391,19 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
 
   if (company) {
     return (
-      <div className={cn('space-y-6', className)}>
-        <div className="glass-ultra rounded-glass-sm p-6">
+      <div className={cn('space-y-4 sm:space-y-6', className)}>
+        <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-label-primary flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-copper" />
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-orange-700 dark:text-amber-400" />
               Company Profile
             </h3>
             <div className="flex flex-wrap items-center gap-2">
-              <Button size="sm" variant="glass" onClick={startEdit} disabled={isLoading}>
+              <Button size="sm" variant="outline" onClick={startEdit} disabled={isLoading}>
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
               </Button>
-              <Button size="sm" variant="glass" onClick={handleUnlink} disabled={isLoading}>
+              <Button size="sm" variant="outline" onClick={handleUnlink} disabled={isLoading}>
                 <Unlink className="w-4 h-4 mr-2" />
                 Unlink
               </Button>
@@ -414,22 +412,24 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
 
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-semibold text-label-secondary mb-1">Company Name</h4>
-              <p className="text-label-primary font-medium">{company.name}</p>
+              <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                Company Name
+              </h4>
+              <p className="text-slate-900 dark:text-slate-100 font-medium">{company.name}</p>
             </div>
 
             {(company.website || company.industry || company.location) && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {company.website && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm text-label-secondary flex items-center gap-2">
+                    <span className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
                       <Globe className="w-4 h-4" /> Website
                     </span>
                     <a
                       href={company.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-copper hover:underline truncate"
+                      className="text-orange-700 dark:text-amber-400 hover:underline truncate"
                     >
                       {company.website}
                     </a>
@@ -437,14 +437,14 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                 )}
                 {company.industry && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm text-label-secondary">Industry</span>
-                    <span className="text-label-primary">{company.industry}</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">Industry</span>
+                    <span className="text-slate-900 dark:text-slate-100">{company.industry}</span>
                   </div>
                 )}
                 {company.location && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm text-label-secondary">Location</span>
-                    <span className="text-label-primary">{company.location}</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">Location</span>
+                    <span className="text-slate-900 dark:text-slate-100">{company.location}</span>
                   </div>
                 )}
               </div>
@@ -454,12 +454,12 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {company.linkedin_url && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm text-label-secondary">LinkedIn</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">LinkedIn</span>
                     <a
                       href={company.linkedin_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-copper hover:underline truncate"
+                      className="text-orange-700 dark:text-amber-400 hover:underline truncate"
                     >
                       {company.linkedin_url}
                     </a>
@@ -467,12 +467,12 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                 )}
                 {company.github_url && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm text-label-secondary">GitHub</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">GitHub</span>
                     <a
                       href={company.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-copper hover:underline truncate"
+                      className="text-orange-700 dark:text-amber-400 hover:underline truncate"
                     >
                       {company.github_url}
                     </a>
@@ -483,8 +483,12 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
 
             {company.overview && (
               <div>
-                <h4 className="text-sm font-semibold text-label-secondary mb-1">Overview</h4>
-                <p className="text-label-primary whitespace-pre-wrap">{company.overview}</p>
+                <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                  Overview
+                </h4>
+                <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+                  {company.overview}
+                </p>
               </div>
             )}
           </div>
@@ -495,20 +499,27 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
 
   // No company profile linked state
   return (
-    <div className={cn('space-y-6', className)}>
-      <div className="glass-light bg-muted/40 border border-border rounded-glass-sm p-6 text-center">
-        <Building2 className="w-12 h-12 text-label-secondary mx-auto mb-3" />
-        <h3 className="text-lg font-semibold text-label-primary mb-2">No company profile linked</h3>
-        <p className="text-label-secondary mb-4">
-          This application is for <strong>{application.company_name}</strong> but it is not linked
-          to a dedicated Company Profile yet.
+    <div className={cn('space-y-4 sm:space-y-6', className)}>
+      <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-8 sm:p-12 text-center shadow-xs">
+        <Building2 className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+        <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+          No company profile linked
+        </h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+          This application is for{' '}
+          <strong className="text-slate-700 dark:text-slate-200">{application.company_name}</strong>{' '}
+          but it is not linked to a dedicated Company Profile yet.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <Button variant="glass" onClick={() => setIsCreating(true)} disabled={isLoading}>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Button
+            onClick={() => setIsCreating(true)}
+            disabled={isLoading}
+            className="bg-orange-700 hover:bg-orange-800 text-white dark:bg-amber-600 dark:hover:bg-amber-700"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Create Company Profile
           </Button>
-          <Button variant="glass" onClick={loadAvailableCompanies} disabled={isLoading}>
+          <Button variant="outline" onClick={loadAvailableCompanies} disabled={isLoading}>
             <LinkIcon className="w-4 h-4 mr-2" />
             Link Existing Company
           </Button>

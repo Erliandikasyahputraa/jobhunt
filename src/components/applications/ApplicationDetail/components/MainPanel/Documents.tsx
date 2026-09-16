@@ -167,13 +167,19 @@ export function Documents({ _application, className }: DocumentsProps) {
           <Loader2 className="w-8 h-8 animate-spin text-label-secondary" />
         </div>
       ) : documents.length === 0 ? (
-        <div className="glass-light bg-muted/40 border border-border rounded-glass-sm p-6 text-center">
-          <FileText className="w-12 h-12 text-label-secondary mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-label-primary mb-2">No documents yet</h3>
-          <p className="text-label-secondary mb-4">
+        <div className="bg-slate-50 dark:bg-[#090d16] border border-neutral-200 dark:border-slate-800 rounded-xl p-6 text-center">
+          <FileText className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+            No documents yet
+          </h3>
+          <p className="text-slate-500 dark:text-slate-400 mb-4 text-sm">
             Upload resumes, cover letters, or other attachments for this application.
           </p>
-          <Button onClick={handleUploadClick} variant="default">
+          <Button
+            onClick={handleUploadClick}
+            variant="default"
+            className="bg-orange-700 hover:bg-orange-800 dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Upload Document
           </Button>
@@ -183,17 +189,20 @@ export function Documents({ _application, className }: DocumentsProps) {
           {documents.map(doc => (
             <div
               key={doc.id}
-              className="glass-ultra rounded-glass-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-border shadow-glass-subtle hover:border-foreground/30 dark:hover:border-copper/40 transition-all duration-200"
+              className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-150"
             >
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="p-2 bg-muted/60 dark:bg-copper/10 rounded-md shrink-0 border border-border dark:border-copper/20">
-                  <File className="w-5 h-5 text-foreground dark:text-copper" />
+                <div className="p-2 bg-slate-100 dark:bg-slate-700/60 rounded-lg shrink-0 border border-slate-200 dark:border-slate-700">
+                  <File className="w-5 h-5 text-slate-700 dark:text-slate-300" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-sm font-medium text-label-primary truncate" title={doc.name}>
+                  <h4
+                    className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate"
+                    title={doc.name}
+                  >
                     {doc.name}
                   </h4>
-                  <div className="flex items-center gap-2 text-xs text-label-secondary mt-1">
+                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
                     <span className="capitalize font-medium">
                       {doc.document_type.replace('_', ' ')}
                     </span>
@@ -211,7 +220,7 @@ export function Documents({ _application, className }: DocumentsProps) {
                   aria-label="View document"
                   onClick={() => handleDownload(doc)}
                   disabled={isDownloadingId === doc.id}
-                  className="h-8 text-label-primary hover:text-foreground hover:bg-accent font-medium transition-colors"
+                  className="h-8 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium transition-colors"
                 >
                   {isDownloadingId === doc.id ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -237,19 +246,23 @@ export function Documents({ _application, className }: DocumentsProps) {
 
       {/* Upload Dialog */}
       <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-        <DialogContent variant="glass" className="border-border/60 max-w-md">
+        <DialogContent className="max-w-md bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-label-primary">Upload Document</DialogTitle>
-            <DialogDescription className="text-label-secondary">
+            <DialogTitle className="text-slate-900 dark:text-slate-100">
+              Upload Document
+            </DialogTitle>
+            <DialogDescription className="text-slate-500 dark:text-slate-400">
               Supported formats: PDF, DOC, DOCX (Max 5MB)
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-label-secondary">Document Type</label>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Document Type
+              </label>
               <Select value={uploadType} onValueChange={val => setUploadType(val as DocumentType)}>
-                <SelectTrigger className="glass-ultra border-border">
+                <SelectTrigger className="border-neutral-200 dark:border-slate-700">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -261,7 +274,7 @@ export function Documents({ _application, className }: DocumentsProps) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-label-secondary">File</label>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">File</label>
               <div className="flex items-center gap-3">
                 <Input
                   ref={fileInputRef}
@@ -274,11 +287,11 @@ export function Documents({ _application, className }: DocumentsProps) {
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
-                  className="glass-ultra border-border shrink-0"
+                  className="border-neutral-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shrink-0"
                 >
                   Choose File
                 </Button>
-                <span className="text-sm text-label-secondary truncate">
+                <span className="text-sm text-slate-500 dark:text-slate-400 truncate">
                   {selectedFile ? selectedFile.name : 'No file selected'}
                 </span>
               </div>
@@ -289,15 +302,14 @@ export function Documents({ _application, className }: DocumentsProps) {
             <Button
               variant="ghost"
               onClick={() => setIsUploadDialogOpen(false)}
-              className="text-label-secondary hover:text-label-primary"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
             >
               Cancel
             </Button>
             <Button
-              variant="brand"
               onClick={handleUploadSubmit}
               disabled={!selectedFile || isUploading}
-              className="min-w-[100px]"
+              className="min-w-[100px] bg-orange-700 hover:bg-orange-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950 font-medium"
             >
               {isUploading ? (
                 <>
@@ -314,13 +326,17 @@ export function Documents({ _application, className }: DocumentsProps) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!documentToDelete} onOpenChange={open => !open && setDocumentToDelete(null)}>
-        <DialogContent variant="glass" className="border-border/60 max-w-sm">
+        <DialogContent className="max-w-sm bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-label-primary">Delete Document</DialogTitle>
-            <DialogDescription className="text-label-secondary">
+            <DialogTitle className="text-slate-900 dark:text-slate-100">
+              Delete Document
+            </DialogTitle>
+            <DialogDescription className="text-slate-500 dark:text-slate-400">
               Are you sure you want to delete{' '}
-              <span className="font-medium text-label-primary">{documentToDelete?.name}</span>? This
-              action cannot be undone.
+              <span className="font-medium text-slate-900 dark:text-slate-100">
+                {documentToDelete?.name}
+              </span>
+              ? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
 
@@ -328,7 +344,7 @@ export function Documents({ _application, className }: DocumentsProps) {
             <Button
               variant="ghost"
               onClick={() => setDocumentToDelete(null)}
-              className="text-label-secondary hover:text-label-primary"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               disabled={isDeleting}
             >
               Cancel

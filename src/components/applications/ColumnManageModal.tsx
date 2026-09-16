@@ -95,7 +95,7 @@ function ColumnItem({
             <select
               value={editIcon}
               onChange={e => setEditIcon(e.target.value)}
-              className="text-sm bg-transparent border border-label-quaternary/20 rounded px-2 py-1"
+              className="text-sm bg-white dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-md px-2 py-1 text-slate-900 dark:text-slate-100"
             >
               <option value="">Select icon...</option>
               {DEFAULT_COLUMN_ICONS.map(icon => (
@@ -129,14 +129,18 @@ function ColumnItem({
           </div>
         </div>
       ) : (
-        <div className="glass-light rounded-glass p-4 border border-label-quaternary/20">
+        <div className="bg-card text-card-foreground border border-border rounded-xl p-3.5 sm:p-4 shadow-xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <span className="text-lg">{column.icon || '📋'}</span>
               <div>
-                <h4 className="font-semibold text-label-primary truncate">{column.name}</h4>
+                <h4 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                  {column.name}
+                </h4>
                 {column.description && (
-                  <p className="text-sm text-label-secondary truncate">{column.description}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+                    {column.description}
+                  </p>
                 )}
               </div>
               {column.isCustom && (
@@ -150,7 +154,7 @@ function ColumnItem({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-8 w-8"
+                  className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   onClick={onEdit}
                   title="Edit column"
                 >
@@ -161,7 +165,7 @@ function ColumnItem({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-8 w-8 text-error hover:bg-error/10"
+                  className="h-8 w-8 text-destructive hover:bg-destructive/10"
                   onClick={onDelete}
                   title="Delete column"
                 >
@@ -326,13 +330,13 @@ export function ColumnManageModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto glass-heavy">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
+            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
+              <Settings className="h-5 w-5 text-orange-600 dark:text-amber-500" />
               Manage Columns
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-slate-500 dark:text-slate-400">
               Customize your kanban board by adding, editing, or removing custom columns. Core
               columns cannot be modified.
             </DialogDescription>
@@ -341,7 +345,7 @@ export function ColumnManageModal({
           <div className="space-y-6">
             {/* Core Columns */}
             <div>
-              <h3 className="text-sm font-semibold text-label-primary mb-3">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
                 Core Columns (Fixed)
               </h3>
               <div className="space-y-2">
@@ -365,12 +369,14 @@ export function ColumnManageModal({
             {/* Custom Columns */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-label-primary">Custom Columns</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  Custom Columns
+                </h3>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => setShowAddForm(!showAddForm)}
-                  className="glass-ultra border-0"
+                  className="border-neutral-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Column
@@ -378,13 +384,13 @@ export function ColumnManageModal({
               </div>
 
               {showAddForm && (
-                <div className="glass-light rounded-glass p-4 border border-label-quaternary/20 mb-3">
+                <div className="bg-slate-50 dark:bg-[#090d16] rounded-xl p-4 border border-neutral-200 dark:border-slate-800 mb-3">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <select
                         value={newColumn.icon}
                         onChange={e => setNewColumn({ ...newColumn, icon: e.target.value })}
-                        className="text-sm bg-transparent border border-label-quaternary/20 rounded px-2 py-1"
+                        className="text-sm bg-white dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-md px-2 py-1 text-slate-900 dark:text-slate-100"
                       >
                         <option value="">Select icon...</option>
                         {DEFAULT_COLUMN_ICONS.map(icon => (
@@ -410,7 +416,7 @@ export function ColumnManageModal({
                         size="sm"
                         onClick={handleCreateColumn}
                         disabled={!newColumn.name.trim() || isProcessing}
-                        className="min-w-[120px]"
+                        className="min-w-[120px] bg-orange-700 hover:bg-orange-800 dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950 font-medium"
                       >
                         {isProcessing ? 'Creating...' : 'Create Column'}
                       </Button>
@@ -431,9 +437,11 @@ export function ColumnManageModal({
 
               <div className="space-y-2">
                 {mappedCustomColumns.length === 0 ? (
-                  <div className="glass-ultra rounded-glass p-8 text-center border-2 border-dashed border-label-quaternary/20">
-                    <p className="text-label-tertiary text-sm">No custom columns yet</p>
-                    <p className="text-label-quaternary text-xs mt-1">
+                  <div className="bg-slate-50 dark:bg-[#090d16] rounded-xl p-8 text-center border-2 border-dashed border-neutral-200 dark:border-slate-800">
+                    <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
+                      No custom columns yet
+                    </p>
+                    <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">
                       Add custom columns to track additional application stages
                     </p>
                   </div>
@@ -463,7 +471,7 @@ export function ColumnManageModal({
             </div>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-label-quaternary/20">
+          <div className="flex justify-end pt-4 border-t border-neutral-200 dark:border-slate-800">
             <Button variant="outline" onClick={onClose}>
               Done
             </Button>
@@ -472,10 +480,12 @@ export function ColumnManageModal({
       </Dialog>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="glass-heavy">
+        <AlertDialogContent className="bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Column</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-slate-900 dark:text-slate-100">
+              Delete Column
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
               Are you sure you want to delete "{deletingColumn?.name}"? This action cannot be
               undone. Applications in this column will be reverted back to their standard pipeline
               status.
