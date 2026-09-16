@@ -95,7 +95,7 @@ function ColumnItem({
             <select
               value={editIcon}
               onChange={e => setEditIcon(e.target.value)}
-              className="text-sm bg-white dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-md px-2 py-1 text-slate-900 dark:text-slate-100"
+              className="text-sm bg-[var(--surface-input)] border border-[var(--border-default)] rounded-md px-2 py-1 text-[var(--text-primary)]"
             >
               <option value="">Select icon...</option>
               {DEFAULT_COLUMN_ICONS.map(icon => (
@@ -134,11 +134,9 @@ function ColumnItem({
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <span className="text-lg">{column.icon || '📋'}</span>
               <div>
-                <h4 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
-                  {column.name}
-                </h4>
+                <h4 className="font-semibold text-[var(--text-primary)] truncate">{column.name}</h4>
                 {column.description && (
-                  <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+                  <p className="text-sm text-[var(--text-secondary)] truncate">
                     {column.description}
                   </p>
                 )}
@@ -154,7 +152,7 @@ function ColumnItem({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-8 w-8 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                  className="h-8 w-8 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   onClick={onEdit}
                   title="Edit column"
                 >
@@ -330,13 +328,13 @@ export function ColumnManageModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl p-6">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-[var(--modal-shell)] border border-[var(--modal-border)] shadow-2xl rounded-2xl p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
-              <Settings className="h-5 w-5 text-orange-600 dark:text-amber-500" />
+            <DialogTitle className="flex items-center gap-2 text-[var(--text-primary)]">
+              <Settings className="h-5 w-5 text-copper dark:text-amber-400" />
               Manage Columns
             </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
+            <DialogDescription className="text-[var(--text-secondary)]">
               Customize your kanban board by adding, editing, or removing custom columns. Core
               columns cannot be modified.
             </DialogDescription>
@@ -345,7 +343,7 @@ export function ColumnManageModal({
           <div className="space-y-6">
             {/* Core Columns */}
             <div>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
                 Core Columns (Fixed)
               </h3>
               <div className="space-y-2">
@@ -369,14 +367,12 @@ export function ColumnManageModal({
             {/* Custom Columns */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  Custom Columns
-                </h3>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)]">Custom Columns</h3>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => setShowAddForm(!showAddForm)}
-                  className="border-neutral-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--surface-card-hover)] hover:text-[var(--text-primary)]"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Column
@@ -384,13 +380,13 @@ export function ColumnManageModal({
               </div>
 
               {showAddForm && (
-                <div className="bg-slate-50 dark:bg-[#090d16] rounded-xl p-4 border border-neutral-200 dark:border-slate-800 mb-3">
+                <div className="bg-[var(--modal-canvas)] rounded-xl p-4 border border-[var(--modal-border)] mb-3">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <select
                         value={newColumn.icon}
                         onChange={e => setNewColumn({ ...newColumn, icon: e.target.value })}
-                        className="text-sm bg-white dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-md px-2 py-1 text-slate-900 dark:text-slate-100"
+                        className="text-sm bg-[var(--surface-input)] border border-[var(--border-default)] rounded-md px-2 py-1 text-[var(--text-primary)]"
                       >
                         <option value="">Select icon...</option>
                         {DEFAULT_COLUMN_ICONS.map(icon => (
@@ -437,11 +433,11 @@ export function ColumnManageModal({
 
               <div className="space-y-2">
                 {mappedCustomColumns.length === 0 ? (
-                  <div className="bg-slate-50 dark:bg-[#090d16] rounded-xl p-8 text-center border-2 border-dashed border-neutral-200 dark:border-slate-800">
-                    <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
+                  <div className="bg-[var(--modal-canvas)] rounded-xl p-8 text-center border-2 border-dashed border-[var(--modal-border)]">
+                    <p className="text-[var(--text-primary)] text-sm font-medium">
                       No custom columns yet
                     </p>
-                    <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">
+                    <p className="text-[var(--text-secondary)] text-xs mt-1">
                       Add custom columns to track additional application stages
                     </p>
                   </div>
@@ -471,7 +467,7 @@ export function ColumnManageModal({
             </div>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-neutral-200 dark:border-slate-800">
+          <div className="flex justify-end pt-4 border-t border-[var(--modal-divider)]">
             <Button variant="outline" onClick={onClose}>
               Done
             </Button>
@@ -480,12 +476,12 @@ export function ColumnManageModal({
       </Dialog>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl">
+        <AlertDialogContent className="bg-[var(--modal-shell)] border border-[var(--modal-border)] shadow-2xl rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-slate-900 dark:text-slate-100">
+            <AlertDialogTitle className="text-[var(--text-primary)]">
               Delete Column
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-500 dark:text-slate-400">
+            <AlertDialogDescription className="text-[var(--text-secondary)]">
               Are you sure you want to delete "{deletingColumn?.name}"? This action cannot be
               undone. Applications in this column will be reverted back to their standard pipeline
               status.

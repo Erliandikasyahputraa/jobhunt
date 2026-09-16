@@ -15,7 +15,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       ref={ref}
       className={cn(
         'rounded-xl border text-card-foreground shadow',
-        variant === 'default' && 'bg-card',
+        variant === 'default' && 'bg-[var(--surface-card)]',
         variant === 'glass' &&
           'rounded-glass bg-[var(--glass-light)] backdrop-blur-[20px] [-webkit-backdrop-filter:blur(20px)] saturate-[180%] border-[var(--glass-border-strong)] shadow-glass-soft',
         interactive && variant === 'glass' && 'glass-interactive',

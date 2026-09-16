@@ -150,18 +150,20 @@ function EmptyState({ column, Icon }: EmptyStateProps) {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center glass-ultra rounded-glass border-2 border-dashed border-label-quaternary/30 p-12 text-center">
-      <div className="glass-light rounded-full p-4 mb-4 border border-label-quaternary/20">
-        <Icon className="h-12 w-12 text-label-tertiary" />
+    <div className="flex flex-1 flex-col items-center justify-center bg-[var(--surface-recessed)] rounded-glass border-2 border-dashed border-[var(--border-default)] p-12 text-center">
+      <div className="bg-[var(--surface-secondary)] rounded-full p-4 mb-4 border border-[var(--border-subtle)]">
+        <Icon className="h-12 w-12 text-[var(--text-muted)]" />
       </div>
-      <h4 className="mb-2 font-bold text-label-primary text-base">{guidance.heading}</h4>
-      <p className="mb-4 max-w-sm text-sm text-label-secondary leading-relaxed">{guidance.text}</p>
+      <h4 className="mb-2 font-bold text-[var(--text-primary)] text-base">{guidance.heading}</h4>
+      <p className="mb-4 max-w-sm text-sm text-[var(--text-secondary)] leading-relaxed">
+        {guidance.text}
+      </p>
       {guidance.cta && (
         <Button
           variant="outline"
           size="sm"
           disabled
-          className="glass-light border border-label-quaternary/30"
+          className="bg-[var(--surface-secondary)] border border-[var(--border-default)] text-[var(--text-secondary)]"
         >
           {guidance.cta}
         </Button>
@@ -213,12 +215,12 @@ function DroppableKanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex w-full md:w-auto min-w-0 md:min-w-[280px] lg:min-w-[320px] flex-1 flex-col rounded-glass p-3 shadow-glass-soft backdrop-blur-sm transition-all duration-200 md:snap-center',
+        'flex w-full md:w-auto min-w-0 md:min-w-[280px] lg:min-w-[320px] flex-1 flex-col rounded-glass p-3 shadow-depth-1 transition-all duration-200 md:snap-center',
         'md:h-full min-h-[150px] md:min-h-[200px]',
-        'glass-light border border-border/50',
+        'bg-[var(--surface-card)] border border-[var(--border-default)]',
         isOver &&
           !isDragDisabled &&
-          'ring-2 ring-copper/60 ring-opacity-50 shadow-glass-medium scale-[1.01]'
+          'ring-2 ring-copper/60 border-copper/50 shadow-depth-2 scale-[1.01]'
       )}
       data-testid={`column-${column.id}`}
     >
@@ -228,24 +230,24 @@ function DroppableKanbanColumn({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 glass-ultra rounded-full hover:glass-light transition-all"
+              className="h-8 w-8 bg-[var(--surface-secondary)] rounded-full hover:bg-[var(--surface-card-hover)] border border-[var(--border-subtle)] transition-all"
               onClick={onToggleExpand}
               aria-label={isExpanded ? 'Collapse sub-stages' : 'Expand sub-stages'}
               data-testid={`toggle-expand-${column.id}`}
             >
               {isExpanded ? (
-                <ChevronDown className="h-4 w-4 text-label-primary" />
+                <ChevronDown className="h-4 w-4 text-[var(--text-primary)]" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-label-primary" />
+                <ChevronRight className="h-4 w-4 text-[var(--text-primary)]" />
               )}
             </Button>
           )}
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full glass-light border border-label-quaternary/20">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)]">
               <span className="text-xl">{icon}</span>
             </div>
             <div className="flex flex-col">
-              <h3 className="text-lg font-bold text-label-primary">{column.name}</h3>
+              <h3 className="text-lg font-bold text-[var(--text-primary)]">{column.name}</h3>
               {column.isCustom && (
                 <Badge variant="secondary" className="text-xs w-fit">
                   Custom
@@ -256,7 +258,7 @@ function DroppableKanbanColumn({
         </div>
         <Badge
           variant="outline"
-          className="text-sm font-semibold glass-light border border-label-quaternary/30 px-3 py-1"
+          className="text-sm font-semibold bg-[var(--surface-secondary)] border border-[var(--border-default)] text-[var(--text-secondary)] px-3 py-1"
           data-testid={`count-badge-${column.id}`}
         >
           {count}
@@ -298,8 +300,8 @@ function DroppableKanbanColumn({
             ))
           )}
           {isOver && !isDragDisabled && applications.length === 0 && (
-            <div className="flex items-center justify-center h-20 border-2 border-dashed border-blue-400 rounded-glass-sm animate-pulse">
-              <span className="text-blue-400 text-sm font-medium">Drop to move here</span>
+            <div className="flex items-center justify-center h-20 border-2 border-dashed border-copper/60 bg-copper/5 rounded-glass-sm animate-pulse">
+              <span className="text-copper text-sm font-medium">Drop to move here</span>
             </div>
           )}
         </div>
@@ -660,7 +662,7 @@ export function KanbanBoardV3({
 
         <DragOverlay>
           {activeApplication ? (
-            <div className="rotate-3 cursor-grabbing glass-heavy shadow-glass-dramatic rounded-glass animate-spring-bounce-in transform scale-105">
+            <div className="rotate-3 cursor-grabbing bg-[var(--surface-card)] shadow-depth-4 border border-[var(--border-strong)] rounded-glass animate-spring-bounce-in transform scale-105">
               <ApplicationCard application={activeApplication} isDragging={true} />
             </div>
           ) : null}

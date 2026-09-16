@@ -31,13 +31,13 @@ const DialogContent = React.forwardRef<
   <DialogPrimitive.Portal>
     <DialogPrimitive.Overlay
       className={cn(
-        'fixed inset-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 bg-slate-900/45 dark:bg-black/75 backdrop-blur-[2px] dark:backdrop-blur-[4px]'
+        'fixed inset-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 bg-[var(--surface-overlay)] backdrop-blur-[2px]'
       )}
     />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-0 border shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl bg-white text-slate-900 border-neutral-200 dark:bg-slate-900 dark:text-slate-50 dark:border-slate-800',
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-0 border shadow-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl bg-[var(--modal-shell)] text-[var(--text-primary)] border-[var(--modal-border)]',
         'max-sm:fixed max-sm:bottom-0 max-sm:top-auto max-sm:left-0 max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-full max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:max-h-[92vh] max-sm:border-x-0 max-sm:border-b-0',
         className
       )}
@@ -94,7 +94,7 @@ export function ApplicationDetail({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
           className={cn(
-            'w-full overflow-hidden p-0 bg-white text-slate-900 border border-neutral-200 shadow-2xl rounded-2xl dark:bg-slate-900 dark:text-slate-50 dark:border-slate-800',
+            'w-full overflow-hidden p-0 bg-[var(--modal-shell)] text-[var(--text-primary)] border border-[var(--modal-border)] shadow-2xl rounded-2xl',
             isEditMode ? 'max-w-5xl h-auto max-h-[90vh]' : 'max-w-[85vw] h-full max-h-[90vh]',
             'max-sm:max-w-full max-sm:w-full max-sm:h-auto max-sm:max-h-[92vh] max-sm:rounded-t-2xl max-sm:rounded-b-none'
           )}
@@ -116,15 +116,15 @@ export function ApplicationDetail({
           )}
 
           {isEditMode ? (
-            <div className="flex flex-col max-h-[90vh] bg-white dark:bg-slate-900">
+            <div className="flex flex-col max-h-[90vh] bg-[var(--modal-shell)]">
               {/* Edit Mode Header */}
-              <div className="bg-white dark:bg-slate-900 border-b border-neutral-200 dark:border-slate-800 rounded-t-2xl max-sm:rounded-t-2xl p-6 shrink-0">
+              <div className="bg-[var(--modal-header)] border-b border-[var(--modal-divider)] rounded-t-2xl max-sm:rounded-t-2xl p-6 shrink-0">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
+                    <h2 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">
                       Edit Application
                     </h2>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    <p className="text-sm text-[var(--text-secondary)] mt-1">
                       Update the details for your application to {application.company_name}
                     </p>
                   </div>
@@ -132,7 +132,7 @@ export function ApplicationDetail({
                     variant="ghost"
                     size="sm"
                     onClick={handleCancelEdit}
-                    className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 p-2 rounded-lg"
+                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-2 rounded-lg"
                     aria-label="Close"
                   >
                     <X className="w-5 h-5" />
@@ -141,7 +141,7 @@ export function ApplicationDetail({
               </div>
 
               {/* Form Content - Scrollable with recessed canvas background */}
-              <div className="overflow-y-auto p-6 bg-slate-50 dark:bg-[#090d16]">
+              <div className="overflow-y-auto p-6 bg-[var(--modal-canvas)]">
                 <ApplicationForm
                   onSubmit={handleFormSubmit}
                   onCancel={handleCancelEdit}
@@ -179,24 +179,21 @@ export function ApplicationDetail({
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="bg-white text-slate-900 border-neutral-200 dark:bg-slate-900 dark:text-slate-50 dark:border-slate-800 rounded-2xl shadow-2xl">
+        <AlertDialogContent className="bg-[var(--modal-shell)] text-[var(--text-primary)] border border-[var(--modal-border)] rounded-2xl shadow-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-slate-900 dark:text-slate-50">
+            <AlertDialogTitle className="text-[var(--text-primary)]">
               Are you sure?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-600 dark:text-slate-400">
+            <AlertDialogDescription className="text-[var(--text-secondary)]">
               This action cannot be undone. This will permanently delete the application for{' '}
-              <strong className="text-slate-900 dark:text-slate-200">
-                {application.company_name}
-              </strong>
-              .
+              <strong className="text-[var(--text-primary)]">{application.company_name}</strong>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
               onClick={handleDeleteCancel}
               disabled={isDeleting}
-              className="bg-white text-slate-900 border-slate-300 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-700"
+              className="bg-[var(--surface-card)] text-[var(--text-primary)] border border-[var(--border-default)] hover:bg-[var(--surface-card-hover)]"
             >
               Cancel
             </AlertDialogCancel>

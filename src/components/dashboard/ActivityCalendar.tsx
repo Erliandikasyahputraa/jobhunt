@@ -29,15 +29,20 @@ export function ActivityCalendar({
   const countMap = Object.fromEntries(data.map(d => [d.day, d.value ?? 0]))
 
   return (
-    <Card className="w-full glass-ultra border-border/80 shadow-glass-subtle">
+    <Card className="w-full bg-[var(--surface-card)] border border-[var(--border-default)] shadow-depth-1">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg text-label-primary">Application Activity</CardTitle>
+          <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
+            Application Activity
+          </CardTitle>
           <Select value={year} onValueChange={setYear}>
-            <SelectTrigger className="w-[100px] glass-ultra" aria-label="Select year">
+            <SelectTrigger
+              className="w-[100px] bg-[var(--surface-input)] border border-[var(--border-default)]"
+              aria-label="Select year"
+            >
               <SelectValue placeholder="Select year" />
             </SelectTrigger>
-            <SelectContent className="glass-ultra">
+            <SelectContent className="bg-[var(--surface-card)] border border-[var(--border-default)] shadow-depth-3">
               {years.map(y => (
                 <SelectItem key={y} value={y}>
                   {y}
@@ -50,7 +55,7 @@ export function ActivityCalendar({
       <CardContent className="h-[200px] overflow-hidden p-0 sm:p-6 pb-2">
         {data.length === 0 ? (
           <div className="flex h-full w-full items-center justify-center">
-            <p className="text-sm text-label-secondary">No activity recorded for {year}</p>
+            <p className="text-sm text-[var(--text-secondary)]">No activity recorded for {year}</p>
           </div>
         ) : (
           <div className="h-full w-full overflow-x-auto scrollbar-hide px-4 sm:px-0">
@@ -76,12 +81,14 @@ export function ActivityCalendar({
                 tooltip={day => {
                   const count = countMap[day.day] ?? 0
                   return (
-                    <div className="bg-slate-800 text-white px-3 py-2 rounded-md text-xs shadow-lg">
-                      <div className="font-semibold mb-1">
+                    <div className="bg-[var(--surface-card)] text-[var(--text-primary)] border border-[var(--border-default)] px-3 py-2 rounded-lg text-xs shadow-depth-3">
+                      <div className="font-semibold text-[var(--text-primary)] mb-1">
                         {format(parseISO(day.day), 'EEE MMM d, yyyy')}
                       </div>
-                      <div>
-                        {count} application{count === 1 ? '' : 's'} created
+                      <div className="text-[var(--text-secondary)]">
+                        <span className="font-medium text-[var(--text-primary)]">{count}</span>{' '}
+                        application
+                        {count === 1 ? '' : 's'} created
                       </div>
                     </div>
                   )

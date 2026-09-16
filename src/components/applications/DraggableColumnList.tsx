@@ -54,7 +54,7 @@ function DraggableColumnItem({ column, children }: DraggableColumnItemProps) {
       <div className="flex items-start gap-3">
         <div
           {...listeners}
-          className="flex items-center justify-center w-8 h-8 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-move opacity-0 group-hover:opacity-100 touch-none text-slate-400 dark:text-slate-500"
+          className="flex items-center justify-center w-8 h-8 rounded-md bg-[var(--surface-card)] hover:bg-[var(--surface-card-hover)] transition-all cursor-move opacity-0 group-hover:opacity-100 touch-none text-[var(--text-muted)]"
         >
           <GripVertical className="h-4 w-4" />
         </div>
@@ -117,17 +117,15 @@ export function DraggableColumnList({ columns, onReorder, children }: DraggableC
 
       <DragOverlay>
         {activeColumn ? (
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-xl border border-neutral-200 dark:border-slate-700 rotate-2 scale-105">
+          <div className="bg-[var(--modal-card)] rounded-xl p-4 shadow-xl border border-[var(--modal-border)] rotate-2 scale-105">
             <div className="flex items-center gap-3">
-              <GripVertical className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+              <GripVertical className="h-4 w-4 text-[var(--text-muted)]" />
               <div className="flex items-center gap-2">
                 <span className="text-lg">{getColumnIcon(activeColumn.id, activeColumn.icon)}</span>
                 <div>
-                  <h4 className="font-semibold text-slate-900 dark:text-slate-100">
-                    {activeColumn.name}
-                  </h4>
+                  <h4 className="font-semibold text-[var(--text-primary)]">{activeColumn.name}</h4>
                   {activeColumn.description && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {activeColumn.description}
                     </p>
                   )}

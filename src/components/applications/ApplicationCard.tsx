@@ -53,11 +53,10 @@ export function ApplicationCard({
       data-testid="application-card"
       onClick={handleCardClick}
       className={cn(
-        'glass-light rounded-glass shadow-glass-soft border border-border/70 transition-all duration-300 ease-in-out group',
+        'bg-[var(--surface-card)] rounded-glass shadow-depth-2 border border-[var(--border-default)] transition-all duration-300 ease-in-out group',
         onClick &&
-          'cursor-pointer transition-all duration-300 ease-in-out hover:!border-[hsl(var(--copper-light))] hover:shadow-[0_0_0_1px_hsl(var(--copper-light))]',
-        isSelected &&
-          'ring-2 ring-blue-500/80 border-blue-500/60 bg-blue-500/5 shadow-glass-medium',
+          'cursor-pointer transition-all duration-300 ease-in-out hover:bg-[var(--surface-card-hover)] hover:!border-[hsl(var(--copper-light))] hover:shadow-[0_0_0_1px_hsl(var(--copper-light))] hover:shadow-depth-3',
+        isSelected && 'ring-2 ring-blue-500/80 border-blue-500/60 bg-blue-500/5 shadow-depth-3',
         isDragging && 'opacity-50 rotate-2 shadow-xl'
       )}
     >
@@ -88,10 +87,10 @@ export function ApplicationCard({
 
           {/* Job Info */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg truncate text-label-primary mb-1">
+            <h3 className="font-semibold text-lg truncate text-[var(--text-primary)] mb-1">
               {application.job_title}
             </h3>
-            <p className="text-sm font-medium text-label-secondary truncate">
+            <p className="text-sm font-medium text-[var(--text-secondary)] truncate">
               {application.company_name}
             </p>
           </div>
@@ -99,10 +98,10 @@ export function ApplicationCard({
           {/* Drag Indicator */}
           <div
             data-testid="drag-indicator"
-            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 glass-ultra rounded-full p-1 cursor-grab active:cursor-grabbing"
+            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 bg-[var(--surface-secondary)] rounded-full p-1 cursor-grab active:cursor-grabbing hover:bg-[var(--surface-card-hover)]"
             {...dragHandleProps}
           >
-            <GripVertical className="h-4 w-4 sm:h-3 sm:w-3 text-label-tertiary" />
+            <GripVertical className="h-4 w-4 sm:h-3 sm:w-3 text-[var(--text-muted)]" />
           </div>
         </div>
       </CardHeader>
@@ -114,8 +113,8 @@ export function ApplicationCard({
 
           {/* Application Date */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-label-secondary font-medium">Applied</span>
-            <span className="text-sm text-label-secondary">
+            <span className="text-sm text-[var(--text-secondary)] font-medium">Applied</span>
+            <span className="text-sm text-[var(--text-secondary)]">
               {formatDate(application.date_applied)}
             </span>
           </div>

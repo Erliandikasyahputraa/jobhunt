@@ -16,10 +16,10 @@ export function StatusDistributionChart({ data }: { data: DistributionData[] }) 
   const total = data.reduce((sum, item) => sum + item.value, 0)
 
   return (
-    <Card className="w-full glass-ultra border-border/80 shadow-glass-subtle @lg:col-span-2">
+    <Card className="w-full bg-[var(--surface-card)] border border-[var(--border-default)] shadow-depth-1 @lg:col-span-2">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-lg text-label-primary min-w-0 truncate">
+          <CardTitle className="text-lg font-semibold text-[var(--text-primary)] min-w-0 truncate">
             Status Distribution
           </CardTitle>
         </div>
@@ -28,8 +28,8 @@ export function StatusDistributionChart({ data }: { data: DistributionData[] }) 
         <div className="relative h-[200px] w-full">
           {data.length === 0 ? (
             <div className="flex h-full w-full items-center justify-center">
-              <div className="h-[132px] w-[132px] rounded-full border-[18px] border-slate-200 dark:border-slate-800" />
-              <p className="absolute inset-x-0 bottom-0 text-center text-sm text-label-secondary">
+              <div className="h-[132px] w-[132px] rounded-full border-[18px] border-[var(--border-subtle)]" />
+              <p className="absolute inset-x-0 bottom-0 text-center text-sm text-[var(--text-secondary)]">
                 No applications recorded
               </p>
             </div>
@@ -46,28 +46,39 @@ export function StatusDistributionChart({ data }: { data: DistributionData[] }) 
               enableArcLabels={false}
               enableArcLinkLabels={true}
               arcLinkLabelsSkipAngle={10}
-              arcLinkLabelsTextColor={resolvedTheme === 'light' ? '#334155' : '#cbd5e1'}
+              arcLinkLabelsTextColor={resolvedTheme === 'light' ? '#334155' : '#e4e4e7'}
               arcLinkLabelsThickness={2}
               arcLinkLabelsColor={{ from: 'color' }}
               theme={{
                 text: { fontSize: 11 },
                 tooltip: {
-                  container: { background: '#1e293b', color: '#fff' },
+                  container: { background: 'transparent', boxShadow: 'none', padding: 0 },
                 },
               }}
               tooltip={({ datum }) => (
-                <div className="bg-slate-800 text-white px-3 py-2 rounded-md text-xs shadow-lg">
-                  <strong>{datum.data.label}</strong> — {datum.value}
+                <div className="bg-[var(--surface-card)] text-[var(--text-primary)] border border-[var(--border-default)] px-3 py-2 rounded-lg text-xs shadow-depth-3 flex items-center gap-2">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: datum.data.color }}
+                  />
+                  <span className="font-semibold text-[var(--text-primary)]">
+                    {datum.data.label}
+                  </span>
+                  <span className="text-[var(--text-secondary)] tabular-nums font-medium">
+                    — {datum.value}
+                  </span>
                 </div>
               )}
             />
           )}
           {data.length > 0 && (
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-px text-center">
-              <span className="text-xl font-bold leading-tight tabular-nums text-label-primary">
+              <span className="text-2xl font-bold leading-tight tabular-nums text-[var(--text-primary)]">
                 {total}
               </span>
-              <span className="text-sm text-label-secondary tabular-nums">Total</span>
+              <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider tabular-nums">
+                Total
+              </span>
             </div>
           )}
         </div>

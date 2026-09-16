@@ -362,25 +362,23 @@ export function ApplicationsToolbar({
               )}
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md w-full h-[90vh] flex flex-col p-0 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-t-2xl rounded-b-none mt-auto mb-0 sm:rounded-2xl">
-            <DialogHeader className="px-4 py-3 border-b border-neutral-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-              <DialogTitle className="text-slate-900 dark:text-slate-100">
-                Filter & Sort
-              </DialogTitle>
+          <DialogContent className="max-w-md w-full h-[90vh] flex flex-col p-0 bg-[var(--surface-card)] border border-[var(--border-default)] shadow-2xl rounded-t-2xl rounded-b-none mt-auto mb-0 sm:rounded-2xl">
+            <DialogHeader className="px-4 py-3 border-b border-[var(--modal-divider)] bg-[var(--modal-header)] shrink-0">
+              <DialogTitle className="text-[var(--text-primary)]">Filter & Sort</DialogTitle>
             </DialogHeader>
-            <div className="flex-1 overflow-y-auto px-4 pb-20 bg-slate-50 dark:bg-[#090d16]">
+            <div className="flex-1 overflow-y-auto px-4 pb-20 bg-[var(--modal-canvas)]">
               <FilterContent />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-neutral-200 dark:border-slate-800 flex gap-2">
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-[var(--modal-header)] border-t border-[var(--modal-divider)] flex gap-2">
               <Button
                 variant="outline"
-                className="flex-1 border-neutral-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                className="flex-1 border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 onClick={onClearFilters}
               >
                 Clear All
               </Button>
               <Button
-                className="flex-1 bg-orange-700 hover:bg-orange-800 dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950 font-medium"
+                className="flex-1 bg-copper text-white hover:bg-copper-dark dark:bg-amber-400 dark:hover:bg-amber-300 dark:text-[#09090b] font-medium"
                 onClick={() => setIsMobileFilterOpen(false)}
               >
                 Apply

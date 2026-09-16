@@ -43,14 +43,14 @@ export function ApplicationDetailLayout({
       getStatusLabel(application.status)
 
   return (
-    <div className="flex flex-col h-full max-h-[90vh] max-sm:max-h-[92vh] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50">
+    <div className="flex flex-col h-full max-h-[90vh] max-sm:max-h-[92vh] bg-[var(--modal-shell)] text-[var(--text-primary)]">
       {/* Mobile Drag Handle Indicator */}
-      <div className="sm:hidden flex justify-center pt-3 pb-1 shrink-0 bg-white dark:bg-slate-900">
-        <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+      <div className="sm:hidden flex justify-center pt-3 pb-1 shrink-0 bg-[var(--modal-header)]">
+        <div className="w-12 h-1.5 rounded-full bg-[var(--border-strong)]" />
       </div>
 
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-neutral-200 dark:border-slate-800 rounded-t-2xl shrink-0">
+      <div className="bg-[var(--modal-header)] border-b border-[var(--modal-divider)] rounded-t-2xl shrink-0">
         {/* Primary Header Info */}
         <div className="flex items-start justify-between gap-4 p-6 pb-3">
           <div className="flex items-center gap-4 min-w-0">
@@ -60,10 +60,10 @@ export function ApplicationDetailLayout({
               className="flex-shrink-0 rounded-xl"
             />
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-50 truncate leading-tight tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-semibold text-[var(--text-primary)] truncate leading-tight tracking-tight">
                 {application.job_title}
               </h1>
-              <p className="text-sm sm:text-base font-medium text-slate-600 dark:text-slate-400 truncate leading-tight mt-0.5">
+              <p className="text-sm sm:text-base font-medium text-[var(--text-secondary)] truncate leading-tight mt-0.5">
                 {application.company_name}
               </p>
             </div>
@@ -80,22 +80,20 @@ export function ApplicationDetailLayout({
         </div>
 
         {/* Metadata Strip */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/60 pt-3">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-4 text-xs sm:text-sm text-[var(--text-secondary)] border-t border-[var(--modal-divider)] pt-3">
           {/* Location */}
           {application.location && (
             <div className="flex items-center gap-1.5">
-              <span className="text-slate-400 dark:text-slate-500">📍</span>
-              <span className="font-medium text-slate-700 dark:text-slate-300">
-                {application.location}
-              </span>
+              <span className="text-[var(--text-muted)]">📍</span>
+              <span className="font-medium text-[var(--text-primary)]">{application.location}</span>
             </div>
           )}
 
           {/* Salary */}
           {application.salary_range && (
             <div className="flex items-center gap-1.5">
-              <span className="text-slate-400 dark:text-slate-500">💰</span>
-              <span className="font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-[var(--text-muted)]">💰</span>
+              <span className="font-medium text-[var(--text-primary)]">
                 {application.salary_range}
               </span>
             </div>
@@ -103,24 +101,22 @@ export function ApplicationDetailLayout({
 
           {/* Status */}
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 dark:text-slate-500">📊</span>
-            <span className="font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-[var(--text-muted)]">📊</span>
+            <span className="font-medium text-[var(--text-primary)]">
               {getStatusLabel(application.status)}
             </span>
           </div>
 
           {/* Column */}
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 dark:text-slate-500">📁</span>
-            <span className="font-medium text-slate-700 dark:text-slate-300">
-              Column: {columnName}
-            </span>
+            <span className="text-[var(--text-muted)]">📁</span>
+            <span className="font-medium text-[var(--text-primary)]">Column: {columnName}</span>
           </div>
 
           {/* Date Applied */}
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 dark:text-slate-500">📅</span>
-            <span className="font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-[var(--text-muted)]">📅</span>
+            <span className="font-medium text-[var(--text-primary)]">
               {new Date(application.date_applied).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric',
@@ -131,8 +127,8 @@ export function ApplicationDetailLayout({
 
           {/* Source */}
           <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 dark:text-slate-500">🔗</span>
-            <span className="font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-[var(--text-muted)]">🔗</span>
+            <span className="font-medium text-[var(--text-primary)]">
               Added from {application.source || 'external'}
             </span>
           </div>
@@ -142,23 +138,23 @@ export function ApplicationDetailLayout({
       {/* Three Panel Layout */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left Panel - Navigation */}
-        <div className="hidden lg:block w-60 shrink-0 border-r border-neutral-200 dark:border-slate-800 overflow-y-auto bg-slate-50/70 dark:bg-slate-900">
+        <div className="hidden lg:block w-60 shrink-0 border-r border-[var(--modal-divider)] overflow-y-auto bg-[var(--modal-sidebar)]">
           <TabNavigation activeTab={activeTab} onTabChange={onTabChange} disabled={isEditMode} />
         </div>
 
         {/* Main Content Basin */}
-        <div className="flex-1 min-w-0 overflow-y-auto bg-slate-50 dark:bg-[#090d16]">
+        <div className="flex-1 min-w-0 overflow-y-auto bg-[var(--modal-canvas)]">
           <MainPanel application={application} activeTab={activeTab} />
         </div>
 
         {/* Right Panel - Timeline */}
-        <div className="hidden xl:block w-80 shrink-0 border-l border-neutral-200 dark:border-slate-800 overflow-y-auto bg-slate-50/70 dark:bg-slate-900">
+        <div className="hidden xl:block w-80 shrink-0 border-l border-[var(--modal-divider)] overflow-y-auto bg-[var(--modal-sidebar)]">
           <ApplicationTimeline application={application} customColumns={customColumns} />
         </div>
       </div>
 
       {/* Mobile Tab Navigation */}
-      <div className="lg:hidden border-t border-neutral-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-1.5 px-2">
+      <div className="lg:hidden border-t border-[var(--modal-divider)] bg-[var(--modal-header)] py-1.5 px-2">
         <TabNavigation activeTab={activeTab} onTabChange={onTabChange} disabled={isEditMode} />
       </div>
     </div>
