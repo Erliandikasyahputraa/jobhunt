@@ -69,3 +69,20 @@
     hsl(var(--brand-secondary-dark))
   );
 }
+
+/* ========================================================================== */
+/* Workspace Ambient Background (Light Mode Only, 2-4% Restrained Tint)      */
+/* ========================================================================== */
+
+.ambient-workspace-light {
+  background-image: 
+    radial-gradient(ellipse 70% 35% at 50% -5%, rgba(217, 119, 6, 0.035), transparent 70%),
+    radial-gradient(ellipse 45% 25% at 85% 10%, rgba(59, 130, 246, 0.02), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Explicitly disable ambient background in Dark Mode */
+.dark .ambient-workspace-light,
+:root.dark .ambient-workspace-light {
+  background-image: none !important;
+}
