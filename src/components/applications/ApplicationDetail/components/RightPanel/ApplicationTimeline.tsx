@@ -216,29 +216,27 @@ export function ApplicationTimeline({
 
   const getEventColor = (type: TimelineEvent['type'], isLatest: boolean) => {
     if (isLatest) {
-      return 'border-orange-600 bg-orange-600 text-white dark:border-amber-500 dark:bg-amber-500 dark:text-slate-950 ring-4 ring-orange-500/15 dark:ring-amber-500/20'
+      return 'border-amber-700 bg-amber-700 text-white dark:border-amber-500 dark:bg-amber-500 dark:text-zinc-950 ring-4 ring-amber-500/15 dark:ring-amber-500/20'
     }
     switch (type) {
       case 'creation':
       case 'status_change':
       case 'column_move':
-        return 'border-slate-400 bg-slate-100 text-slate-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'
+        return 'border-[var(--border-strong)] bg-[var(--surface-secondary)] text-[var(--text-secondary)]'
       case 'document_added':
-        return 'border-emerald-500 bg-emerald-50 text-emerald-600 dark:border-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400'
+        return 'border-emerald-500 bg-emerald-50 text-emerald-600 dark:border-emerald-500/60 dark:bg-emerald-950/40 dark:text-emerald-400'
       case 'note_added':
-        return 'border-blue-500 bg-blue-50 text-blue-600 dark:border-blue-600 dark:bg-blue-950/50 dark:text-blue-400'
+        return 'border-blue-500 bg-blue-50 text-blue-600 dark:border-blue-500/60 dark:bg-blue-950/40 dark:text-blue-400'
       default:
-        return 'border-slate-300 bg-slate-50 text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500'
+        return 'border-[var(--border-subtle)] bg-[var(--surface-secondary)] text-[var(--text-muted)]'
     }
   }
 
   return (
-    <div className={cn('p-6 bg-slate-50/70 dark:bg-slate-900', className)}>
+    <div className={cn('p-6', className)}>
       <div className="flex items-center gap-2 mb-6">
-        <Clock className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-        <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Timeline
-        </h3>
+        <Clock className="w-5 h-5 text-[var(--text-muted)]" />
+        <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Timeline</h3>
       </div>
 
       <div className="space-y-4">
@@ -258,10 +256,10 @@ export function ApplicationTimeline({
                 <div className="w-1.5 h-1.5 rounded-full bg-current" />
               </div>
 
-              {/* Timeline line - connecting vertical line between dots (NEUTRAL SLATE) */}
+              {/* Timeline line - connecting vertical line between dots */}
               {!isLast && (
                 <div
-                  className="absolute left-[7px] top-[18px] h-full border-l-2 border-slate-200 dark:border-slate-800"
+                  className="absolute left-[7px] top-[18px] h-full border-l-2 border-[var(--border-subtle)]"
                   aria-hidden="true"
                 />
               )}
@@ -269,19 +267,17 @@ export function ApplicationTimeline({
               {/* Event content */}
               <div className="space-y-1">
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-medium text-slate-900 dark:text-slate-100 text-sm">
-                    {event.title}
-                  </h4>
+                  <h4 className="font-medium text-[var(--text-primary)] text-sm">{event.title}</h4>
                   <div className="flex flex-col items-end text-right shrink-0">
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                    <div className="text-xs text-[var(--text-secondary)]">
                       {formatDate(event.timestamp)}
                     </div>
-                    <div className="text-xs text-slate-400 dark:text-slate-500">
+                    <div className="text-xs text-[var(--text-secondary)]">
                       {formatTime(event.timestamp)}
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                   {event.description}
                 </p>
               </div>
@@ -292,14 +288,14 @@ export function ApplicationTimeline({
         {/* Empty state for future events */}
         {timelineEvents.length === 0 && (
           <div className="text-center py-8">
-            <Clock className="w-8 h-8 text-slate-400 dark:text-slate-500 mx-auto mb-2" />
-            <p className="text-sm text-slate-600 dark:text-slate-400">No timeline events yet</p>
+            <Clock className="w-8 h-8 text-[var(--text-muted)] mx-auto mb-2" />
+            <p className="text-sm text-[var(--text-secondary)]">No timeline events yet</p>
           </div>
         )}
 
         {/* Add more events prompt */}
-        <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-          <p className="text-xs text-slate-400 dark:text-slate-500 text-center">
+        <div className="pt-4 border-t border-[var(--border-subtle)]">
+          <p className="text-xs text-[var(--text-secondary)] text-center">
             Timeline will update as your application progresses
           </p>
         </div>

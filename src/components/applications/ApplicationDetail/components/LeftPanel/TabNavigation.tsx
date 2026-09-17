@@ -66,17 +66,15 @@ export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabN
               'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition-all duration-150 text-left',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2',
               isActive
-                ? 'bg-orange-500/10 dark:bg-amber-500/10 text-slate-900 dark:text-slate-50 border-l-[3px] border-orange-700 dark:border-amber-500 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/60',
+                ? 'bg-amber-500/10 dark:bg-amber-500/15 text-[var(--text-primary)] border-l-[3px] border-amber-600 dark:border-amber-500 shadow-xs'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-recessed)]',
               disabled && 'opacity-50 cursor-not-allowed'
             )}
           >
             <Icon
               className={cn(
                 'w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 transition-colors',
-                isActive
-                  ? 'text-orange-700 dark:text-amber-400'
-                  : 'text-slate-400 dark:text-slate-500'
+                isActive ? 'text-amber-600 dark:text-amber-400' : 'text-[var(--text-muted)]'
               )}
             />
             <div className="flex-1 min-w-0">
@@ -84,13 +82,13 @@ export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabN
                 className={cn(
                   'text-sm truncate',
                   isActive
-                    ? 'font-semibold text-slate-900 dark:text-slate-50'
-                    : 'font-medium text-slate-700 dark:text-slate-300'
+                    ? 'font-semibold text-[var(--text-primary)]'
+                    : 'font-medium text-[var(--text-primary)]'
                 )}
               >
                 {tab.label}
               </div>
-              <div className="text-xs text-slate-400 dark:text-slate-500 truncate mt-0.5">
+              <div className="text-xs text-[var(--text-secondary)] truncate mt-0.5">
                 {tab.description}
               </div>
             </div>

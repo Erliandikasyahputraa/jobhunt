@@ -30,14 +30,14 @@ export function ActionButtons({
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card shadow-xs',
-            'text-slate-700 dark:text-slate-300 hover:text-foreground hover:bg-accent',
+            'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border border-[var(--border-default)] bg-[var(--surface-card)] shadow-xs',
+            'text-[var(--text-primary)] hover:bg-[var(--surface-card-hover)]',
             'transition-all duration-150',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500',
             isDisabled && 'opacity-50 cursor-not-allowed'
           )}
         >
-          <ExternalLink className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+          <ExternalLink className="w-4 h-4 text-[var(--text-secondary)]" />
           <span className="hidden sm:inline">View Job</span>
         </a>
       )}
@@ -48,9 +48,9 @@ export function ActionButtons({
         size="sm"
         onClick={onEdit}
         disabled={isDisabled}
-        className="transition-all duration-150 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border-border"
+        className="transition-all duration-150 rounded-lg text-[var(--text-primary)] bg-[var(--surface-card)] hover:bg-[var(--surface-card-hover)] border-[var(--border-default)]"
       >
-        <Edit2 className="w-4 h-4 mr-2 text-slate-500 dark:text-slate-400" />
+        <Edit2 className="w-4 h-4 mr-2 text-[var(--text-secondary)]" />
         <span className="hidden sm:inline">Edit</span>
       </Button>
 
@@ -62,7 +62,7 @@ export function ActionButtons({
         disabled={isDisabled}
         className={cn(
           'bg-red-500/10 text-red-700 dark:text-red-400',
-          'border-red-200 dark:border-red-900/60',
+          'border-red-200 dark:border-red-900/50',
           'hover:bg-red-500/20 transition-all duration-150 rounded-lg'
         )}
       >
@@ -76,8 +76,8 @@ export function ActionButtons({
         size="sm"
         onClick={onClose}
         className={cn(
-          'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100',
-          'hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-150',
+          'text-[var(--text-muted)] hover:text-[var(--text-primary)]',
+          'hover:bg-[var(--surface-card-hover)] transition-all duration-150',
           'min-w-[36px] px-2 rounded-lg'
         )}
         aria-label="Close dialog"

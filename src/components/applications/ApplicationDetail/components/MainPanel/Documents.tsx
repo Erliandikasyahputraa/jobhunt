@@ -155,7 +155,7 @@ export function Documents({ _application, className }: DocumentsProps) {
         <Button
           onClick={handleUploadClick}
           variant="outline"
-          className="border-border shadow-xs hover:bg-accent transition-all"
+          className="border-[var(--border-default)] bg-[var(--surface-card)] text-[var(--text-primary)] hover:bg-[var(--surface-card-hover)] shadow-xs transition-all"
         >
           <Upload className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
           Upload Document
@@ -171,21 +171,21 @@ export function Documents({ _application, className }: DocumentsProps) {
           />
         </div>
       ) : documents.length === 0 ? (
-        <div className="bg-slate-50 dark:bg-[#090d16] border border-neutral-200 dark:border-slate-800 rounded-xl p-6 text-center">
+        <div className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-6 text-center">
           <FileText
             className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3"
             aria-hidden="true"
           />
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
             No documents yet
           </h3>
-          <p className="text-slate-500 dark:text-slate-400 mb-4 text-sm">
+          <p className="text-[var(--text-secondary)] mb-4 text-sm">
             Upload resumes, cover letters, or other attachments for this application.
           </p>
           <Button
             onClick={handleUploadClick}
             variant="default"
-            className="bg-orange-700 hover:bg-orange-800 dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950"
+            className="bg-amber-700 hover:bg-amber-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 font-medium"
           >
             <Plus className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
             Upload Document
@@ -196,10 +196,10 @@ export function Documents({ _application, className }: DocumentsProps) {
           {documents.map(doc => (
             <div
               key={doc.id}
-              className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-150"
+              className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs hover:border-[var(--border-strong)] transition-all duration-150"
             >
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="p-2 bg-slate-100 dark:bg-slate-700/60 rounded-lg shrink-0 border border-slate-200 dark:border-slate-700">
+                <div className="p-2 bg-[var(--surface-secondary)] rounded-lg shrink-0 border border-[var(--border-subtle)]">
                   <FileText
                     className="h-4 w-4 text-[var(--text-secondary)] shrink-0"
                     aria-hidden="true"
@@ -207,12 +207,12 @@ export function Documents({ _application, className }: DocumentsProps) {
                 </div>
                 <div className="min-w-0">
                   <h4
-                    className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate"
+                    className="text-sm font-medium text-[var(--text-primary)] truncate"
                     title={doc.name}
                   >
                     {doc.name}
                   </h4>
-                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)] mt-1">
                     <span className="capitalize font-medium">
                       {doc.document_type.replace('_', ' ')}
                     </span>
@@ -230,7 +230,7 @@ export function Documents({ _application, className }: DocumentsProps) {
                   aria-label="View document"
                   onClick={() => handleDownload(doc)}
                   disabled={isDownloadingId === doc.id}
-                  className="h-8 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium transition-colors"
+                  className="h-8 text-[var(--text-primary)] hover:bg-[var(--surface-card-hover)] font-medium transition-colors"
                 >
                   {isDownloadingId === doc.id ? (
                     <Loader2
@@ -259,23 +259,21 @@ export function Documents({ _application, className }: DocumentsProps) {
 
       {/* Upload Dialog */}
       <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-        <DialogContent className="max-w-md bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl">
+        <DialogContent className="max-w-md bg-[var(--modal-shell)] border border-[var(--modal-border)] shadow-2xl rounded-2xl text-[var(--text-primary)]">
           <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-slate-100">
-              Upload Document
-            </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
+            <DialogTitle className="text-[var(--text-primary)]">Upload Document</DialogTitle>
+            <DialogDescription className="text-[var(--text-secondary)]">
               Supported formats: PDF, DOC, DOCX (Max 5MB)
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="text-sm font-medium text-[var(--text-primary)]">
                 Document Type
               </label>
               <Select value={uploadType} onValueChange={val => setUploadType(val as DocumentType)}>
-                <SelectTrigger className="border-neutral-200 dark:border-slate-700">
+                <SelectTrigger className="border-[var(--border-default)]">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -287,7 +285,7 @@ export function Documents({ _application, className }: DocumentsProps) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">File</label>
+              <label className="text-sm font-medium text-[var(--text-primary)]">File</label>
               <div className="flex items-center gap-3">
                 <Input
                   ref={fileInputRef}
@@ -300,11 +298,11 @@ export function Documents({ _application, className }: DocumentsProps) {
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-neutral-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shrink-0"
+                  className="border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--surface-card-hover)] shrink-0"
                 >
                   Choose File
                 </Button>
-                <span className="text-sm text-slate-500 dark:text-slate-400 truncate">
+                <span className="text-sm text-[var(--text-secondary)] truncate">
                   {selectedFile ? selectedFile.name : 'No file selected'}
                 </span>
               </div>
@@ -315,14 +313,14 @@ export function Documents({ _application, className }: DocumentsProps) {
             <Button
               variant="ghost"
               onClick={() => setIsUploadDialogOpen(false)}
-              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-card-hover)]"
             >
               Cancel
             </Button>
             <Button
               onClick={handleUploadSubmit}
               disabled={!selectedFile || isUploading}
-              className="min-w-[100px] bg-orange-700 hover:bg-orange-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950 font-medium"
+              className="min-w-[100px] bg-amber-700 hover:bg-amber-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 font-medium"
             >
               {isUploading ? (
                 <>
@@ -339,14 +337,12 @@ export function Documents({ _application, className }: DocumentsProps) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!documentToDelete} onOpenChange={open => !open && setDocumentToDelete(null)}>
-        <DialogContent className="max-w-sm bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-800 shadow-2xl rounded-2xl">
+        <DialogContent className="max-w-sm bg-[var(--modal-shell)] border border-[var(--modal-border)] shadow-2xl rounded-2xl text-[var(--text-primary)]">
           <DialogHeader>
-            <DialogTitle className="text-slate-900 dark:text-slate-100">
-              Delete Document
-            </DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400">
+            <DialogTitle className="text-[var(--text-primary)]">Delete Document</DialogTitle>
+            <DialogDescription className="text-[var(--text-secondary)]">
               Are you sure you want to delete{' '}
-              <span className="font-medium text-slate-900 dark:text-slate-100">
+              <span className="font-medium text-[var(--text-primary)]">
                 {documentToDelete?.name}
               </span>
               ? This action cannot be undone.
@@ -357,7 +353,7 @@ export function Documents({ _application, className }: DocumentsProps) {
             <Button
               variant="ghost"
               onClick={() => setDocumentToDelete(null)}
-              className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-card-hover)]"
               disabled={isDeleting}
             >
               Cancel

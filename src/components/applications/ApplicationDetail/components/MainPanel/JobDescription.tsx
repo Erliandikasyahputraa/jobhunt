@@ -15,8 +15,8 @@ export function JobDescription({ application, className }: JobDescriptionProps) 
     <div className={cn('space-y-4 sm:space-y-6', className)}>
       {/* Job URL */}
       {application.job_url && (
-        <section className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
-          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+        <section className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-5 sm:p-6 shadow-xs">
+          <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
             <ExternalLink
               className="h-4 w-4 text-[hsl(var(--copper-dark))] shrink-0"
               aria-hidden="true"
@@ -37,12 +37,12 @@ export function JobDescription({ application, className }: JobDescriptionProps) 
 
       {/* Job Description */}
       {application.job_description && (
-        <section className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
-          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
+        <section className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-5 sm:p-6 shadow-xs">
+          <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)] mb-3">
             Job Description
           </h3>
           <div
-            className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
+            className="prose prose-sm max-w-none text-[var(--text-secondary)] leading-relaxed"
             dangerouslySetInnerHTML={{ __html: application.job_description }}
           />
         </section>
@@ -50,11 +50,11 @@ export function JobDescription({ application, className }: JobDescriptionProps) 
 
       {/* Notes */}
       {application.notes && (
-        <section className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
-          <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3">
+        <section className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-5 sm:p-6 shadow-xs">
+          <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)] mb-3">
             Notes
           </h3>
-          <div className="prose prose-sm max-w-none text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+          <div className="prose prose-sm max-w-none text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed">
             {application.notes}
           </div>
         </section>
@@ -62,15 +62,15 @@ export function JobDescription({ application, className }: JobDescriptionProps) 
 
       {/* Empty State */}
       {!application.job_description && !application.notes && !application.job_url && (
-        <section className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-8 sm:p-12 text-center shadow-xs">
+        <section className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-8 sm:p-12 text-center shadow-xs">
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)] flex items-center justify-center">
               <FileText className="h-6 w-6 text-[var(--text-muted)] shrink-0" aria-hidden="true" />
             </div>
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="text-base font-semibold text-[var(--text-primary)]">
               No Details Available
             </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">
+            <p className="text-sm text-[var(--text-secondary)] max-w-sm">
               This application doesn't have any job description or notes yet.
             </p>
           </div>
