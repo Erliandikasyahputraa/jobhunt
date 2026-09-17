@@ -31,6 +31,76 @@ export interface UseHorizontalScrollReturn<T extends HTMLElement = HTMLElement> 
 }
 
 /**
+ * Tolerance in pixels to absorb fractional subpixel rendering differences
+ */
+const SCROLL_TOLERANCE_PX = 1
+
+/**
+ * Checks whether an element or any of its ancestors (up to container)
+ * can scroll vertically in the direction indicated by deltaY.
+ */
+export function canScrollVertically(
+  target: EventTarget | null,
+  container: HTMLElement,
+  deltaY: number
+): boolean {
+  if (!target || !(target instanceof HTMLElement) || deltaY === 0) {
+    return false
+  }
+
+  let current: HTMLElement | null = target
+
+  while (current && current !== container) {
+    const style = window.getComputedStyle(current)
+    const overflowY = style.overflowY
+
+    if (overflowY === 'auto' || overflowY === 'scroll') {
+      const { scrollTop, scrollHeight, clientHeight } = current
+      const maxScrollTop = scrollHeight - clientHeight
+
+      if (maxScrollTop > SCROLL_TOLERANCE_PX) {
+        if (deltaY < 0 && scrollTop > SCROLL_TOLERANCE_PX) {
+          // Can scroll upward
+          return true
+        }
+        if (deltaY > 0 && scrollTop < maxScrollTop - SCROLL_TOLERANCE_PX) {
+          // Can scroll downward
+          return true
+        }
+      }
+    }
+
+    current = current.parentElement
+  }
+
+  return false
+}
+
+/**
+ * Checks whether the container can scroll horizontally in the direction indicated by delta.
+ */
+export function canScrollHorizontally(container: HTMLElement, delta: number): boolean {
+  if (delta === 0) return false
+
+  const { scrollLeft, scrollWidth, clientWidth } = container
+  const maxScrollLeft = scrollWidth - clientWidth
+
+  if (maxScrollLeft <= SCROLL_TOLERANCE_PX) {
+    return false
+  }
+
+  if (delta < 0 && scrollLeft > SCROLL_TOLERANCE_PX) {
+    return true
+  }
+
+  if (delta > 0 && scrollLeft < maxScrollLeft - SCROLL_TOLERANCE_PX) {
+    return true
+  }
+
+  return false
+}
+
+/**
  * Enhanced horizontal scrolling hook that preserves native scrolling behavior
  *
  * This hook only converts vertical wheel events to horizontal scrolling when:
@@ -51,6 +121,11 @@ export function useHorizontalScroll<T extends HTMLElement>(
   // Store the current element to trigger useEffect when it changes
   const [element, setElement] = React.useState<T | null>(null)
 
+  // Gesture lock: persists horizontal scrolling across consecutive wheel ticks
+  // to prevent cursor drift over adjacent columns from terminating horizontal navigation.
+  const isHorizontalGestureActiveRef = React.useRef(false)
+  const gestureTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
   // Callback ref to update element state when ref changes
   const callbackRef = React.useCallback((node: T | null) => {
     ref.current = node
@@ -65,29 +140,84 @@ export function useHorizontalScroll<T extends HTMLElement>(
     return element.scrollWidth > element.clientWidth
   }, [])
 
-  // Enhanced wheel event handler that preserves native horizontal scrolling
+  // Enhanced wheel event handler that preserves native horizontal scrolling,
+  // respects nested vertical column scrolling, and maintains gesture intent across ticks.
   const handleWheel = React.useCallback(
     (event: WheelEvent) => {
       if (!enabled || !ref.current) return
 
-      // Don't interfere with native horizontal scrolling (trackpad deltaX or Shift+Wheel)
+      // 1. Don't interfere with native horizontal scrolling (trackpad deltaX or Shift+Wheel)
       if (event.deltaX !== 0 || event.shiftKey) {
+        // Any real horizontal trackpad activity resets the synthetic gesture lock
+        if (gestureTimeoutRef.current) {
+          clearTimeout(gestureTimeoutRef.current)
+          gestureTimeoutRef.current = null
+        }
+        isHorizontalGestureActiveRef.current = false
         return
       }
 
-      // Only handle pure vertical wheel events
+      // 2. Only handle pure vertical wheel events
       if (event.deltaY === 0) return
 
-      // Check if element is horizontally scrollable
-      if (!checkScrollable()) return
+      const container = ref.current
 
-      // Prevent vertical page scroll synchronously
+      // 3. If a horizontal gesture lock is already active, maintain horizontal intent
+      // even if the board's physical movement slid an adjacent column card under the stationary cursor!
+      if (isHorizontalGestureActiveRef.current) {
+        // Verify board still has room to move in the requested deltaY direction
+        if (canScrollHorizontally(container, event.deltaY)) {
+          event.preventDefault()
+          container.scrollLeft += event.deltaY
+
+          // Refresh gesture timeout
+          if (gestureTimeoutRef.current) {
+            clearTimeout(gestureTimeoutRef.current)
+          }
+          gestureTimeoutRef.current = setTimeout(() => {
+            isHorizontalGestureActiveRef.current = false
+            gestureTimeoutRef.current = null
+          }, 200)
+          return
+        } else {
+          // Reached true horizontal boundary of the board; unlock and let outer page scroll naturally
+          if (gestureTimeoutRef.current) {
+            clearTimeout(gestureTimeoutRef.current)
+            gestureTimeoutRef.current = null
+          }
+          isHorizontalGestureActiveRef.current = false
+          return
+        }
+      }
+
+      // 4. Initial Tick - Priority 1: If target or any descendant ancestor can scroll vertically in deltaY direction,
+      // allow native vertical scrolling (do NOT preventDefault, do NOT modify scrollLeft)
+      if (canScrollVertically(event.target, container, event.deltaY)) {
+        return
+      }
+
+      // 5. Initial Tick - Priority 2 & 3: Target reached vertical boundary or is over neutral space.
+      // Check if horizontal movement is possible in deltaY direction.
+      if (!canScrollHorizontally(container, event.deltaY)) {
+        // Board cannot scroll horizontally in this direction; do not prevent default,
+        // allow standard outer page scroll behavior.
+        return
+      }
+
+      // 6. Convert deltaY to horizontal scrollLeft and establish horizontal gesture lock
       event.preventDefault()
+      container.scrollLeft += event.deltaY
 
-      // Smooth & responsive horizontal scrollLeft adjustment
-      ref.current.scrollLeft += event.deltaY
+      isHorizontalGestureActiveRef.current = true
+      if (gestureTimeoutRef.current) {
+        clearTimeout(gestureTimeoutRef.current)
+      }
+      gestureTimeoutRef.current = setTimeout(() => {
+        isHorizontalGestureActiveRef.current = false
+        gestureTimeoutRef.current = null
+      }, 200)
     },
-    [enabled, checkScrollable]
+    [enabled]
   )
 
   // Scroll to specific position
@@ -138,6 +268,11 @@ export function useHorizontalScroll<T extends HTMLElement>(
     return () => {
       element.removeEventListener('wheel', handleWheel)
       resizeObserver.disconnect()
+      if (gestureTimeoutRef.current) {
+        clearTimeout(gestureTimeoutRef.current)
+        gestureTimeoutRef.current = null
+      }
+      isHorizontalGestureActiveRef.current = false
     }
   }, [element, enabled, handleWheel, checkScrollable])
 

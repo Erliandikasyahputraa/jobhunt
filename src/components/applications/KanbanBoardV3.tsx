@@ -324,7 +324,7 @@ function DroppableKanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex w-full md:w-auto min-w-0 md:min-w-[280px] lg:min-w-[320px] flex-1 flex-col rounded-glass p-3 shadow-depth-1 transition-all duration-200 md:snap-center',
+        'flex w-full md:w-auto min-w-0 md:min-w-[280px] lg:min-w-[320px] flex-1 flex-col rounded-glass p-3 shadow-depth-1 transition-all duration-200',
         'md:h-full min-h-[150px] md:min-h-[200px]',
         'bg-[var(--surface-card)] border border-[var(--border-default)]',
         isOver &&
@@ -432,7 +432,11 @@ export function KanbanBoardV3({
   const [announcement, setAnnouncement] = React.useState<string>('')
   const [expandedColumns, setExpandedColumns] = React.useState<Set<string>>(new Set())
 
-  const kanbanScroll = useHorizontalScroll<HTMLDivElement>({ behavior: 'auto', throttleMs: 8 })
+  const kanbanScroll = useHorizontalScroll<HTMLDivElement>({
+    enabled: !activeId,
+    behavior: 'auto',
+    throttleMs: 8,
+  })
 
   // Combine Default Core Columns with User Custom Columns
   const columns: ColumnConfig[] = React.useMemo(() => {
@@ -740,7 +744,7 @@ export function KanbanBoardV3({
         <div
           ref={kanbanScroll.ref}
           data-testid="kanban-dnd-context"
-          className="flex-1 w-full md:overflow-x-auto kanban-scrollbar md:snap-x md:snap-mandatory overflow-y-visible md:overflow-y-hidden"
+          className="flex-1 w-full md:overflow-x-auto kanban-scrollbar overflow-y-visible md:overflow-y-hidden"
         >
           <div
             className="flex flex-col md:flex-row gap-6 md:gap-4 p-0 sm:p-3 pb-24 md:pb-6 md:min-w-max md:h-full"
