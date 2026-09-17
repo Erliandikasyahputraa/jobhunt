@@ -430,6 +430,20 @@ describe('KanbanBoardV3', () => {
         expect(column).toHaveClass('md:min-w-[280px]')
       })
     })
+
+    it('applies responsive padding utilities to the columns container', () => {
+      const { container } = render(
+        <KanbanBoardV3 applications={[]} customColumns={[]} onUpdateApplicationColumn={vi.fn()} />
+      )
+
+      const columnsContainer = container.querySelector('[data-testid="kanban-dnd-context"] > div')
+      expect(columnsContainer).toBeInTheDocument()
+      expect(columnsContainer).toHaveClass('px-0')
+      expect(columnsContainer).toHaveClass('pt-3.5')
+      expect(columnsContainer).toHaveClass('pb-24')
+      expect(columnsContainer).toHaveClass('sm:p-3')
+      expect(columnsContainer).toHaveClass('md:pb-6')
+    })
   })
 
   describe('Performance', () => {

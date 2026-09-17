@@ -747,7 +747,7 @@ export function KanbanBoardV3({
           className="flex-1 w-full md:overflow-x-auto kanban-scrollbar overflow-y-visible md:overflow-y-hidden"
         >
           <div
-            className="flex flex-col md:flex-row gap-6 md:gap-4 p-0 sm:p-3 pb-24 md:pb-6 md:min-w-max md:h-full"
+            className="flex flex-col md:flex-row gap-6 md:gap-4 px-0 pt-3.5 pb-24 sm:p-3 md:pb-6 md:min-w-max md:h-full"
             style={{ minHeight: 'calc(100vh - 250px)' }}
           >
             {columns.map(column => (
