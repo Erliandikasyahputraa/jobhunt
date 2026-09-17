@@ -116,6 +116,31 @@ describe('ApplicationDetail', () => {
       expect(screen.getByText(/notes/i)).toBeInTheDocument()
     })
 
+    it('renders Notes containing an extremely long URL with word wrapping and without truncation', () => {
+      const longUrl = 'https://agent.askethos.com/share/b03487c6-7f4c-4740-9a25-c6036dc7190d'
+      const application = createMockApplication({
+        notes: `Referral link: ${longUrl}`,
+      })
+      render(
+        <ApplicationDetail
+          application={application}
+          onUpdate={mockOnUpdate}
+          onDelete={mockOnDelete}
+          onClose={mockOnClose}
+          isOpen={true}
+        />
+      )
+
+      const notesElement = screen.getByText(new RegExp(longUrl))
+      expect(notesElement).toBeInTheDocument()
+      expect(notesElement.className).toContain('break-words')
+      expect(notesElement.className).toContain('[overflow-wrap:anywhere]')
+      expect(notesElement.className).toContain('whitespace-pre-wrap')
+      expect(notesElement.className).not.toContain('truncate')
+      expect(notesElement.className).not.toContain('text-ellipsis')
+      expect(notesElement.className).not.toContain('overflow-hidden')
+    })
+
     it('displays default job description content', () => {
       const application = createMockApplication() // Uses default job_description
       render(
