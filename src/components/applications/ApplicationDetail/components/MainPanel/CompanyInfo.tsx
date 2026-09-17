@@ -510,7 +510,7 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
   // No company profile linked state
   return (
     <div className={cn('space-y-4 sm:space-y-6', className)}>
-      <div className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-8 sm:p-12 text-center shadow-xs">
+      <div className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-6 sm:p-10 text-center shadow-xs">
         <Building2 className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3" aria-hidden="true" />
         <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)] mb-2">
           No company profile linked
@@ -520,16 +520,21 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
           <strong className="text-[var(--text-primary)]">{application.company_name}</strong> but it
           is not linked to a dedicated Company Profile yet.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 w-full max-w-xs sm:max-w-none mx-auto">
           <Button
             onClick={() => setIsCreating(true)}
             disabled={isLoading}
-            className="bg-amber-700 hover:bg-amber-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 font-medium"
+            className="w-full sm:w-auto bg-amber-700 hover:bg-amber-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 font-medium"
           >
             <Plus className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
             Create Company Profile
           </Button>
-          <Button variant="outline" onClick={loadAvailableCompanies} disabled={isLoading}>
+          <Button
+            variant="outline"
+            onClick={loadAvailableCompanies}
+            disabled={isLoading}
+            className="w-full sm:w-auto"
+          >
             <Link2 className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
             Link Existing Company
           </Button>

@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { FileText, Building, FolderOpen } from 'lucide-react'
+import { FileText, Building, FolderOpen, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { TabType } from '../../types'
 
@@ -9,9 +9,10 @@ interface TabNavigationProps {
   activeTab: TabType
   onTabChange: (tab: TabType) => void
   disabled?: boolean
+  variant?: 'sidebar' | 'bottom-bar'
 }
 
-const tabItems: Array<{
+const allTabItems: Array<{
   id: TabType
   label: string
   icon: React.ComponentType<{ className?: string }>
@@ -35,9 +36,20 @@ const tabItems: Array<{
     icon: FolderOpen,
     description: 'Resume, cover letter, and attachments',
   },
+  {
+    id: 'timeline',
+    label: 'Timeline',
+    icon: Clock,
+    description: 'Activity history',
+  },
 ]
 
-export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabNavigationProps) {
+export function TabNavigation({
+  activeTab,
+  onTabChange,
+  disabled = false,
+  variant = 'sidebar',
+}: TabNavigationProps) {
   const handleTabClick = React.useCallback(
     (tabId: TabType) => {
       if (!disabled) {
@@ -47,8 +59,68 @@ export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabN
     [disabled, onTabChange]
   )
 
+  // Both desktop sidebar and mobile bottom-bar show all 4 tabs: Overview, Company, Documents, Timeline
+  const tabItems = allTabItems
+
+  if (variant === 'bottom-bar') {
+    return (
+      <nav
+        className="grid grid-cols-4 gap-1 p-1"
+        role="tablist"
+        aria-label="Application detail navigation"
+      >
+        {tabItems.map(tab => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`${tab.id}-panel`}
+              id={`${tab.id}-tab`}
+              disabled={disabled}
+              onClick={() => handleTabClick(tab.id)}
+              className={cn(
+                'flex flex-col items-center justify-center py-1.5 px-1 rounded-lg transition-all duration-150',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-1',
+                'min-h-[48px]',
+                isActive
+                  ? 'text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/15'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-recessed)]',
+                disabled && 'opacity-50 cursor-not-allowed'
+              )}
+            >
+              <Icon
+                className={cn(
+                  'w-[18px] h-[18px] flex-shrink-0 transition-colors mb-0.5',
+                  isActive ? 'text-amber-600 dark:text-amber-400' : 'text-[var(--text-muted)]'
+                )}
+              />
+              <span
+                className={cn(
+                  'text-[11px] sm:text-xs font-medium leading-none',
+                  isActive ? 'text-amber-600 dark:text-amber-400' : ''
+                )}
+              >
+                {tab.label}
+              </span>
+            </button>
+          )
+        })}
+      </nav>
+    )
+  }
+
+  // variant === 'sidebar'
   return (
-    <nav className="p-3 sm:p-4 space-y-1.5" role="tablist">
+    <nav
+      className="p-3 sm:p-4 space-y-1.5"
+      role="tablist"
+      aria-label="Application detail navigation"
+    >
       {tabItems.map(tab => {
         const Icon = tab.icon
         const isActive = activeTab === tab.id
@@ -60,6 +132,7 @@ export function TabNavigation({ activeTab, onTabChange, disabled = false }: TabN
             role="tab"
             aria-selected={isActive}
             aria-controls={`${tab.id}-panel`}
+            id={`${tab.id}-tab`}
             disabled={disabled}
             onClick={() => handleTabClick(tab.id)}
             className={cn(

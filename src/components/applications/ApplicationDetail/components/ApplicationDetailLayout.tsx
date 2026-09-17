@@ -10,7 +10,6 @@ import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { getStatusLabel } from '@/lib/utils/status-colors'
 import { TabNavigation } from './LeftPanel/TabNavigation'
 import { MainPanel } from './MainPanel/MainPanel'
-import { ApplicationTimeline } from './RightPanel/ApplicationTimeline'
 import { ActionButtons } from './ActionButtons'
 
 interface ApplicationDetailLayoutProps {
@@ -53,15 +52,15 @@ export function ApplicationDetailLayout({
       {/* Header */}
       <div className="bg-[var(--modal-header)] border-b border-[var(--modal-divider)] rounded-t-2xl shrink-0">
         {/* Primary Header Info */}
-        <div className="flex items-start justify-between gap-4 p-6 pb-3">
-          <div className="flex items-center gap-4 min-w-0">
+        <div className="flex items-start justify-between gap-3 p-4 sm:p-6 pb-3">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <CompanyLogo
               companyName={application.company_name}
-              size="lg"
-              className="flex-shrink-0 rounded-xl"
+              size="md"
+              className="flex-shrink-0 rounded-xl h-11 w-11 sm:h-16 sm:w-16"
             />
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold text-[var(--text-primary)] truncate leading-tight tracking-tight">
+              <h1 className="text-lg sm:text-2xl font-semibold text-[var(--text-primary)] truncate leading-tight tracking-tight">
                 {application.job_title}
               </h1>
               <p className="text-sm sm:text-base font-medium text-[var(--text-secondary)] truncate leading-tight mt-0.5">
@@ -81,7 +80,7 @@ export function ApplicationDetailLayout({
         </div>
 
         {/* Metadata Strip */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-4 text-xs sm:text-sm text-[var(--text-secondary)] border-t border-[var(--modal-divider)] pt-3">
+        <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2 px-4 sm:px-6 pb-3 sm:pb-4 text-xs sm:text-sm text-[var(--text-secondary)] border-t border-[var(--modal-divider)] pt-2.5 sm:pt-3">
           {/* Location */}
           {application.location && (
             <div className="flex items-center gap-1.5">
@@ -151,27 +150,36 @@ export function ApplicationDetailLayout({
         </div>
       </div>
 
-      {/* Three Panel Layout */}
+      {/* Desktop 2-Column / Mobile Single-Column Basin */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        {/* Left Panel - Navigation */}
-        <div className="hidden lg:block w-60 shrink-0 border-r border-[var(--modal-divider)] overflow-y-auto bg-[var(--modal-sidebar)]">
-          <TabNavigation activeTab={activeTab} onTabChange={onTabChange} disabled={isEditMode} />
+        {/* Left Panel - Desktop Navigation (>= 1280px only) */}
+        <div className="hidden xl:block w-60 shrink-0 border-r border-[var(--modal-divider)] overflow-y-auto bg-[var(--modal-sidebar)]">
+          <TabNavigation
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+            disabled={isEditMode}
+            variant="sidebar"
+          />
         </div>
 
         {/* Main Content Basin */}
         <div className="flex-1 min-w-0 overflow-y-auto bg-[var(--modal-canvas)]">
-          <MainPanel application={application} activeTab={activeTab} />
-        </div>
-
-        {/* Right Panel - Timeline */}
-        <div className="hidden xl:block w-80 shrink-0 border-l border-[var(--modal-divider)] overflow-y-auto bg-[var(--modal-sidebar)]">
-          <ApplicationTimeline application={application} customColumns={customColumns} />
+          <MainPanel
+            application={application}
+            activeTab={activeTab}
+            customColumns={customColumns}
+          />
         </div>
       </div>
 
-      {/* Mobile Tab Navigation */}
-      <div className="lg:hidden border-t border-[var(--modal-divider)] bg-[var(--modal-header)] py-1.5 px-2">
-        <TabNavigation activeTab={activeTab} onTabChange={onTabChange} disabled={isEditMode} />
+      {/* Mobile & Tablet Bottom Tab Bar (< 1280px) */}
+      <div className="xl:hidden shrink-0 border-t border-[var(--modal-divider)] bg-[var(--modal-header)] py-1 px-1.5">
+        <TabNavigation
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          disabled={isEditMode}
+          variant="bottom-bar"
+        />
       </div>
     </div>
   )

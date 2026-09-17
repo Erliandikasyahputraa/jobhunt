@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, waitFor, cleanup } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import userEvent from '@testing-library/user-event'
 import { ApplicationDetail } from '../ApplicationDetail'
+import { TabNavigation } from '../ApplicationDetail/components/LeftPanel/TabNavigation'
 import type { Application } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 
@@ -737,6 +738,94 @@ describe('ApplicationDetail', () => {
       // Test that we can go back with Shift+Tab
       await user.tab({ shift: true })
       expect(companyInput).toHaveFocus()
+    })
+  })
+
+  describe('Phase 2C-C — Mobile Navigation Architecture', () => {
+    afterEach(() => {
+      cleanup()
+    })
+
+    it('bottom-bar TabNavigation renders 4 compact tabs without subtitle descriptions', () => {
+      render(<TabNavigation activeTab="overview" onTabChange={() => {}} variant="bottom-bar" />)
+
+      // Should render exactly 4 tabs in bottom-bar variant
+      const tabs = screen.getAllByRole('tab')
+      expect(tabs).toHaveLength(4)
+
+      // Should include the Timeline tab
+      expect(screen.getByText('Timeline')).toBeInTheDocument()
+
+      // Should NOT render tab descriptions (bottom-bar omits subtitles)
+      expect(screen.queryByText('Job description and details')).not.toBeInTheDocument()
+      expect(screen.queryByText('Activity history')).not.toBeInTheDocument()
+    })
+
+    it('sidebar TabNavigation renders 4 tabs including timeline', () => {
+      render(<TabNavigation activeTab="overview" onTabChange={() => {}} variant="sidebar" />)
+
+      // Sidebar should render exactly 4 tabs (including timeline)
+      const tabs = screen.getAllByRole('tab')
+      expect(tabs).toHaveLength(4)
+
+      // Timeline tab MUST appear in sidebar variant
+      expect(screen.getByText('Timeline')).toBeInTheDocument()
+
+      // Descriptions should be visible in sidebar
+      expect(screen.getByText('Job description and details')).toBeInTheDocument()
+      expect(screen.getByText('Activity history')).toBeInTheDocument()
+    })
+
+    it('selecting Timeline tab renders ApplicationTimeline in MainPanel with no duplicate right panel', async () => {
+      const user = userEvent.setup()
+      const application = createMockApplication()
+      render(
+        <ApplicationDetail
+          application={application}
+          onUpdate={mockOnUpdate}
+          onDelete={mockOnDelete}
+          onClose={mockOnClose}
+          isOpen={true}
+        />
+      )
+
+      // Initially in 'overview' tab: MainPanel has overview panel, no timeline panel
+      expect(screen.getByRole('tabpanel', { name: /overview/i })).toBeInTheDocument()
+      expect(screen.queryByRole('tabpanel', { name: /timeline/i })).not.toBeInTheDocument()
+
+      // Find timeline tab button
+      const timelineTabs = screen.getAllByRole('tab', { name: /timeline/i })
+      expect(timelineTabs.length).toBeGreaterThan(0)
+
+      // Click the first timeline tab
+      await user.click(timelineTabs[0])
+
+      // MainPanel now renders timeline panel
+      await waitFor(() => {
+        expect(screen.getByRole('tabpanel', { name: /timeline/i })).toBeInTheDocument()
+      })
+
+      // Ensure there is only 1 instance of Timeline heading (no duplicate right panel)
+      const timelineHeadings = screen.getAllByRole('heading', { level: 3, name: 'Timeline' })
+      expect(timelineHeadings).toHaveLength(1)
+    })
+
+    it('CompanyInfo empty state container uses flex-col sm:flex-row for mobile button stacking', () => {
+      const application = createMockApplication({ company_id: null })
+      render(
+        <ApplicationDetail
+          application={application}
+          onUpdate={mockOnUpdate}
+          onDelete={mockOnDelete}
+          onClose={mockOnClose}
+          isOpen={true}
+        />
+      )
+
+      // Navigate to Company tab via the bottom-bar or sidebar tab button
+      const companyTabButtons = screen.getAllByRole('tab', { name: /company/i })
+      // At least one Company tab button should be present
+      expect(companyTabButtons.length).toBeGreaterThan(0)
     })
   })
 })

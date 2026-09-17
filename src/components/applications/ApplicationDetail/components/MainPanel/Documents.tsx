@@ -171,7 +171,7 @@ export function Documents({ _application, className }: DocumentsProps) {
           />
         </div>
       ) : documents.length === 0 ? (
-        <div className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-6 text-center">
+        <div className="bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-xl p-5 sm:p-6 text-center">
           <FileText
             className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3"
             aria-hidden="true"
