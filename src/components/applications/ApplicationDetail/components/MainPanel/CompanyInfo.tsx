@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Building2, Globe, Link as LinkIcon, Plus, Edit, Unlink } from 'lucide-react'
+import { Building2, Globe, Link2, Plus, Edit2, Unlink } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Application, CompanyDB } from '@/lib/types/database.types'
 import { Button } from '@/components/ui/button'
@@ -185,7 +185,10 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
       <div className={cn('space-y-4 sm:space-y-6', className)}>
         <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
           <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-slate-700 dark:text-amber-400" />
+            <Building2
+              className="h-5 w-5 text-[hsl(var(--copper-dark))] shrink-0"
+              aria-hidden="true"
+            />
             {isEditing ? 'Edit Company Profile' : 'Create Company Profile'}
           </h3>
           <form onSubmit={isEditing ? handleUpdate : handleCreate} className="space-y-4">
@@ -334,7 +337,7 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
       <div className={cn('space-y-4 sm:space-y-6', className)}>
         <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
           <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-            <LinkIcon className="w-5 h-5 text-orange-700 dark:text-amber-400" />
+            <Link2 className="h-5 w-5 text-[hsl(var(--copper-dark))] shrink-0" aria-hidden="true" />
             Link Existing Company
           </h3>
           <div className="space-y-4">
@@ -395,16 +398,19 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
         <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-orange-700 dark:text-amber-400" />
+              <Building2
+                className="h-5 w-5 text-[hsl(var(--copper-dark))] shrink-0"
+                aria-hidden="true"
+              />
               Company Profile
             </h3>
             <div className="flex flex-wrap items-center gap-2">
               <Button size="sm" variant="outline" onClick={startEdit} disabled={isLoading}>
-                <Edit className="w-4 h-4 mr-2" />
+                <Edit2 className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
                 Edit
               </Button>
               <Button size="sm" variant="outline" onClick={handleUnlink} disabled={isLoading}>
-                <Unlink className="w-4 h-4 mr-2" />
+                <Unlink className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
                 Unlink
               </Button>
             </div>
@@ -423,7 +429,11 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
                 {company.website && (
                   <div className="flex flex-col gap-1">
                     <span className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                      <Globe className="w-4 h-4" /> Website
+                      <Globe
+                        className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"
+                        aria-hidden="true"
+                      />{' '}
+                      Website
                     </span>
                     <a
                       href={company.website}
@@ -501,7 +511,7 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
   return (
     <div className={cn('space-y-4 sm:space-y-6', className)}>
       <div className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-8 sm:p-12 text-center shadow-xs">
-        <Building2 className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+        <Building2 className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3" aria-hidden="true" />
         <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
           No company profile linked
         </h3>
@@ -516,11 +526,11 @@ export function CompanyInfo({ application, className }: CompanyInfoProps) {
             disabled={isLoading}
             className="bg-orange-700 hover:bg-orange-800 text-white dark:bg-amber-600 dark:hover:bg-amber-700"
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
             Create Company Profile
           </Button>
           <Button variant="outline" onClick={loadAvailableCompanies} disabled={isLoading}>
-            <LinkIcon className="w-4 h-4 mr-2" />
+            <Link2 className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
             Link Existing Company
           </Button>
         </div>

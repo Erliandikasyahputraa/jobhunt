@@ -4,6 +4,7 @@ import * as React from 'react'
 import type { Application, CustomColumnDB } from '@/lib/types/database.types'
 import type { ApplicationFormData } from '@/lib/schemas/application.schema'
 import type { TabType } from '../types'
+import { MapPin, WalletCards, Activity, KanbanSquare, Calendar, Compass } from 'lucide-react'
 import { CompanyLogo } from '@/components/ui/company-logo'
 import { DEFAULT_COLUMNS } from '@/lib/storage/column-storage'
 import { getStatusLabel } from '@/lib/utils/status-colors'
@@ -84,7 +85,10 @@ export function ApplicationDetailLayout({
           {/* Location */}
           {application.location && (
             <div className="flex items-center gap-1.5">
-              <span className="text-[var(--text-muted)]">📍</span>
+              <MapPin
+                className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"
+                aria-hidden="true"
+              />
               <span className="font-medium text-[var(--text-primary)]">{application.location}</span>
             </div>
           )}
@@ -92,7 +96,10 @@ export function ApplicationDetailLayout({
           {/* Salary */}
           {application.salary_range && (
             <div className="flex items-center gap-1.5">
-              <span className="text-[var(--text-muted)]">💰</span>
+              <WalletCards
+                className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"
+                aria-hidden="true"
+              />
               <span className="font-medium text-[var(--text-primary)]">
                 {application.salary_range}
               </span>
@@ -101,7 +108,10 @@ export function ApplicationDetailLayout({
 
           {/* Status */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-muted)]">📊</span>
+            <Activity
+              className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"
+              aria-hidden="true"
+            />
             <span className="font-medium text-[var(--text-primary)]">
               {getStatusLabel(application.status)}
             </span>
@@ -109,13 +119,19 @@ export function ApplicationDetailLayout({
 
           {/* Column */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-muted)]">📁</span>
+            <KanbanSquare
+              className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"
+              aria-hidden="true"
+            />
             <span className="font-medium text-[var(--text-primary)]">Column: {columnName}</span>
           </div>
 
           {/* Date Applied */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-muted)]">📅</span>
+            <Calendar
+              className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"
+              aria-hidden="true"
+            />
             <span className="font-medium text-[var(--text-primary)]">
               {new Date(application.date_applied).toLocaleDateString('en-US', {
                 month: 'long',
@@ -127,7 +143,7 @@ export function ApplicationDetailLayout({
 
           {/* Source */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-muted)]">🔗</span>
+            <Compass className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" aria-hidden="true" />
             <span className="font-medium text-[var(--text-primary)]">
               Added from {application.source || 'external'}
             </span>

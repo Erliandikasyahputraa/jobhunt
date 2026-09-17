@@ -22,7 +22,15 @@ import {
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Bookmark,
+  Send,
+  CalendarClock,
+  Sparkles,
+  Archive,
+} from 'lucide-react'
 import { ApplicationCard } from './ApplicationCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -138,9 +146,108 @@ function SortableApplication({
   )
 }
 
+function ColumnHeaderIcon({ column }: { column: ColumnConfig }) {
+  if (column.isCustom && column.icon) {
+    return (
+      <span className="text-xl leading-none" aria-hidden="true">
+        {column.icon}
+      </span>
+    )
+  }
+
+  switch (column.id) {
+    case 'saved':
+      return (
+        <Bookmark
+          className="h-[18px] w-[18px] text-[hsl(var(--copper-dark))] shrink-0"
+          aria-hidden="true"
+        />
+      )
+    case 'applied':
+      return (
+        <Send
+          className="h-[18px] w-[18px] text-sky-600 dark:text-sky-400 shrink-0"
+          aria-hidden="true"
+        />
+      )
+    case 'interview':
+      return (
+        <CalendarClock
+          className="h-[18px] w-[18px] text-indigo-600 dark:text-indigo-400 shrink-0"
+          aria-hidden="true"
+        />
+      )
+    case 'offers':
+      return (
+        <Sparkles
+          className="h-[18px] w-[18px] text-emerald-600 dark:text-emerald-400 shrink-0"
+          aria-hidden="true"
+        />
+      )
+    case 'closed':
+      return (
+        <Archive
+          className="h-[18px] w-[18px] text-[var(--text-muted)] shrink-0"
+          aria-hidden="true"
+        />
+      )
+    default:
+      if (column.icon) {
+        return (
+          <span className="text-xl leading-none" aria-hidden="true">
+            {column.icon}
+          </span>
+        )
+      }
+      return (
+        <span className="text-xl leading-none" aria-hidden="true">
+          {getColumnIcon(column.id)}
+        </span>
+      )
+  }
+}
+
+function ColumnEmptyStateIcon({ column, className }: { column: ColumnConfig; className?: string }) {
+  if (column.isCustom && column.icon) {
+    return (
+      <span className="text-3xl leading-none" aria-hidden="true">
+        {column.icon}
+      </span>
+    )
+  }
+
+  const iconClass = cn('h-10 w-10 text-[var(--text-muted)] shrink-0', className)
+
+  switch (column.id) {
+    case 'saved':
+      return <Bookmark className={iconClass} aria-hidden="true" />
+    case 'applied':
+      return <Send className={iconClass} aria-hidden="true" />
+    case 'interview':
+      return <CalendarClock className={iconClass} aria-hidden="true" />
+    case 'offers':
+      return <Sparkles className={iconClass} aria-hidden="true" />
+    case 'closed':
+      return <Archive className={iconClass} aria-hidden="true" />
+    default:
+      if (column.icon) {
+        return (
+          <span className="text-3xl leading-none" aria-hidden="true">
+            {column.icon}
+          </span>
+        )
+      }
+      return (
+        <span className="text-3xl leading-none" aria-hidden="true">
+          {getColumnIcon(column.id)}
+        </span>
+      )
+  }
+}
+
 interface EmptyStateProps {
   column: ColumnConfig
-  Icon: React.ComponentType<{ className?: string }>
+  Icon?: React.ComponentType<{ className?: string }>
 }
 
 function EmptyState({ column, Icon }: EmptyStateProps) {
@@ -151,8 +258,12 @@ function EmptyState({ column, Icon }: EmptyStateProps) {
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-[var(--surface-recessed)] rounded-glass border-2 border-dashed border-[var(--border-default)] p-12 text-center">
-      <div className="bg-[var(--surface-secondary)] rounded-full p-4 mb-4 border border-[var(--border-subtle)]">
-        <Icon className="h-12 w-12 text-[var(--text-muted)]" />
+      <div className="bg-[var(--surface-secondary)] rounded-full p-4 mb-4 border border-[var(--border-subtle)] flex items-center justify-center">
+        {Icon ? (
+          <Icon className="h-10 w-10 text-[var(--text-muted)]" />
+        ) : (
+          <ColumnEmptyStateIcon column={column} />
+        )}
       </div>
       <h4 className="mb-2 font-bold text-[var(--text-primary)] text-base">{guidance.heading}</h4>
       <p className="mb-4 max-w-sm text-sm text-[var(--text-secondary)] leading-relaxed">
@@ -209,8 +320,6 @@ function DroppableKanbanColumn({
   const count = applications.length
   const isExpandable = column.id === 'interview' && !column.isCustom
 
-  const icon = column.icon || getColumnIcon(column.id)
-
   return (
     <div
       ref={setNodeRef}
@@ -236,15 +345,15 @@ function DroppableKanbanColumn({
               data-testid={`toggle-expand-${column.id}`}
             >
               {isExpanded ? (
-                <ChevronDown className="h-4 w-4 text-[var(--text-primary)]" />
+                <ChevronDown className="h-4 w-4 text-[var(--text-primary)]" aria-hidden="true" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-[var(--text-primary)]" />
+                <ChevronRight className="h-4 w-4 text-[var(--text-primary)]" aria-hidden="true" />
               )}
             </Button>
           )}
           <div className="flex items-center gap-2">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)]">
-              <span className="text-xl">{icon}</span>
+              <ColumnHeaderIcon column={column} />
             </div>
             <div className="flex flex-col">
               <h3 className="text-lg font-bold text-[var(--text-primary)]">{column.name}</h3>
@@ -280,12 +389,7 @@ function DroppableKanbanColumn({
           )}
         >
           {applications.length === 0 ? (
-            <EmptyState
-              column={column}
-              Icon={() => (
-                <span className="text-3xl">{column.icon || getColumnIcon(column.id)}</span>
-              )}
-            />
+            <EmptyState column={column} />
           ) : (
             applications.map(application => (
               <SortableApplication

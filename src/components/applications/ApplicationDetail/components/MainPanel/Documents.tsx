@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { FileText, Upload, Plus, Download, Trash2, Loader2, File } from 'lucide-react'
+import { FileText, Upload, Plus, Download, Trash2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import type { Application, ApplicationDocumentDB, DocumentType } from '@/lib/types/database.types'
@@ -157,18 +157,25 @@ export function Documents({ _application, className }: DocumentsProps) {
           variant="outline"
           className="border-border shadow-xs hover:bg-accent transition-all"
         >
-          <Upload className="w-4 h-4 mr-2" />
+          <Upload className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
           Upload Document
         </Button>
       </div>
 
       {isLoading ? (
         <div className="flex justify-center p-8">
-          <Loader2 className="w-8 h-8 animate-spin text-label-secondary" />
+          <Loader2
+            className="h-8 w-8 animate-spin text-[var(--text-muted)]"
+            aria-label="Loading documents"
+            role="status"
+          />
         </div>
       ) : documents.length === 0 ? (
         <div className="bg-slate-50 dark:bg-[#090d16] border border-neutral-200 dark:border-slate-800 rounded-xl p-6 text-center">
-          <FileText className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+          <FileText
+            className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-3"
+            aria-hidden="true"
+          />
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
             No documents yet
           </h3>
@@ -180,7 +187,7 @@ export function Documents({ _application, className }: DocumentsProps) {
             variant="default"
             className="bg-orange-700 hover:bg-orange-800 dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-slate-950"
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="h-4 w-4 mr-1.5 shrink-0" aria-hidden="true" />
             Upload Document
           </Button>
         </div>
@@ -193,7 +200,10 @@ export function Documents({ _application, className }: DocumentsProps) {
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <div className="p-2 bg-slate-100 dark:bg-slate-700/60 rounded-lg shrink-0 border border-slate-200 dark:border-slate-700">
-                  <File className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                  <FileText
+                    className="h-4 w-4 text-[var(--text-secondary)] shrink-0"
+                    aria-hidden="true"
+                  />
                 </div>
                 <div className="min-w-0">
                   <h4
@@ -223,9 +233,12 @@ export function Documents({ _application, className }: DocumentsProps) {
                   className="h-8 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium transition-colors"
                 >
                   {isDownloadingId === doc.id ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    <Loader2
+                      className="h-3.5 w-3.5 animate-spin mr-1.5 shrink-0"
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="h-3.5 w-3.5 mr-1.5 shrink-0" aria-hidden="true" />
                   )}
                   View
                 </Button>
@@ -236,7 +249,7 @@ export function Documents({ _application, className }: DocumentsProps) {
                   onClick={() => setDocumentToDelete(doc)}
                   className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="h-4 w-4 shrink-0" aria-hidden="true" />
                 </Button>
               </div>
             </div>
@@ -313,7 +326,7 @@ export function Documents({ _application, className }: DocumentsProps) {
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-1.5 animate-spin shrink-0" aria-hidden="true" />
                   Uploading...
                 </>
               ) : (
@@ -355,7 +368,11 @@ export function Documents({ _application, className }: DocumentsProps) {
               disabled={isDeleting}
               className="min-w-[100px]"
             >
-              {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden="true" />
+              ) : (
+                'Delete'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

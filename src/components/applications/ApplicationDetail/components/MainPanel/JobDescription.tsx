@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Application } from '@/lib/types/database.types'
 
@@ -17,17 +17,20 @@ export function JobDescription({ application, className }: JobDescriptionProps) 
       {application.job_url && (
         <section className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-5 sm:p-6 shadow-xs">
           <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-            <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 text-orange-700 dark:text-amber-400" />
+            <ExternalLink
+              className="h-4 w-4 text-[hsl(var(--copper-dark))] shrink-0"
+              aria-hidden="true"
+            />
             Job Posting
           </h3>
           <a
             href={application.job_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-orange-700 dark:text-amber-400 hover:text-orange-800 dark:hover:text-amber-300 hover:underline transition-colors duration-150 font-medium text-sm"
+            className="inline-flex items-center gap-1.5 text-[hsl(var(--copper-dark))] hover:underline transition-colors duration-150 font-medium text-sm"
           >
             View Original Job Posting
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           </a>
         </section>
       )}
@@ -61,8 +64,8 @@ export function JobDescription({ application, className }: JobDescriptionProps) 
       {!application.job_description && !application.notes && !application.job_url && (
         <section className="bg-white dark:bg-slate-800/90 border border-neutral-200 dark:border-slate-700/60 rounded-xl p-8 sm:p-12 text-center shadow-xs">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center">
-              <span className="text-xl text-slate-500 dark:text-slate-400">📝</span>
+            <div className="w-12 h-12 rounded-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)] flex items-center justify-center">
+              <FileText className="h-6 w-6 text-[var(--text-muted)] shrink-0" aria-hidden="true" />
             </div>
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
               No Details Available
